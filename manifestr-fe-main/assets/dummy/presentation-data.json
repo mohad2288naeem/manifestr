@@ -1,0 +1,593 @@
+{
+    "dpi": 72,
+    "unit": "px",
+    "fonts": [
+        {
+            "fontFamily": "Inter"
+        },
+        {
+            "fontFamily": "Inter"
+        }
+    ],
+    "pages": [
+        {
+            "id": "slide-1",
+            "children": [
+                {
+                    "x": 0,
+                    "y": 0,
+                    "id": "bg-slide-1",
+                    "src": "https://images.unsplash.com/photo-1539876782331-cdcf975877af?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NTI2NTd8MHwxfHNlYXJjaHwxfHxUaGUlMjBFdmVyLUV2b2x2aW5nJTIwQXV0byUyMEluZHVzdHJ5JTIwTGFuZHNjYXBlfGVufDB8MHx8fDE3Njc4NTY4ODZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+                    "type": "image",
+                    "width": 1920,
+                    "height": 1080,
+                    "opacity": 1
+                },
+                {
+                    "x": 0,
+                    "y": 0,
+                    "id": "overlay-slide-1",
+                    "fill": "rgba(0,0,0,0.6)",
+                    "type": "figure",
+                    "width": 1920,
+                    "height": 1080,
+                    "subType": "rect"
+                },
+                {
+                    "x": 100,
+                    "y": 400,
+                    "id": "title-1",
+                    "fill": "#FFFFFF",
+                    "text": "Revolutionizing Mobility",
+                    "type": "text",
+                    "align": "center",
+                    "width": 1720,
+                    "fontSize": 80,
+                    "fontFamily": "Inter",
+                    "fontWeight": "bold"
+                },
+                {
+                    "x": 100,
+                    "y": 556,
+                    "id": "subtitle-1",
+                    "fill": "#E0E0E0",
+                    "text": "Navigating the digital highways of tomorrow's auto industry.",
+                    "type": "text",
+                    "align": "center",
+                    "width": 1720,
+                    "fontSize": 40,
+                    "fontFamily": "Inter"
+                }
+            ],
+            "background": "#000"
+        },
+        {
+            "id": "slide-2",
+            "children": [
+                {
+                    "x": 0,
+                    "y": 0,
+                    "id": "bg-slide-2",
+                    "fill": "#0066FF",
+                    "type": "figure",
+                    "width": 1920,
+                    "height": 1080,
+                    "subType": "rect"
+                },
+                {
+                    "x": -200,
+                    "y": -200,
+                    "id": "deco-blob-slide-2",
+                    "fill": "#00D4FF",
+                    "type": "figure",
+                    "width": 1000,
+                    "height": 1000,
+                    "opacity": 0.4,
+                    "subType": "circle"
+                },
+                {
+                    "x": 100,
+                    "y": 400,
+                    "id": "title-2",
+                    "fill": "#FFFFFF",
+                    "text": "Bridging Consumer Diversity",
+                    "type": "text",
+                    "align": "center",
+                    "width": 1720,
+                    "fontSize": 80,
+                    "fontFamily": "Inter",
+                    "fontWeight": "bold"
+                },
+                {
+                    "x": 60,
+                    "y": 526,
+                    "id": "card-body-1",
+                    "rx": 20,
+                    "fill": "rgba(0,0,0,0.5)",
+                    "type": "figure",
+                    "width": 1800,
+                    "height": 98.4,
+                    "subType": "rect"
+                },
+                {
+                    "x": 100,
+                    "y": 556,
+                    "id": "body-1",
+                    "fill": "#FFFFFF",
+                    "text": "Crafting solutions for the modern driver: personalized, diverse, dynamic.",
+                    "type": "text",
+                    "align": "center",
+                    "width": 1720,
+                    "fontSize": 32,
+                    "fontFamily": "Inter"
+                },
+                {
+                    "x": 100,
+                    "y": 654.4,
+                    "id": "image-1",
+                    "src": "https://images.unsplash.com/photo-1666455985155-3770068123f7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NTI2NTd8MHwxfHNlYXJjaHwxfHxBJTIwZGl2ZXJzZSUyMGdyb3VwJTIwb2YlMjBmaXZlJTIwaW5kaXZpZHVhbHMlMjBvZiUyMHZhcmlvdXMlMjBhZ2VzJTIwYW5kJTIwYmFja2dyb3VuZHMlMkMlMjBzaWxob3VldHRlZCUyMGFnYWluc3QlMjBhJTIwYmFja2Ryb3AlMjBvZiUyMHZhcmlvdXMlMjBjYXIlMjBtb2RlbHMlMkMlMjByZXByZXNlbnRpbmclMjBjb25zdW1lciUyMGRpdmVyc2l0eSUyMGluJTIwdGhlJTIwYXV0b21vdGl2ZSUyMG1hcmtldC58ZW58MHwwfHx8MTc2Nzg1Njg4N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+                    "type": "image",
+                    "width": 1720,
+                    "height": 500
+                }
+            ],
+            "background": "#000"
+        },
+        {
+            "id": "slide-3",
+            "children": [
+                {
+                    "x": 0,
+                    "y": 0,
+                    "id": "bg-slide-3",
+                    "fill": "#F8FAFC",
+                    "type": "figure",
+                    "width": 1920,
+                    "height": 1080,
+                    "subType": "rect"
+                },
+                {
+                    "x": 100,
+                    "y": 400,
+                    "id": "title-3",
+                    "fill": "#0A0E27",
+                    "text": "Affordable to Sublime",
+                    "type": "text",
+                    "align": "center",
+                    "width": 1720,
+                    "fontSize": 80,
+                    "fontFamily": "Inter",
+                    "fontWeight": "bold"
+                },
+                {
+                    "x": 100,
+                    "y": 556,
+                    "id": "body-2",
+                    "fill": "#0A0E27",
+                    "text": "Offering a spectrum of vehicles to suit every style and budget. Experience choice.",
+                    "type": "text",
+                    "align": "center",
+                    "width": 1720,
+                    "fontSize": 32,
+                    "fontFamily": "Inter"
+                },
+                {
+                    "x": 100,
+                    "y": 80,
+                    "id": "accent-line-slide-3",
+                    "fill": "#FF3366",
+                    "type": "figure",
+                    "width": 200,
+                    "height": 10,
+                    "subType": "rect"
+                }
+            ],
+            "background": "#000"
+        },
+        {
+            "id": "slide-4",
+            "children": [
+                {
+                    "x": 0,
+                    "y": 0,
+                    "id": "bg-slide-4",
+                    "fill": "#F8FAFC",
+                    "type": "figure",
+                    "width": 1920,
+                    "height": 1080,
+                    "subType": "rect"
+                },
+                {
+                    "x": -600,
+                    "y": 0,
+                    "id": "image-2",
+                    "src": "https://images.unsplash.com/photo-1750271462536-d9c5cba10d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NTI2NTd8MHwxfHNlYXJjaHwxfHxBZXJpYWwlMjB2aWV3JTIwb2YlMjBhJTIwY2FyJTIwZGVhbGVyc2hpcCUyMGxvdCUyMHdpdGglMjBuZWF0bHklMjBhcnJhbmdlZCUyMGhhdGNoYmFja3MlMkMlMjBzZWRhbnMlMkMlMjBhbmQlMjBTVVZzJTIwb2YlMjB2YXJpb3VzJTIwY29sb3JzLnxlbnwwfDB8fHwxNzY3ODU2ODg3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+                    "type": "image",
+                    "width": 700,
+                    "height": 500
+                },
+                {
+                    "x": 200,
+                    "y": 300,
+                    "id": "caption-1",
+                    "fill": "#555555",
+                    "text": "A collection for every lifestyle.",
+                    "type": "text",
+                    "align": "left",
+                    "width": 700,
+                    "fontSize": 24,
+                    "fontFamily": "Inter"
+                }
+            ],
+            "background": "#000"
+        },
+        {
+            "id": "slide-5",
+            "children": [
+                {
+                    "x": 0,
+                    "y": 0,
+                    "id": "bg-slide-5",
+                    "fill": "#F8FAFC",
+                    "type": "figure",
+                    "width": 1920,
+                    "height": 1080,
+                    "subType": "rect"
+                },
+                {
+                    "x": 100,
+                    "y": 150,
+                    "id": "title-4",
+                    "fill": "#0A0E27",
+                    "text": "Unveiling the Stars",
+                    "type": "text",
+                    "align": "left",
+                    "width": 800,
+                    "fontSize": 80,
+                    "fontFamily": "Inter",
+                    "fontWeight": "bold"
+                },
+                {
+                    "x": 1000,
+                    "y": 150,
+                    "id": "image-3",
+                    "src": "https://images.unsplash.com/photo-1692260122105-28c26fc3c882?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NTI2NTd8MHwxfHNlYXJjaHwxfHxDbG9zZS11cCUyMHNob3RzJTIwb2YlMjB0aGUlMjB0b3AlMjB0aHJlZSUyMGJlc3RzZWxsaW5nJTIwYW5kJTIwdW5pcXVlJTIwY2FyJTIwbW9kZWxzJTJDJTIwc2hvd2Nhc2luZyUyMHNsZWVrJTIwZGVzaWduJTJDJTIwaW5ub3ZhdGl2ZSUyMGZlYXR1cmVzJTJDJTIwYW5kJTIwcHJlbWl1bSUyMGludGVyaW9ycy58ZW58MHwwfHx8MTc2Nzg1Njg4OHww&ixlib=rb-4.1.0&q=80&w=1080",
+                    "type": "image",
+                    "width": 800,
+                    "height": 500
+                },
+                {
+                    "x": 100,
+                    "y": 402,
+                    "id": "body-3",
+                    "fill": "#0A0E27",
+                    "text": "Top performers, future classics. Our selection defines distinction.",
+                    "type": "text",
+                    "align": "left",
+                    "width": 800,
+                    "fontSize": 32,
+                    "fontFamily": "Inter"
+                },
+                {
+                    "x": 100,
+                    "y": 80,
+                    "id": "accent-line-slide-5",
+                    "fill": "#FF3366",
+                    "type": "figure",
+                    "width": 200,
+                    "height": 10,
+                    "subType": "rect"
+                }
+            ],
+            "background": "#000"
+        },
+        {
+            "id": "slide-6",
+            "children": [
+                {
+                    "x": 0,
+                    "y": 0,
+                    "id": "bg-slide-6",
+                    "fill": "#F8FAFC",
+                    "type": "figure",
+                    "width": 1920,
+                    "height": 1080,
+                    "subType": "rect"
+                },
+                {
+                    "x": 100,
+                    "y": 100,
+                    "id": "title-5",
+                    "fill": "#0A0E27",
+                    "text": "Enter the $30B Zone",
+                    "type": "text",
+                    "align": "center",
+                    "width": 1720,
+                    "fontSize": 80,
+                    "fontFamily": "Inter",
+                    "fontWeight": "bold"
+                },
+                {
+                    "x": 200,
+                    "y": 300,
+                    "id": "body-4",
+                    "fill": "#0A0E27",
+                    "text": "Unlock a niche exploding with potential, poised for strategic expansion.",
+                    "type": "text",
+                    "align": "left",
+                    "width": 700,
+                    "fontSize": 32,
+                    "fontFamily": "Inter"
+                }
+            ],
+            "background": "#000"
+        },
+        {
+            "id": "slide-7",
+            "children": [
+                {
+                    "x": 0,
+                    "y": 0,
+                    "id": "bg-slide-7",
+                    "fill": "#F8FAFC",
+                    "type": "figure",
+                    "width": 1920,
+                    "height": 1080,
+                    "subType": "rect"
+                },
+                {
+                    "x": 100,
+                    "y": 400,
+                    "id": "title-6",
+                    "fill": "#0A0E27",
+                    "text": "Profits Through Diversity",
+                    "type": "text",
+                    "align": "center",
+                    "width": 1720,
+                    "fontSize": 80,
+                    "fontFamily": "Inter",
+                    "fontWeight": "bold"
+                }
+            ],
+            "background": "#000"
+        },
+        {
+            "id": "slide-8",
+            "children": [
+                {
+                    "x": 0,
+                    "y": 0,
+                    "id": "bg-slide-8",
+                    "fill": "#F8FAFC",
+                    "type": "figure",
+                    "width": 1920,
+                    "height": 1080,
+                    "subType": "rect"
+                },
+                {
+                    "x": 100,
+                    "y": 400,
+                    "id": "title-7",
+                    "fill": "#0A0E27",
+                    "text": "Captivating Results",
+                    "type": "text",
+                    "align": "center",
+                    "width": 1720,
+                    "fontSize": 80,
+                    "fontFamily": "Inter",
+                    "fontWeight": "bold"
+                },
+                {
+                    "x": 100,
+                    "y": 556,
+                    "id": "body-5",
+                    "fill": "#0A0E27",
+                    "text": "Skyrocketing sales, ecstatic customers. Our growth is proof positive.",
+                    "type": "text",
+                    "align": "center",
+                    "width": 1720,
+                    "fontSize": 32,
+                    "fontFamily": "Inter"
+                }
+            ],
+            "background": "#000"
+        },
+        {
+            "id": "slide-9",
+            "children": [
+                {
+                    "x": 0,
+                    "y": 0,
+                    "id": "bg-slide-9",
+                    "fill": "#F8FAFC",
+                    "type": "figure",
+                    "width": 1920,
+                    "height": 1080,
+                    "subType": "rect"
+                },
+                {
+                    "x": 100,
+                    "y": 150,
+                    "id": "title-8",
+                    "fill": "#0A0E27",
+                    "text": "Distinctly Different",
+                    "type": "text",
+                    "align": "left",
+                    "width": 800,
+                    "fontSize": 80,
+                    "fontFamily": "Inter",
+                    "fontWeight": "bold"
+                },
+                {
+                    "x": 1000,
+                    "y": 150,
+                    "id": "image-4",
+                    "src": "https://images.unsplash.com/photo-1649579037055-3c0f2fefc1ba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NTI2NTd8MHwxfHNlYXJjaHwxfHxBbiUyMGlsbHVzdHJhdGlvbiUyMHBvcnRyYXlpbmclMjBhJTIwc3BvdGxpZ2h0JTIwb24lMjBhJTIwdW5pcXVlJTIwY2FyJTIwbW9kZWwlMkMlMjBzdXJyb3VuZGVkJTIwYnklMjBpbm5vdmF0aXZlJTIwdGVjaG5vbG9neSUyMGFuZCUyMG1pbmltYWxpc3QlMjBkZXNpZ24lMjBlbGVtZW50cy58ZW58MHwwfHx8MTc2Nzg1Njg4OXww&ixlib=rb-4.1.0&q=80&w=1080",
+                    "type": "image",
+                    "width": 800,
+                    "height": 500
+                },
+                {
+                    "x": 100,
+                    "y": 402,
+                    "id": "body-6",
+                    "fill": "#0A0E27",
+                    "text": "Stand alone with technological excellence and distinct offerings.",
+                    "type": "text",
+                    "align": "left",
+                    "width": 800,
+                    "fontSize": 32,
+                    "fontFamily": "Inter"
+                },
+                {
+                    "x": 100,
+                    "y": 80,
+                    "id": "accent-line-slide-9",
+                    "fill": "#FF3366",
+                    "type": "figure",
+                    "width": 200,
+                    "height": 10,
+                    "subType": "rect"
+                }
+            ],
+            "background": "#000"
+        },
+        {
+            "id": "slide-10",
+            "children": [
+                {
+                    "x": 0,
+                    "y": 0,
+                    "id": "bg-slide-10",
+                    "fill": "#F8FAFC",
+                    "type": "figure",
+                    "width": 1920,
+                    "height": 1080,
+                    "subType": "rect"
+                },
+                {
+                    "x": 100,
+                    "y": 100,
+                    "id": "title-9",
+                    "fill": "#0A0E27",
+                    "text": "Innovate with Insight",
+                    "type": "text",
+                    "align": "center",
+                    "width": 1720,
+                    "fontSize": 80,
+                    "fontFamily": "Inter",
+                    "fontWeight": "bold"
+                },
+                {
+                    "x": 200,
+                    "y": 300,
+                    "id": "body-7",
+                    "fill": "#0A0E27",
+                    "text": "Veteran wisdom meets youthful vision. The minds transforming our future.",
+                    "type": "text",
+                    "align": "left",
+                    "width": 700,
+                    "fontSize": 32,
+                    "fontFamily": "Inter"
+                }
+            ],
+            "background": "#000"
+        },
+        {
+            "id": "slide-11",
+            "children": [
+                {
+                    "x": 0,
+                    "y": 0,
+                    "id": "bg-slide-11",
+                    "fill": "#F8FAFC",
+                    "type": "figure",
+                    "width": 1920,
+                    "height": 1080,
+                    "subType": "rect"
+                },
+                {
+                    "x": 100,
+                    "y": 400,
+                    "id": "title-10",
+                    "fill": "#0A0E27",
+                    "text": "Accelerate Together",
+                    "type": "text",
+                    "align": "center",
+                    "width": 1720,
+                    "fontSize": 80,
+                    "fontFamily": "Inter",
+                    "fontWeight": "bold"
+                },
+                {
+                    "x": 100,
+                    "y": 556,
+                    "id": "body-8",
+                    "fill": "#0A0E27",
+                    "text": "Join us in driving the future. Invest in innovation, growth, success.",
+                    "type": "text",
+                    "align": "center",
+                    "width": 1720,
+                    "fontSize": 32,
+                    "fontFamily": "Inter"
+                },
+                {
+                    "x": 100,
+                    "y": 80,
+                    "id": "accent-line-slide-11",
+                    "fill": "#FF3366",
+                    "type": "figure",
+                    "width": 200,
+                    "height": 10,
+                    "subType": "rect"
+                }
+            ],
+            "background": "#000"
+        },
+        {
+            "id": "slide-12",
+            "children": [
+                {
+                    "x": 0,
+                    "y": 0,
+                    "id": "bg-slide-12",
+                    "fill": "#F8FAFC",
+                    "type": "figure",
+                    "width": 1920,
+                    "height": 1080,
+                    "subType": "rect"
+                },
+                {
+                    "x": 100,
+                    "y": 400,
+                    "id": "title-11",
+                    "fill": "#0A0E27",
+                    "text": "A Green Tomorrow",
+                    "type": "text",
+                    "align": "center",
+                    "width": 1720,
+                    "fontSize": 80,
+                    "fontFamily": "Inter",
+                    "fontWeight": "bold"
+                },
+                {
+                    "x": 100,
+                    "y": 556,
+                    "id": "body-9",
+                    "fill": "#0A0E27",
+                    "text": "Harnessing sustainable methods today, securing achievements for generations.",
+                    "type": "text",
+                    "align": "center",
+                    "width": 1720,
+                    "fontSize": 32,
+                    "fontFamily": "Inter"
+                }
+            ],
+            "background": "#000"
+        }
+    ],
+    "width": 1920,
+    "audios": [],
+    "height": 1080,
+    "schemaVersion": 1
+}

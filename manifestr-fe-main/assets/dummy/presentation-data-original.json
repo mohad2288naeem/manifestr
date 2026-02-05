@@ -1,0 +1,555 @@
+{
+    "width": 1920,
+    "height": 1080,
+    "fonts": [],
+    "pages": [
+        {
+            "id": "page-1",
+            "background": "#0F0F11",
+            "children": [
+                {
+                    "id": "shape-bg-1",
+                    "type": "figure",
+                    "subType": "circle",
+                    "x": 1200,
+                    "y": -200,
+                    "width": 1000,
+                    "height": 1000,
+                    "fill": "#4338ca",
+                    "opacity": 0.2
+                },
+                {
+                    "id": "title",
+                    "type": "text",
+                    "x": 120,
+                    "y": 380,
+                    "width": 1200,
+                    "height": 200,
+                    "text": "NEXUS\nCREATIVE",
+                    "fontSize": 200,
+                    "fontFamily": "Inter",
+                    "fill": "#ffffff",
+                    "align": "left",
+                    "fontWeight": "bold",
+                    "lineHeight": 0.9
+                },
+                {
+                    "id": "subtitle",
+                    "type": "text",
+                    "x": 125,
+                    "y": 780,
+                    "width": 800,
+                    "height": 60,
+                    "text": "SCALING BRANDS TO 7-FIGURES & BEYOND",
+                    "fontSize": 40,
+                    "fontFamily": "Inter",
+                    "fill": "#a1a1aa",
+                    "align": "left",
+                    "letterSpacing": 5
+                }
+            ]
+        },
+        {
+            "id": "page-2",
+            "background": "#ffffff",
+            "children": [
+                {
+                    "id": "img-left",
+                    "type": "image",
+                    "x": 0,
+                    "y": 0,
+                    "width": 960,
+                    "height": 1080,
+                    "src": "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2940&auto=format&fit=crop"
+                },
+                {
+                    "id": "mission-title",
+                    "type": "text",
+                    "x": 1080,
+                    "y": 300,
+                    "width": 720,
+                    "height": 100,
+                    "text": "WE DON'T JUST MARKET.",
+                    "fontSize": 80,
+                    "fontFamily": "Inter",
+                    "fill": "#0F0F11",
+                    "fontWeight": "bold"
+                },
+                {
+                    "id": "mission-highlight",
+                    "type": "text",
+                    "x": 1080,
+                    "y": 420,
+                    "width": 720,
+                    "height": 100,
+                    "text": "WE DOMINATE.",
+                    "fontSize": 80,
+                    "fontFamily": "Inter",
+                    "fill": "#4338ca",
+                    "fontWeight": "bold"
+                },
+                {
+                    "id": "mission-body",
+                    "type": "text",
+                    "x": 1080,
+                    "y": 600,
+                    "width": 720,
+                    "height": 200,
+                    "text": "Leveraging data-driven strategies and world-class design to turn clicks into customers and impressions into empire-building revenue.",
+                    "fontSize": 32,
+                    "fontFamily": "Roboto",
+                    "fill": "#52525b",
+                    "lineHeight": 1.5
+                }
+            ]
+        },
+        {
+            "id": "page-3",
+            "background": "#0F0F11",
+            "children": [
+                {
+                    "id": "service-header",
+                    "type": "text",
+                    "x": 0,
+                    "y": 150,
+                    "width": 1920,
+                    "height": 100,
+                    "text": "OUR EXPERTISE",
+                    "fontSize": 60,
+                    "fontFamily": "Inter",
+                    "fill": "#ffffff",
+                    "align": "center",
+                    "letterSpacing": 10
+                },
+                {
+                    "id": "card-1",
+                    "type": "figure",
+                    "subType": "rect",
+                    "x": 210,
+                    "y": 350,
+                    "width": 450,
+                    "height": 500,
+                    "fill": "#18181b",
+                    "cornerRadius": 20
+                },
+                {
+                    "id": "title-1",
+                    "type": "text",
+                    "x": 260,
+                    "y": 450,
+                    "width": 350,
+                    "height": 50,
+                    "text": "BRAND STRATEGY",
+                    "fontSize": 36,
+                    "fontFamily": "Inter",
+                    "fill": "#ffffff",
+                    "fontWeight": "bold"
+                },
+                {
+                    "id": "desc-1",
+                    "type": "text",
+                    "x": 260,
+                    "y": 550,
+                    "width": 350,
+                    "height": 200,
+                    "text": "Positioning your business to be the only logical choice in your market.",
+                    "fontSize": 24,
+                    "fontFamily": "Roboto",
+                    "fill": "#a1a1aa"
+                },
+                {
+                    "id": "card-2",
+                    "type": "figure",
+                    "subType": "rect",
+                    "x": 735,
+                    "y": 350,
+                    "width": 450,
+                    "height": 500,
+                    "fill": "#18181b",
+                    "cornerRadius": 20
+                },
+                {
+                    "id": "title-2",
+                    "type": "text",
+                    "x": 785,
+                    "y": 450,
+                    "width": 350,
+                    "height": 50,
+                    "text": "PERFORMANCE UI",
+                    "fontSize": 36,
+                    "fontFamily": "Inter",
+                    "fill": "#ffffff",
+                    "fontWeight": "bold"
+                },
+                {
+                    "id": "desc-2",
+                    "type": "text",
+                    "x": 785,
+                    "y": 550,
+                    "width": 350,
+                    "height": 200,
+                    "text": "High-conversion interfaces designed to captivate and convert user attention.",
+                    "fontSize": 24,
+                    "fontFamily": "Roboto",
+                    "fill": "#a1a1aa"
+                },
+                {
+                    "id": "card-3",
+                    "type": "figure",
+                    "subType": "rect",
+                    "x": 1260,
+                    "y": 350,
+                    "width": 450,
+                    "height": 500,
+                    "fill": "#4338ca",
+                    "cornerRadius": 20
+                },
+                {
+                    "id": "title-3",
+                    "type": "text",
+                    "x": 1310,
+                    "y": 450,
+                    "width": 350,
+                    "height": 50,
+                    "text": "GROWTH SYSTEMS",
+                    "fontSize": 36,
+                    "fontFamily": "Inter",
+                    "fill": "#ffffff",
+                    "fontWeight": "bold"
+                },
+                {
+                    "id": "desc-3",
+                    "type": "text",
+                    "x": 1310,
+                    "y": 550,
+                    "width": 350,
+                    "height": 200,
+                    "text": "Automated funnels and CRM integrations that print money while you sleep.",
+                    "fontSize": 24,
+                    "fontFamily": "Roboto",
+                    "fill": "#e0e7ff"
+                }
+            ]
+        },
+        {
+            "id": "page-4",
+            "background": "#ffffff",
+            "children": [
+                {
+                    "id": "stat-bg",
+                    "type": "image",
+                    "x": 0,
+                    "y": 0,
+                    "width": 1920,
+                    "height": 600,
+                    "src": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2940&auto=format&fit=crop",
+                    "cropY": 0.2
+                },
+                {
+                    "id": "stat-overlay",
+                    "type": "figure",
+                    "subType": "rect",
+                    "x": 0,
+                    "y": 0,
+                    "width": 1920,
+                    "height": 600,
+                    "fill": "#000000",
+                    "opacity": 0.7
+                },
+                {
+                    "id": "quote",
+                    "type": "text",
+                    "x": 360,
+                    "y": 200,
+                    "width": 1200,
+                    "height": 200,
+                    "text": "\"Nexus transformed our business from a local player to a national leader in 6 months.\"",
+                    "fontSize": 60,
+                    "fontFamily": "Inter",
+                    "fill": "#ffffff",
+                    "align": "center",
+                    "fontStyle": "italic"
+                },
+                {
+                    "id": "stat-container",
+                    "type": "figure",
+                    "subType": "rect",
+                    "x": 160,
+                    "y": 500,
+                    "width": 1600,
+                    "height": 400,
+                    "fill": "#0F0F11",
+                    "cornerRadius": 20
+                },
+                {
+                    "id": "val-1",
+                    "type": "text",
+                    "x": 260,
+                    "y": 620,
+                    "width": 400,
+                    "height": 100,
+                    "text": "$50M+",
+                    "fontSize": 120,
+                    "fontFamily": "Inter",
+                    "fill": "#ffffff",
+                    "align": "center",
+                    "fontWeight": "bold"
+                },
+                {
+                    "id": "label-1",
+                    "type": "text",
+                    "x": 260,
+                    "y": 760,
+                    "width": 400,
+                    "height": 50,
+                    "text": "CLIENT REVENUE",
+                    "fontSize": 24,
+                    "fontFamily": "Inter",
+                    "fill": "#a1a1aa",
+                    "align": "center"
+                },
+                {
+                    "id": "val-2",
+                    "type": "text",
+                    "x": 760,
+                    "y": 620,
+                    "width": 400,
+                    "height": 100,
+                    "text": "300%",
+                    "fontSize": 120,
+                    "fontFamily": "Inter",
+                    "fill": "#4338ca",
+                    "align": "center",
+                    "fontWeight": "bold"
+                },
+                {
+                    "id": "label-2",
+                    "type": "text",
+                    "x": 760,
+                    "y": 760,
+                    "width": 400,
+                    "height": 50,
+                    "text": "AVG ROI",
+                    "fontSize": 24,
+                    "fontFamily": "Inter",
+                    "fill": "#a1a1aa",
+                    "align": "center"
+                },
+                {
+                    "id": "val-3",
+                    "type": "text",
+                    "x": 1260,
+                    "y": 620,
+                    "width": 400,
+                    "height": 100,
+                    "text": "55+",
+                    "fontSize": 120,
+                    "fontFamily": "Inter",
+                    "fill": "#ffffff",
+                    "align": "center",
+                    "fontWeight": "bold"
+                },
+                {
+                    "id": "label-3",
+                    "type": "text",
+                    "x": 1260,
+                    "y": 760,
+                    "width": 400,
+                    "height": 50,
+                    "text": "GLOBAL AWARDS",
+                    "fontSize": 24,
+                    "fontFamily": "Inter",
+                    "fill": "#a1a1aa",
+                    "align": "center"
+                }
+            ]
+        },
+        {
+            "id": "page-5",
+            "background": "#0F0F11",
+            "children": [
+                {
+                    "id": "team-title",
+                    "type": "text",
+                    "x": 120,
+                    "y": 100,
+                    "width": 1000,
+                    "text": "MEET THE VANGUARD",
+                    "fontSize": 60,
+                    "fontFamily": "Inter",
+                    "fill": "#ffffff",
+                    "letterSpacing": 5
+                },
+                {
+                    "id": "member-1-img",
+                    "type": "image",
+                    "x": 120,
+                    "y": 300,
+                    "width": 500,
+                    "height": 600,
+                    "src": "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=2000&auto=format&fit=crop"
+                },
+                {
+                    "id": "member-1-name",
+                    "type": "text",
+                    "x": 120,
+                    "y": 920,
+                    "width": 500,
+                    "text": "ALEX RIVERA",
+                    "fontSize": 32,
+                    "fontFamily": "Inter",
+                    "fill": "#ffffff",
+                    "fontWeight": "bold"
+                },
+                {
+                    "id": "member-1-role",
+                    "type": "text",
+                    "x": 120,
+                    "y": 960,
+                    "width": 500,
+                    "text": "Chief Strategy Officer",
+                    "fontSize": 24,
+                    "fontFamily": "Roboto",
+                    "fill": "#a1a1aa"
+                },
+                {
+                    "id": "member-2-img",
+                    "type": "image",
+                    "x": 710,
+                    "y": 300,
+                    "width": 500,
+                    "height": 600,
+                    "src": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2000&auto=format&fit=crop"
+                },
+                {
+                    "id": "member-2-name",
+                    "type": "text",
+                    "x": 710,
+                    "y": 920,
+                    "width": 500,
+                    "text": "SARAH CHEN",
+                    "fontSize": 32,
+                    "fontFamily": "Inter",
+                    "fill": "#ffffff",
+                    "fontWeight": "bold"
+                },
+                {
+                    "id": "member-2-role",
+                    "type": "text",
+                    "x": 710,
+                    "y": 960,
+                    "width": 500,
+                    "text": "Head of Design",
+                    "fontSize": 24,
+                    "fontFamily": "Roboto",
+                    "fill": "#a1a1aa"
+                },
+                {
+                    "id": "join-us-box",
+                    "type": "figure",
+                    "subType": "rect",
+                    "x": 1300,
+                    "y": 300,
+                    "width": 500,
+                    "height": 600,
+                    "fill": "#18181b",
+                    "stroke": "#4338ca",
+                    "strokeWidth": 2
+                },
+                {
+                    "id": "join-title",
+                    "type": "text",
+                    "x": 1350,
+                    "y": 550,
+                    "width": 400,
+                    "text": "THIS COULD BE YOU",
+                    "fontSize": 48,
+                    "fontFamily": "Inter",
+                    "fill": "#ffffff",
+                    "align": "center",
+                    "fontWeight": "bold"
+                },
+                {
+                    "id": "join-link",
+                    "type": "text",
+                    "x": 1350,
+                    "y": 620,
+                    "width": 400,
+                    "text": "careers@nexus.agency",
+                    "fontSize": 24,
+                    "fontFamily": "Roboto",
+                    "fill": "#4338ca",
+                    "align": "center",
+                    "textDecoration": "underline"
+                }
+            ]
+        },
+        {
+            "id": "page-6",
+            "background": "#0F0F11",
+            "children": [
+                {
+                    "id": "contact-bg-shape",
+                    "type": "figure",
+                    "subType": "triangle",
+                    "x": -500,
+                    "y": -200,
+                    "width": 1500,
+                    "height": 1500,
+                    "fill": "#18181b",
+                    "rotation": 45
+                },
+                {
+                    "id": "contact-title",
+                    "type": "text",
+                    "x": 960,
+                    "y": 300,
+                    "width": 840,
+                    "text": "READY TO SCALE?",
+                    "fontSize": 100,
+                    "fontFamily": "Inter",
+                    "fill": "#ffffff",
+                    "align": "right",
+                    "fontWeight": "bold"
+                },
+                {
+                    "id": "contact-cta",
+                    "type": "text",
+                    "x": 960,
+                    "y": 450,
+                    "width": 840,
+                    "text": "Book your free strategy audit today.",
+                    "fontSize": 40,
+                    "fontFamily": "Roboto",
+                    "fill": "#a1a1aa",
+                    "align": "right"
+                },
+                {
+                    "id": "email",
+                    "type": "text",
+                    "x": 960,
+                    "y": 600,
+                    "width": 840,
+                    "text": "HELLO@NEXUS.AGENCY",
+                    "fontSize": 48,
+                    "fontFamily": "Inter",
+                    "fill": "#4338ca",
+                    "align": "right",
+                    "fontWeight": "bold"
+                },
+                {
+                    "id": "phone",
+                    "type": "text",
+                    "x": 960,
+                    "y": 680,
+                    "width": 840,
+                    "text": "+1 (555) 000-0000",
+                    "fontSize": 32,
+                    "fontFamily": "Roboto",
+                    "fill": "#ffffff",
+                    "align": "right"
+                }
+            ]
+        }
+    ]
+}

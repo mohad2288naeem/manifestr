@@ -1,0 +1,18 @@
+# global
+.env
+.env.*
+node_modules
+dist
+build
+.next
+logs
+
+# frontend
+manifestr-fe-main/node_modules
+manifestr-fe-main/.next
+manifestr-fe-main/.env*
+
+# backend
+manifestr-be-main/node_modules
+manifestr-be-main/dist
+manifestr-be-main/.env*

@@ -1,0 +1,390 @@
+export const BUDGET_DATA = {
+    id: 'workbook-01',
+    locale: 'en-US',
+    name: 'Advanced Financial Suite',
+    sheetOrder: ['sheet-01', 'sheet-02', 'sheet-03'],
+    appVersion: '3.0.0-alpha',
+    styles: {
+        'style-header': {
+            ff: 'Roboto',
+            fs: 12,
+            bl: 1,
+            bg: { rgb: '#4d5c6e' },
+            cl: { rgb: '#ffffff' },
+            ht: 2,
+            vt: 2,
+            bd: {
+                b: { s: 1, cl: { rgb: '#ffffff' } },
+                r: { s: 1, cl: { rgb: '#ffffff' } }
+            }
+        },
+        'style-header-secondary': {
+            ff: 'Roboto',
+            fs: 11,
+            bl: 1,
+            bg: { rgb: '#7f8c8d' },
+            cl: { rgb: '#ffffff' },
+            ht: 2,
+            vt: 2
+        },
+        'style-currency': {
+            fs: 11,
+            ht: 2,
+            vt: 2,
+            n: { pattern: '$#,##0.00' }
+        },
+        'style-currency-bold': {
+            fs: 11,
+            bl: 1,
+            ht: 2,
+            vt: 2,
+            n: { pattern: '$#,##0.00' },
+            bg: { rgb: '#f0f4f8' }
+        },
+        'style-currency-highlight': {
+            fs: 12,
+            bl: 1,
+            ht: 2,
+            vt: 2,
+            n: { pattern: '$#,##0.00' },
+            cl: { rgb: '#27ae60' },
+            bg: { rgb: '#e8f8f5' }
+        },
+        'style-percent': {
+            fs: 11,
+            ht: 2,
+            vt: 2,
+            n: { pattern: '0.00%' }
+        },
+        'style-normal': {
+            fs: 11,
+            ht: 2,
+            vt: 2,
+        },
+        'style-date': {
+            fs: 11,
+            ht: 2,
+            vt: 2,
+            n: { pattern: 'yyyy-mm-dd' }
+        },
+        'style-title': {
+            fs: 20,
+            bl: 1,
+            cl: { rgb: '#2c3e50' },
+            ht: 2,
+            vt: 2
+        },
+        'style-subtitle': {
+            fs: 14,
+            bl: 1,
+            cl: { rgb: '#7f8c8d' },
+            ht: 2,
+            vt: 2,
+            ul: { s: 1 }
+        },
+        'style-expense-category': {
+            bg: { rgb: '#ffebeb' },
+            cl: { rgb: '#c0392b' },
+            fs: 10,
+            ht: 2,
+            vt: 2,
+            bl: 1,
+            bd: { r: 5 }
+        },
+        'style-income-category': {
+            bg: { rgb: '#e8f8f5' },
+            cl: { rgb: '#27ae60' },
+            fs: 10,
+            ht: 2,
+            vt: 2,
+            bl: 1,
+            bd: { r: 5 }
+        },
+        'style-kpi-card': {
+            bg: { rgb: '#f8f9fa' },
+            bd: {
+                t: { s: 1, cl: { rgb: '#dfe6e9' } },
+                b: { s: 1, cl: { rgb: '#dfe6e9' } },
+                l: { s: 1, cl: { rgb: '#dfe6e9' } },
+                r: { s: 1, cl: { rgb: '#dfe6e9' } }
+            },
+            ht: 2,
+            vt: 2
+        }
+    },
+    sheets: {
+        'sheet-01': {
+            name: 'Budget Dashboard',
+            id: 'sheet-01',
+            tabColor: '#27ae60',
+            rowCount: 100,
+            columnCount: 20,
+            freeze: {
+                xSplit: 0,
+                ySplit: 5,
+                startRow: 5,
+                startColumn: 0
+            },
+            defaultColumnWidth: 100,
+            defaultRowHeight: 25,
+            mergeData: [
+                { startRow: 0, endRow: 0, startColumn: 0, endColumn: 5 }, // Title
+                { startRow: 0, endRow: 0, startColumn: 8, endColumn: 11 } // Analysis Title
+            ],
+            cellData: {
+                0: {
+                    0: { v: 'Monthly Transaction Ledger', s: 'style-title', t: 1 },
+                    8: { v: 'Category Analysis', s: 'style-title', t: 1 }
+                },
+                2: {
+                    4: { v: 'Net Savings:', s: 'style-total-label', t: 1 },
+                    5: { f: '=D3-D4', s: 'style-currency-highlight', t: 2 },
+
+                    8: { v: 'Budget Utilization:', s: 'style-total-label', t: 1 },
+                    9: { f: '=J13/I13', s: 'style-percent', t: 2 }
+                },
+                3: {
+                    4: { v: 'Total Income:', s: 'style-total-label', t: 1 },
+                    5: { f: '=SUMIF(D6:D100, "Income", E6:E100)', s: 'style-currency-bold', t: 2 }
+                },
+                4: {
+                    4: { v: 'Total Expenses:', s: 'style-total-label', t: 1 },
+                    5: { f: '=SUMIF(D6:D100, "Expense", E6:E100)', s: 'style-currency-bold', t: 2 },
+
+                    // Table 2 Headers (Category Analysis) - starting at col 8 (I)
+                    8: { v: 'Category', s: 'style-header-secondary', t: 1 },
+                    9: { v: 'Planned', s: 'style-header-secondary', t: 1 },
+                    10: { v: 'Actual', s: 'style-header-secondary', t: 1 },
+                    11: { v: 'Diff', s: 'style-header-secondary', t: 1 }
+                },
+                // Table 1 Headers
+                5: {
+                    0: { v: 'Date', s: 'style-header', t: 1 },
+                    1: { v: 'Description', s: 'style-header', t: 1 },
+                    2: { v: 'Category', s: 'style-header', t: 1 },
+                    3: { v: 'Type', s: 'style-header', t: 1 },
+                    4: { v: 'Amount', s: 'style-header', t: 1 },
+                    5: { v: 'Status', s: 'style-header', t: 1 },
+
+                    // Table 2 Data
+                    8: { v: 'Food', s: 'style-normal', t: 1 },
+                    9: { v: 400, s: 'style-currency', t: 2 },
+                    10: { f: '=SUMIF(C6:C100, "Food", E6:E100)', s: 'style-currency', t: 2 },
+                    11: { f: '=J6-K6', s: 'style-currency', t: 2 }
+                },
+                6: {
+                    0: { v: '2025-01-01', s: 'style-date', t: 1 },
+                    1: { v: 'Opening Balance', s: 'style-normal', t: 1 },
+                    2: { v: 'Salary', s: 'style-normal', t: 1 },
+                    3: { v: 'Income', s: 'style-income-category', t: 1 },
+                    4: { v: 5000, s: 'style-currency', t: 2 },
+                    5: { v: 'Cleared', s: 'style-normal', t: 1 },
+
+                    8: { v: 'Utilities', s: 'style-normal', t: 1 },
+                    9: { v: 200, s: 'style-currency', t: 2 },
+                    10: { f: '=SUMIF(C6:C100, "Utilities", E6:E100)', s: 'style-currency', t: 2 },
+                    11: { f: '=J7-K7', s: 'style-currency', t: 2 }
+                },
+                7: {
+                    0: { v: '2025-01-03', s: 'style-date', t: 1 },
+                    1: { v: 'Grocery Store', s: 'style-normal', t: 1 },
+                    2: { v: 'Food', s: 'style-normal', t: 1 },
+                    3: { v: 'Expense', s: 'style-expense-category', t: 1 },
+                    4: { v: 156.40, s: 'style-currency', t: 2 },
+                    5: { v: 'Cleared', s: 'style-normal', t: 1 },
+
+                    8: { v: 'Entertainment', s: 'style-normal', t: 1 },
+                    9: { v: 100, s: 'style-currency', t: 2 },
+                    10: { f: '=SUMIF(C6:C100, "Entertainment", E6:E100)', s: 'style-currency', t: 2 },
+                    11: { f: '=J8-K8', s: 'style-currency', t: 2 }
+                },
+                8: {
+                    0: { v: '2025-01-05', s: 'style-date', t: 1 },
+                    1: { v: 'Electric Bill', s: 'style-normal', t: 1 },
+                    2: { v: 'Utilities', s: 'style-normal', t: 1 },
+                    3: { v: 'Expense', s: 'style-expense-category', t: 1 },
+                    4: { v: 120.50, s: 'style-currency', t: 2 },
+                    5: { v: 'Pending', s: 'style-normal', t: 1 },
+
+                    8: { v: 'Transport', s: 'style-normal', t: 1 },
+                    9: { v: 150, s: 'style-currency', t: 2 },
+                    10: { f: '=SUMIF(C6:C100, "Transport", E6:E100)', s: 'style-currency', t: 2 },
+                    11: { f: '=J9-K9', s: 'style-currency', t: 2 }
+                },
+                9: {
+                    0: { v: '2025-01-07', s: 'style-date', t: 1 },
+                    1: { v: 'Freelance Project', s: 'style-normal', t: 1 },
+                    2: { v: 'Side Gig', s: 'style-normal', t: 1 },
+                    3: { v: 'Income', s: 'style-income-category', t: 1 },
+                    4: { v: 800, s: 'style-currency', t: 2 },
+                    5: { v: 'Cleared', s: 'style-normal', t: 1 }
+                },
+                10: {
+                    0: { v: '2025-01-10', s: 'style-date', t: 1 },
+                    1: { v: 'Gas Station', s: 'style-normal', t: 1 },
+                    2: { v: 'Transport', s: 'style-normal', t: 1 },
+                    3: { v: 'Expense', s: 'style-expense-category', t: 1 },
+                    4: { v: 45.00, s: 'style-currency', t: 2 },
+                    5: { v: 'Cleared', s: 'style-normal', t: 1 }
+                },
+                11: {
+                    0: { v: '2025-01-12', s: 'style-date', t: 1 },
+                    1: { v: 'Netflix Subscription', s: 'style-normal', t: 1 },
+                    2: { v: 'Entertainment', s: 'style-normal', t: 1 },
+                    3: { v: 'Expense', s: 'style-expense-category', t: 1 },
+                    4: { v: 15.99, s: 'style-currency', t: 2 },
+                    5: { v: 'Cleared', s: 'style-normal', t: 1 }
+                },
+                12: {
+                    // Total Row for Table 2
+                    8: { v: 'TOTALS', s: 'style-currency-bold', t: 1 },
+                    9: { f: '=SUM(J6:J9)', s: 'style-currency-bold', t: 2 },
+                    10: { f: '=SUM(K6:K9)', s: 'style-currency-bold', t: 2 },
+                    11: { f: '=SUM(L6:L9)', s: 'style-currency-bold', t: 2 }
+                }
+            },
+            columnData: {
+                0: { w: 100 },
+                1: { w: 250 },
+                2: { w: 120 },
+                3: { w: 100 },
+                4: { w: 120 },
+                5: { w: 100 },
+                6: { w: 30 }, // Spacer
+                7: { w: 30 }, // Spacer
+                8: { w: 120 },
+                9: { w: 100 },
+                10: { w: 100 },
+                11: { w: 100 }
+            }
+        },
+        'sheet-02': {
+            name: 'Investment Portfolio',
+            id: 'sheet-02',
+            tabColor: '#2980b9',
+            rowCount: 50,
+            columnCount: 15,
+            defaultColumnWidth: 120,
+            cellData: {
+                0: {
+                    0: { v: 'Assets Portfolio', s: 'style-title', t: 1 }
+                },
+                2: {
+                    0: { v: 'TABLE 1: Stock Holdings', s: 'style-subtitle', t: 1 }
+                },
+                3: {
+                    0: { v: 'Ticker', s: 'style-header', t: 1 },
+                    1: { v: 'Shares', s: 'style-header', t: 1 },
+                    2: { v: 'Avg Cost', s: 'style-header', t: 1 },
+                    3: { v: 'Current Price', s: 'style-header', t: 1 },
+                    4: { v: 'Market Value', s: 'style-header', t: 1 },
+                    5: { v: 'Gain/Loss', s: 'style-header', t: 1 },
+                    6: { v: 'Return %', s: 'style-header', t: 1 }
+                },
+                4: {
+                    0: { v: 'AAPL', s: 'style-normal', t: 1 },
+                    1: { v: 50, s: 'style-normal', t: 2 },
+                    2: { v: 145.00, s: 'style-currency', t: 2 },
+                    3: { v: 175.50, s: 'style-currency', t: 2 },
+                    4: { f: '=B5*D5', s: 'style-currency', t: 2 },
+                    5: { f: '=E5-(B5*C5)', s: 'style-currency', t: 2 },
+                    6: { f: '=F5/(B5*C5)', s: 'style-percent', t: 2 }
+                },
+                5: {
+                    0: { v: 'MSFT', s: 'style-normal', t: 1 },
+                    1: { v: 30, s: 'style-normal', t: 2 },
+                    2: { v: 280.00, s: 'style-currency', t: 2 },
+                    3: { v: 315.20, s: 'style-currency', t: 2 },
+                    4: { f: '=B6*D6', s: 'style-currency', t: 2 },
+                    5: { f: '=E6-(B6*C6)', s: 'style-currency', t: 2 },
+                    6: { f: '=F6/(B6*C6)', s: 'style-percent', t: 2 }
+                },
+                6: {
+                    0: { v: 'GOOGL', s: 'style-normal', t: 1 },
+                    1: { v: 40, s: 'style-normal', t: 2 },
+                    2: { v: 120.00, s: 'style-currency', t: 2 },
+                    3: { v: 138.90, s: 'style-currency', t: 2 },
+                    4: { f: '=B7*D7', s: 'style-currency', t: 2 },
+                    5: { f: '=E7-(B7*C7)', s: 'style-currency', t: 2 },
+                    6: { f: '=F7/(B7*C7)', s: 'style-percent', t: 2 }
+                },
+                8: {
+                    // Table 1 Totals
+                    3: { v: 'Stock Total:', s: 'style-currency-bold', t: 1 },
+                    4: { f: '=SUM(E5:E7)', s: 'style-currency-bold', t: 2 },
+                    5: { f: '=SUM(F5:F7)', s: 'style-currency-bold', t: 2 }
+                },
+                // TABLE 2: Real Estate (offset)
+                11: {
+                    0: { v: 'TABLE 2: Real Estate & Other Assets', s: 'style-subtitle', t: 1 }
+                },
+                12: {
+                    0: { v: 'Property', s: 'style-header', t: 1 },
+                    1: { v: 'Purchase Price', s: 'style-header', t: 1 },
+                    2: { v: 'Current Value', s: 'style-header', t: 1 },
+                    3: { v: 'Mortgage Bal', s: 'style-header', t: 1 },
+                    4: { v: 'Equity', s: 'style-header', t: 1 }
+                },
+                13: {
+                    0: { v: 'Primary Residence', s: 'style-normal', t: 1 },
+                    1: { v: 450000, s: 'style-currency', t: 2 },
+                    2: { v: 525000, s: 'style-currency', t: 2 },
+                    3: { v: 380000, s: 'style-currency', t: 2 },
+                    4: { f: '=C14-D14', s: 'style-currency', t: 2 }
+                },
+                14: {
+                    0: { v: 'Rental Unit A', s: 'style-normal', t: 1 },
+                    1: { v: 210000, s: 'style-currency', t: 2 },
+                    2: { v: 235000, s: 'style-currency', t: 2 },
+                    3: { v: 150000, s: 'style-currency', t: 2 },
+                    4: { f: '=C15-D15', s: 'style-currency', t: 2 }
+                },
+                15: {
+                    3: { v: 'RE Total Equity:', s: 'style-currency-bold', t: 1 },
+                    4: { f: '=SUM(E14:E15)', s: 'style-currency-bold', t: 2 }
+                },
+                // Grand Total using Cross-Table refs
+                18: {
+                    2: { v: 'TOTAL NET WORTH:', s: 'style-title', t: 1 },
+                    4: { f: '=E9+E16', s: 'style-currency-highlight', t: 2 }
+                }
+            }
+        },
+        'sheet-03': {
+            name: 'Loan Calculator',
+            id: 'sheet-03',
+            tabColor: '#e74c3c',
+            columnData: {
+                0: { w: 150 },
+                1: { w: 120 }
+            },
+            cellData: {
+                0: {
+                    0: { v: 'Simple Loan Calculator', s: 'style-title', t: 1 }
+                },
+                2: {
+                    0: { v: 'Loan Amount', s: 'style-normal', t: 1 },
+                    1: { v: 25000, s: 'style-currency', t: 2 }
+                },
+                3: {
+                    0: { v: 'Interest Rate (Annual)', s: 'style-normal', t: 1 },
+                    1: { v: 0.05, s: 'style-percent', t: 2 }
+                },
+                4: {
+                    0: { v: 'Term (Months)', s: 'style-normal', t: 1 },
+                    1: { v: 60, s: 'style-normal', t: 2 }
+                },
+                6: {
+                    0: { v: 'Monthly Payment:', s: 'style-currency-bold', t: 1 },
+                    // PMT formula approximation: P * r * (1+r)^n / ((1+r)^n - 1)
+                    // r = rate/12, n = months
+                    1: { f: '=(B3*B4/12 * POWER(1+B4/12, B5)) / (POWER(1+B4/12, B5) - 1)', s: 'style-currency-highlight', t: 2 }
+                },
+                7: {
+                    0: { v: 'Total Interest:', s: 'style-currency-bold', t: 1 },
+                    1: { f: '=(B7*B5)-B3', s: 'style-currency', t: 2 }
+                }
+            }
+        }
+    }
+};

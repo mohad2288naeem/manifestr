@@ -1,0 +1,20 @@
+export const API_BASE_URL = 'http://localhost:31981/api';
+
+export const ENDPOINTS = {
+    UPLOADS: {
+        PRESIGN: '/uploads/presign',
+    },
+    VAULTS: {
+        LIST: '/vaults',
+        CREATE_FOLDER: '/vaults/folder',
+        CREATE_FILE: '/vaults',
+        UPDATE: (id) => `/vaults/${id}`,
+        DELETE: (id) => `/vaults/${id}`,
+    },
+    STYLE_GUIDES: {
+        LIST: '/style-guides',
+        DETAILS: (id) => `/style-guides/${id}`,
+        CREATE: '/style-guides',
+        UPDATE: (id) => `/style-guides/${id}`,
+    }
+};

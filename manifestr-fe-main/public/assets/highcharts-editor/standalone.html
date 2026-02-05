@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Highcharts Editor - full</title>
+
+    <script src="./highstock.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./map.js" type="text/javascript" charset="utf-8"></script>
+
+    <!-- <script src="https://code.highcharts.com/maps/modules/data.js"></script> -->
+    <script src="./codemirror.min.js"></script>
+    <link href="./codemirror.min.css" type="text/css" rel="stylesheet">
+    <link href="./neo.min.css" type="text/css" rel="stylesheet">
+    <script src="./javascript.min.js"></script>
+
+    <script src="./highcharts-more.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./highcharts-3d.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./data.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./exporting.js"></script>
+    <script src="./funnel.js"></script>
+    <script src="./solid-gauge.js"></script>
+    <script src="./accessibility.js"></script>
+
+    <script src="./highcharts-editor.complete.js" type="text/javascript"></script>
+    <link href="./highcharts-editor.min.css" type="text/css" rel="stylesheet">
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: #F5F5F5;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .highed-index-box {
+            height: 100%;
+            position: relative;
+            left: 50%;
+            width: 80%;
+            max-width: 600px;
+            padding: 20px;
+            transform: translate(-50%, 0);
+            background: #FFF;
+
+            box-sizing: border-box !important;
+            -moz-box-sizing: border-box !important;
+            -webkit-box-sizing: border-box !important;
+        }
+
+        .highed-index-group {
+            text-decoration: none;
+            padding: 20px;
+            border-radius: 10px;
+            background: #01579b;
+            color: #fff;
+            font-size: 24px;
+            width: 100%;
+            min-height: 30px;
+            margin-bottom: 10px;
+
+            text-align: center;
+            display: block;
+
+
+            box-sizing: border-box !important;
+            -moz-box-sizing: border-box !important;
+            -webkit-box-sizing: border-box !important;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            cursor: pointer !important;
+            transition: 0.2s ease all;
+            -moz-transition: 0.2s ease all;
+            -webkit-transition: 0.2s ease all;
+        }
+
+        .highed-index-group:hover {
+            background: #0288d1;
+        }
+
+        .highed-index-headline {
+            padding-left: 10px;
+            font-weight: 100;
+            text-align: center;
+        }
+
+        .highed-index-footer {
+            margin-top: 50px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            text-align: center;
+            font-size: 10px;
+            font-style: italic;
+        }
+    </style>
+
+    <link rel="stylesheet" type="text/css" href="./font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="./style.css">
+</head>
+
+<body cz-shortcut-listen="true">
+    <script>
+
+        highed.ready(function () {
+            highed.DrawerEditor(document.body);
+        });
+
+    </script>
+
+
+
+
+    <input type="file" accept=".csv" style="display: none;">
+    <div class="highed-colorpicker highed-colorpicker-responsive"><canvas class="picker"></canvas><input class="manual">
+        <div class="highed-ok-button">Close</div>
+    </div>
+    <div class="highed-scrollbar highed-tooltip highed-tooltip-fixed"></div>
+    <div class="highed-snackbar no-print"><span class="snackbar-title"></span><span class="snackbar-action"></span><span
+            class="highed-snackbar-close fa fa-times-circle"></span></div>
+    <div class="highed-dropdown-items highed-dropdown-items-responsive"
+        style="opacity: 0; left: -20000px; pointer-events: none;"></div>
+    <div class="highed-overlay-modal"><span class="">License info goes here</span></div>
+    <div class="highed-overlay-modal">
+        <h2 class="highed-titlebar">Load project from Highcharts Cloud</h2>
+        <div>
+            <div class="highed-dropdown">
+                <div class="highed-dropdown-body"></div>
+                <div class="highed-dropdown-arrow fa fa-arrow-down"></div>
+            </div>
+            <div class="highed-cloud-chart-container"></div>
+            <div class="highed-cloud-paging"></div>
+        </div>
+    </div>
+    <div class="highed-overlay-modal">
+        <h2 class="highed-titlebar">Save to Cloud</h2>
+        <div class="">Team</div>
+        <div>
+            <div class="highed-dropdown">
+                <div class="highed-dropdown-body"></div>
+                <div class="highed-dropdown-arrow fa fa-arrow-down"></div>
+            </div>
+        </div><br>
+        <div class="">Chart Name</div><input class="highed-field-input"><button class="highed-ok-button">Save to
+            cloud</button>
+    </div>
+    <div class="highed-vsplitter" style="overflow-y: hidden; width: 1512px; height: 861px;">
+        <div class="panel top highed-scrollbar" style="overflow-y: hidden; height: 60px;">
+            <div class="highed-vsplitter-body highed-scrollbar">
+                <div class="highed-toolbar ">
+                    <div class="highed-toolbar-left"><span
+                            style="margin-left: 2px; width: 200px; height: 60px; float: left; display: inline-block; background-size: auto 100%; background-repeat: no-repeat; background-image: url(&quot;data:image/svg+xml;utf8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22utf-8%22%3F%3E%3C!--%20Generator%3A%20Adobe%20Illustrator%2016.0.3%2C%20SVG%20Export%20Plug-In%20.%20SVG%20Version%3A%206.00%20Build%200)%20%20--%3E%3C!DOCTYPE%20svg%20PUBLIC%20%22-%2F%2FW3C%2F%2FDTD%20SVG%201.1%2F%2FEN%22%20%22http%3A%2F%2Fwww.w3.org%2FGraphics%2FSVG%2F1.1%2FDTD%2Fsvg11.dtd%22%3E%3Csvg%20version%3D%221.1%22%20id%3D%22Warstwa_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20x%3D%220px%22%20y%3D%220px%22%20%20%20%20%20width%3D%22425.197px%22%20height%3D%22141.732px%22%20viewBox%3D%220%200%20425.197%20141.732%22%20enable-background%3D%22new%200%200%20425.197%20141.732%22%20%20%20%20%20xml%3Aspace%3D%22preserve%22%3E%3Cg%3E%20%20%20%20%3Cpath%20fill%3D%22%23eeeaea%22%20d%3D%22M138.475%2C69.712h-17.02v9.77c0%2C1.037-0.813%2C1.851-1.849%2C1.851c-1.037%2C0-1.85-0.813-1.85-1.851V57.725%20%20%20%20%20%20%20%20c0-1.037%2C0.813-1.852%2C1.85-1.852c1.036%2C0%2C1.849%2C0.813%2C1.849%2C1.852v8.436h17.02v-8.436c0-1.037%2C0.814-1.852%2C1.85-1.852%20%20%20%20%20%20%20%20c1.036%2C0%2C1.85%2C0.813%2C1.85%2C1.852v21.754c0%2C1.037-0.814%2C1.851-1.85%2C1.851c-1.036%2C0-1.85-0.813-1.85-1.851V69.712z%22%2F%3E%20%20%20%20%3Cpath%20fill%3D%22%23eeeaea%22%20d%3D%22M156.973%2C79.479c0%2C1.037-0.814%2C1.851-1.852%2C1.851s-1.852-0.813-1.852-1.851V57.725%20%20%20%20%20%20%20%20c0-1.037%2C0.814-1.852%2C1.852-1.852s1.852%2C0.813%2C1.852%2C1.852V79.479z%22%2F%3E%20%20%20%20%3Cpath%20fill%3D%22%23eeeaea%22%20d%3D%22M184.125%2C70.378c0-1.036%2C0.814-1.774%2C1.852-1.774c1.034%2C0%2C1.852%2C0.813%2C1.852%2C1.849v5.847%20%20%20%20%20%20%20%20c0%2C0.444-0.226%2C1.109-0.595%2C1.479c-2.367%2C2.369-5.549%2C3.773-9.176%2C3.773c-7.178%2C0-12.949-5.771-12.949-12.948%20%20%20%20%20%20%20%20c0-7.181%2C5.771-12.949%2C12.949-12.949c3.627%2C0%2C6.809%2C1.405%2C9.176%2C3.771c0.738%2C0.74%2C0.738%2C1.852%2C0%2C2.592%20%20%20%20%20%20%20%20c-0.741%2C0.738-1.922%2C0.813-2.663%2C0.072c-1.702-1.699-3.923-2.736-6.513-2.736c-5.104%2C0-9.249%2C4.144-9.249%2C9.25%20%20%20%20%20%20%20%20c0%2C5.104%2C4.146%2C9.25%2C9.249%2C9.25c2.367%2C0%2C4.441-0.813%2C6.067-2.222V70.378z%22%2F%3E%20%20%20%20%3Cpath%20fill%3D%22%23eeeaea%22%20d%3D%22M218.162%2C69.712h-17.019v9.77c0%2C1.037-0.817%2C1.851-1.852%2C1.851c-1.037%2C0-1.849-0.813-1.849-1.851V57.725%20%20%20%20%20%20%20%20c0-1.037%2C0.812-1.852%2C1.849-1.852c1.034%2C0%2C1.852%2C0.813%2C1.852%2C1.852v8.436h17.019v-8.436c0-1.037%2C0.813-1.852%2C1.849-1.852%20%20%20%20%20%20%20%20c1.037%2C0%2C1.852%2C0.813%2C1.852%2C1.852v21.754c0%2C1.037-0.813%2C1.851-1.852%2C1.851c-1.033%2C0-1.849-0.813-1.849-1.851V69.712z%22%2F%3E%20%20%20%20%3Cpath%20fill%3D%22%23eeeaea%22%20d%3D%22M242.948%2C81.552c-7.182%2C0-12.949-5.771-12.949-12.948c0-7.181%2C5.77-12.949%2C12.949-12.949%20%20%20%20%20%20%20%20c3.627%2C0%2C6.809%2C1.405%2C9.176%2C3.771c0.738%2C0.74%2C0.738%2C1.852%2C0%2C2.592c-0.741%2C0.738-1.925%2C0.813-2.666%2C0.072%20%20%20%20%20%20%20%20c-1.699-1.699-3.92-2.736-6.51-2.736c-5.106%2C0-9.249%2C4.144-9.249%2C9.25c0%2C5.104%2C4.143%2C9.25%2C9.249%2C9.25%20%20%20%20%20%20%20%20c2.59%2C0%2C4.884-0.962%2C6.586-2.664c0.74-0.741%2C1.849-0.741%2C2.59%2C0c0.738%2C0.738%2C0.738%2C1.85%2C0%2C2.589%20%20%20%20%20%20%20%20C249.756%2C80.146%2C246.574%2C81.552%2C242.948%2C81.552z%22%2F%3E%20%20%20%20%3Cpath%20fill%3D%22%23eeeaea%22%20d%3D%22M281.569%2C69.712h-17.02v9.77c0%2C1.037-0.813%2C1.851-1.852%2C1.851c-1.034%2C0-1.85-0.813-1.85-1.851V57.725%20%20%20%20%20%20%20%20c0-1.037%2C0.813-1.852%2C1.85-1.852c1.035%2C0%2C1.852%2C0.813%2C1.852%2C1.852v8.436h17.02v-8.436c0-1.037%2C0.813-1.852%2C1.853-1.852%20%20%20%20%20%20%20%20c1.034%2C0%2C1.849%2C0.813%2C1.849%2C1.852v21.754c0%2C1.037-0.813%2C1.851-1.849%2C1.851c-1.037%2C0-1.853-0.813-1.853-1.851V69.712z%22%2F%3E%20%20%20%20%3Cpath%20fill%3D%22%23eeeaea%22%20d%3D%22M308.758%2C57.503l10.507%2C20.646c0.223%2C0.443%2C0.445%2C1.036%2C0.445%2C1.554c0%2C1.036-0.668%2C1.628-1.702%2C1.628%20%20%20%20%20%20%20%20c-0.741%2C0-1.481-0.222-2.001-1.258l-3.253-6.438h-13.547l-3.183%2C6.438c-0.517%2C1.036-1.256%2C1.258-1.994%2C1.258%20%20%20%20%20%20%20%20c-1.037%2C0-1.702-0.593-1.702-1.628c0-0.519%2C0.22-1.109%2C0.442-1.554l10.506-20.646c0.668-1.405%2C2.002-1.628%2C2.74-1.628%20%20%20%20%20%20%20%20C306.76%2C55.875%2C308.09%2C56.096%2C308.758%2C57.503z%20M300.985%2C70.083h9.988l-4.957-9.99L300.985%2C70.083z%22%2F%3E%20%20%20%20%3Cpath%20fill%3D%22%23eeeaea%22%20d%3D%22M340.159%2C56.023c4.441%2C0%2C8.064%2C3.255%2C8.064%2C7.694c0%2C3.923-2.813%2C6.884-6.511%2C7.549l6.731%2C7.104%20%20%20%20%20%20%20%20c0.664%2C0.666%2C0.889%2C1.85%2C0.146%2C2.516c-0.736%2C0.741-2.145%2C0.521-2.886-0.296l-8.729-9.176h-6.511v8.142%20%20%20%20%20%20%20%20c0%2C1.034-0.815%2C1.774-1.854%2C1.774c-1.033%2C0-1.85-0.813-1.85-1.851V57.873c0-1.035%2C0.814-1.85%2C1.85-1.85H340.159z%20M330.468%2C59.575%20%20%20%20%20%20%20%20v8.288h9.691c2.59%2C0%2C4.367-1.776%2C4.367-4.146c0-2.365-1.777-4.144-4.367-4.144L330.468%2C59.575L330.468%2C59.575z%22%2F%3E%20%20%20%20%3Cpath%20fill%3D%22%23eeeaea%22%20d%3D%22M365.047%2C59.575h-9.249c-1.033%2C0-1.849-0.74-1.849-1.776c0-1.034%2C0.813-1.773%2C1.849-1.773h22.201%20%20%20%20%20%20%20%20c1.037%2C0%2C1.852%2C0.74%2C1.852%2C1.773c0%2C1.037-0.813%2C1.776-1.852%2C1.776h-9.249V79.48c0%2C1.037-0.813%2C1.851-1.849%2C1.851%20%20%20%20%20%20%20%20c-1.037%2C0-1.854-0.813-1.854-1.851V59.575z%22%2F%3E%20%20%20%20%3Cpath%20fill%3D%22%23eeeaea%22%20d%3D%22M388.724%2C66.013c0-9.25%2C5.698-10.359%2C9.99-10.359c1.035%2C0%2C1.85%2C0.813%2C1.85%2C1.85%20%20%20%20%20%20%20%20c0%2C1.036-0.813%2C1.851-1.85%2C1.851c-3.479%2C0-6.29%2C0.738-6.29%2C6.66v5.18c0%2C9.25-5.698%2C10.358-9.989%2C10.358%20%20%20%20%20%20%20%20c-1.035%2C0-1.85-0.813-1.85-1.85s0.814-1.85%2C1.85-1.85c3.479%2C0%2C6.289-0.74%2C6.289-6.66V66.013z%22%2F%3E%3C%2Fg%3E%3Cpolygon%20fill%3D%22%238087E8%22%20points%3D%2267.981%2C30.52%2056.757%2C56.73%2042.009%2C91.171%2076.301%2C76.685%2094.465%2C69.013%20%22%2F%3E%3Cpolygon%20fill%3D%22%2330426B%22%20points%3D%2273.7%2C62.25%2076.302%2C76.685%2094.466%2C69.013%20%22%2F%3E%3Cpolygon%20fill%3D%22%236699A1%22%20points%3D%2267.981%2C30.52%2073.7%2C62.251%2094.465%2C69.013%20%22%2F%3E%3Cpolygon%20fill%3D%22%2378758C%22%20points%3D%2273.7%2C62.25%2094.466%2C69.013%2056.758%2C56.729%2042.009%2C91.171%2076.302%2C76.685%20%22%2F%3E%3Cpolygon%20fill%3D%22%23A3EDBA%22%20points%3D%2242.009%2C91.171%2056.757%2C56.73%2026.442%2C46.855%20%22%2F%3E%3Cpolygon%20fill%3D%22%236699A1%22%20points%3D%2276.302%2C76.685%2079.628%2C95.13%2094.466%2C69.013%20%22%2F%3E%3Cpolygon%20fill%3D%22%238087E8%22%20points%3D%2267.981%2C30.52%2056.757%2C56.73%2073.7%2C62.251%20%22%2F%3E%3C%2Fsvg%3E&quot;);"></span>
+                    </div>
+                    <div class="highed-toolbar-center"></div>
+                    <div class="highed-toolbar-right">
+                        <div class="icon highed-icon fa fa-file" title="New Chart"></div>
+                        <div class="icon highed-icon fa fa-floppy-o" title="Save Project"></div>
+                        <div class="icon highed-icon fa fa-folder-open" title="bad localized string: openProject"></div>
+                        <span class="separator"></span>
+                        <div class="icon highed-icon fa fa-cloud-upload" title="Save To Cloud"></div>
+                        <div class="icon highed-icon fa fa-cloud-download" title="Load From Cloud"></div><span
+                            class="separator"></span>
+                        <div class="icon highed-icon fa fa-question-circle" title="Help"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel bottom highed-scrollbar" style="overflow-y: hidden; height: 801px;">
+            <div class="highed-vsplitter-body highed-scrollbar">
+                <div class="highed-transition highed-toolbox highed-box-size" style="width: 850px;">
+                    <div class="highed-toolbox-bar highed-box-size">
+                        <div class="highed-box-size highed-toolbox-bar-icon fa fa-table highed-toolbox-bar-icon-sel">
+                        </div>
+                        <div class="highed-box-size highed-toolbox-bar-icon fa fa-bar-chart"></div>
+                        <div class="highed-box-size highed-toolbox-bar-icon fa fa-sliders"></div>
+                        <div class="highed-box-size highed-toolbox-bar-icon fa fa-download"></div>
+                    </div>
+                    <div class="highed-toolbox-body highed-box-size highed-transition"
+                        style="width: 800px; height: 801px; opacity: 1;">
+                        <div class="highed-box-size highed-toolbox-inner-body" style="width: 800px; height: 757px;">
+                            <div class="highed-toolbox-body-title">Chart Data<div class="highed-toolbox-live">LIVE</div>
+                                <div class="highed-toolbox-help highed-icon fa fa-question-circle"
+                                    style="display: block;"></div>
+                            </div>
+                            <div class="highed-box-size highed-toolbox-user-contents">
+                                <div class="highed-box-size highed-fill">
+                                    <div class="highed-box-size highed-dtable-gsheet-frame">
+                                        <div class="highed-box-size highed-prettyscroll highed-dtable-gsheet">
+                                            <div class="highed-dtable-gsheet-heading">Google Spreadsheet</div>
+                                            <div class="highed-dtable-gsheet-inner">
+                                                <div class="highed-dtable-gsheet-label">Google Spreadsheet ID</div>
+                                                <div><input class="highed-box-size highed-dtable-gsheet-id"
+                                                        placeholder="Spreadsheet ID"></div>
+                                                <table class="highed-stretch">
+                                                    <tr>
+                                                        <td class="highed-dtable-gsheet-label">Worksheet</td>
+                                                        <td class="highed-dtable-gsheet-label">Refresh Time (Seconds)
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class=""><input
+                                                                class="highed-box-size highed-dtable-gsheet-id"
+                                                                placeholder="Worksheet (leave blank for first)"></td>
+                                                        <td class=""><input
+                                                                class="highed-box-size highed-dtable-gsheet-id"
+                                                                placeholder="Refresh Time (leave blank for no refresh)">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="highed-dtable-gsheet-label">Start Row</td>
+                                                        <td class="highed-dtable-gsheet-label">End Row</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class=""><input
+                                                                class="highed-box-size highed-dtable-gsheet-id"></td>
+                                                        <td class=""><input
+                                                                class="highed-box-size highed-dtable-gsheet-id"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="highed-dtable-gsheet-label">Start Column</td>
+                                                        <td class="highed-dtable-gsheet-label">End Column</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class=""><input
+                                                                class="highed-box-size highed-dtable-gsheet-id"></td>
+                                                        <td class=""><input
+                                                                class="highed-box-size highed-dtable-gsheet-id"></td>
+                                                    </tr>
+                                                </table>
+                                                <div><button class="highed-ok-button highed-dtable-gsheet-button">Load
+                                                        Spreadsheet</button><button
+                                                        class="highed-ok-button highed-dtable-gsheet-button">Detach
+                                                        Sheet From Chart</button></div>
+                                                <div class="">When using Google Spreadsheet, Highcharts references the
+                                                    sheet directly.<br><br> This means that the published chart always
+                                                    loads the latest version of the sheet.<br><br> For more information
+                                                    on how to set up your spreadsheet, visit <a target="_blank"
+                                                        href="https://www.highcharts.com/cloud/import-data/how-to-set-up-a-google-spreadsheet-file">the
+                                                        documentation</a>.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="highed-box-size highed-dtable-gsheet-frame">
+                                        <div class="highed-box-size highed-prettyscroll highed-dtable-gsheet">
+                                            <div class="highed-dtable-gsheet-heading">Live Data</div>
+                                            <div class="highed-dtable-gsheet-inner">
+                                                <div class="highed-dtable-gsheet-label">URL</div>
+                                                <div><input class="highed-imp-input-stretch"></div>
+                                                <table class="highed-stretch">
+                                                    <tr>
+                                                        <td class="highed-dtable-gsheet-label">Chart Refresh Time
+                                                            (Seconds)</td>
+                                                        <td class="highed-dtable-gsheet-label">Data Type</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class=""><input class="highed-imp-input-stretch"
+                                                                style="padding: 8px;"></td>
+                                                        <td class="">
+                                                            <div class="highed-customize-master-dropdown"
+                                                                style="display: block;">
+                                                                <div class="highed-dropdown">
+                                                                    <div class="highed-dropdown-body"></div>
+                                                                    <div class="highed-dropdown-arrow fa fa-arrow-down">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                                <div><button class="highed-ok-button highed-dtable-gsheet-button">Load
+                                                        Live Data</button><button
+                                                        class="highed-ok-button highed-dtable-gsheet-button">Cancel</button>
+                                                </div>
+                                                <div class="">Live data needs a url to your JSON data to
+                                                    reference.<br><br> This means that the published chart always loads
+                                                    the latest version of your data.<br><br></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="highed-dtable-container">
+                                        <div class="highed-dtable-table-frame highed-scrollbar"
+                                            style="height: 637px; width: 740px;">
+                                            <table class="highed-dtable-table" cellpadding="0" cellspacing="0"
+                                                style="width: 740px;">
+                                                <colgroup>
+                                                    <col width="140" style="width: 140px;">
+                                                    <col width="140" style="width: 140px;">
+                                                    <col>
+                                                </colgroup>
+                                                <thead class="highed-dtable-head"></thead>
+                                                <tbody class="highed-dtable-body">
+                                                    <tr>
+                                                        <td>
+                                                            <div class="highed-dtable-col-val"></div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="highed-dtable-col-val"></div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div class="highed-dtable-table-tail">Only the first 500 rows are shown.
+                                            </div>
+                                            <div class="highed-dtable-drop-zone highed-transition" style="opacity: 1;">
+                                                DROP CSV FILES HERE OR ON THE TABLE!<br><span
+                                                    class="highed-dtable-drop-zone-small">...you can also paste CSV or
+                                                    Excel data into any cell</span></div>
+                                        </div>
+                                        <div class="highed-dtable-left-bar">
+                                            <div class="highed-dtable-left-bar-row"><input
+                                                    class="highed-dtable-row-select-box" type="checkbox"></div>
+                                        </div>
+                                        <div class="highed-dtable-top-bar"><span class="highed-dtable-top-bar-col"
+                                                style="width: 140px;">
+                                                <div class="">Column 1</div>
+                                                <div class="highed-dtable-top-bar-col-options fa fa-chevron-down"></div>
+                                                <div class="highed-dtable-resize-handle"></div>
+                                            </span><span class="highed-dtable-top-bar-col" style="width: 140px;">
+                                                <div class="">Column 2</div>
+                                                <div class="highed-dtable-top-bar-col-options fa fa-chevron-down"></div>
+                                                <div class="highed-dtable-resize-handle"></div>
+                                            </span></div>
+                                        <div class="highed-dtable-top-left-panel"><input type="checkbox"></div>
+                                        <div class="highed-toolbar highed-dtable-toolbar">
+                                            <div class="highed-toolbar-left">
+                                                <div class="highed-dtable-toolbar-label">With Selection: </div>
+                                                <div class="icon highed-icon fa fa-trash" title="Delete row(s)"></div>
+                                            </div>
+                                            <div class="highed-toolbar-center"></div>
+                                            <div class="highed-toolbar-right">
+                                                <div class="highed-ok-button highed-toolbar-button" title="Add row">ADD
+                                                    ROW</div>
+                                                <div class="highed-ok-button highed-toolbar-button" title="Reset">CLEAR
+                                                    DATA</div>
+                                                <div class="highed-ok-button highed-toolbar-button"
+                                                    title="Import Google Spreadsheet">Google Sheet</div>
+                                                <div class="highed-ok-button highed-toolbar-button"
+                                                    title="Download data">EXPORT DATA</div>
+                                                <div class="highed-ok-button highed-toolbar-button" title="undefined">
+                                                    IMPORT</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="highed-dtable-weird-data highed-box-size highed-errobar-body">
+                                        <div class="highed-dtable-weird-data-body">Uh-oh! It looks like our data
+                                            importer may have had some issues processing your data. Usually this means
+                                            that we were unable to deduce how the columns are separated.</div><button
+                                            class="highed-ok-button">No, this looks right</button><button
+                                            class="highed-ok-button">Yeah, this looks wrong</button>
+                                    </div>
+                                    <div class="highed-dtable-load-indicator">Loading Data...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="highed-transition highed-box-size highed-chart-frame highed-scrollbar"
+                    style="left: 850px; width: 662px; height: 801px; overflow-x: auto;">
+                    <div class="highed-res-preview">
+                        <div class="highed-res-headline">Size Preview:</div>
+                        <div class="highed-res-quicksel">
+                            <div class="highed-dropdown">
+                                <div class="highed-dropdown-body">Actual Size</div>
+                                <div class="highed-dropdown-arrow fa fa-arrow-down"></div>
+                            </div>
+                        </div>
+                        <div class="highed-res-quicksel"><input class="highed-res-number" disabled=""><span
+                                class="">x</span><input class="highed-res-number" disabled=""></div>
+                    </div>
+                    <div class="highed-box-size highed-chart-frame-body" aria-hidden="false" role="region"
+                        aria-label="My Chart. Highcharts interactive chart." data-highcharts-chart="1"
+                        style="overflow: hidden; width: 562px; height: 400px;">
+                        <div id="highcharts-screen-reader-region-before-1" aria-hidden="false"
+                            style="position: relative;">
+                            <div aria-hidden="false"
+                                style="position: absolute; width: 1px; height: 1px; overflow: hidden; white-space: nowrap; clip: rect(1px, 1px, 1px, 1px); margin-top: -3px; opacity: 0.01;">
+                                <h6>My Chart</h6>
+                                <div>Empty chart</div>
+                                <div>My Untitled Chart</div>
+                            </div>
+                        </div>
+                        <div aria-hidden="false" class="highcharts-announcer-container" style="position: relative;">
+                            <div aria-hidden="false" aria-live="polite" aria-atomic="true"
+                                style="position: absolute; width: 1px; height: 1px; overflow: hidden; white-space: nowrap; clip: rect(1px, 1px, 1px, 1px); margin-top: -3px; opacity: 0.01;">
+                            </div>
+                            <div aria-hidden="false" aria-live="assertive" aria-atomic="true"
+                                style="position: absolute; width: 1px; height: 1px; overflow: hidden; white-space: nowrap; clip: rect(1px, 1px, 1px, 1px); margin-top: -3px; opacity: 0.01;">
+                            </div>
+                            <div aria-hidden="false" aria-live="polite" aria-atomic="true"
+                                style="position: absolute; width: 1px; height: 1px; overflow: hidden; white-space: nowrap; clip: rect(1px, 1px, 1px, 1px); margin-top: -3px; opacity: 0.01;">
+                            </div>
+                            <div aria-hidden="false" aria-live="polite" aria-atomic="true"
+                                style="position: absolute; width: 1px; height: 1px; overflow: hidden; white-space: nowrap; clip: rect(1px, 1px, 1px, 1px); margin-top: -3px; opacity: 0.01;">
+                            </div>
+                        </div>
+                        <div id="highcharts-z3bkgqm-1" dir="ltr"
+                            style="position: relative; overflow: hidden; width: 562px; height: 400px; text-align: left; line-height: normal; z-index: 0; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); user-select: none; touch-action: manipulation; outline: none; padding: 0px;"
+                            class="highcharts-container " aria-hidden="false" tabindex="0">
+                            <div aria-hidden="false" class="highcharts-a11y-proxy-container-before"
+                                style="top: 0px; left: 0px; white-space: nowrap; position: absolute;"></div><svg
+                                version="1.1" class="highcharts-root"
+                                style="font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, sans-serif; font-size: 1rem;"
+                                xmlns="http://www.w3.org/2000/svg" width="562" height="400" viewBox="0 0 562 400"
+                                aria-hidden="false" aria-label="Interactive chart">
+                                <desc aria-hidden="true">Created with Highcharts 12.4.0</desc>
+                                <defs aria-hidden="true">
+                                    <filter id="highcharts-drop-shadow-1">
+                                        <fedropshadow dx="1" dy="1" flood-color="#000000" flood-opacity="0.75"
+                                            stdDeviation="2.5"></fedropshadow>
+                                    </filter>
+                                </defs>
+                                <rect fill="#ffffff" class="highcharts-background" filter="none" x="0" y="0" width="562"
+                                    height="400" rx="0" ry="0" aria-hidden="true"></rect>
+                                <rect fill="none" class="highcharts-plot-background" x="10" y="63" width="542"
+                                    height="322" filter="none" aria-hidden="true"></rect>
+                                <g class="highcharts-pane-group" data-z-index="0" aria-hidden="true"></g>
+                                <rect fill="none" class="highcharts-plot-border" data-z-index="1" stroke="#cccccc"
+                                    stroke-width="0" x="10" y="63" width="542" height="322" aria-hidden="true"></rect>
+                                <g class="highcharts-series-group" data-z-index="3" filter="none" aria-hidden="true">
+                                </g>
+                                <g class="highcharts-exporting-group" data-z-index="3" aria-hidden="true">
+                                    <g class="highcharts-no-tooltip highcharts-button highcharts-contextbutton"
+                                        stroke-linecap="round" style="cursor: pointer;" transform="translate(524,5)">
+                                        <title>Chart context menu</title>
+                                        <rect fill="#ffffff" class="highcharts-button-box" x="0.5" y="0.5" width="28"
+                                            height="28" rx="2" ry="2" stroke="none" stroke-width="1"></rect>
+                                        <path fill="#666666" d="M 8 9.5 L 22 9.5 M 8 14.5 L 22 14.5 M 8 19.5 L 22 19.5"
+                                            class="highcharts-button-symbol" data-z-index="1" stroke="#666666"
+                                            stroke-width="3"></path><text x="28" data-z-index="1" y="18.5"
+                                            text-anchor="end"
+                                            style="font-size: 0.8em; font-weight: normal; fill: rgb(51, 51, 51);"></text>
+                                    </g>
+                                </g><text x="281" class="highcharts-title" data-z-index="4" text-align="center" y="25"
+                                    text-anchor="middle" transform-origin="51.7578125 22"
+                                    transform="translate(0,0) scale(1 1)"
+                                    style="font-size: 1.2em; font-weight: bold; fill: rgb(51, 51, 51);"
+                                    aria-hidden="true">My Chart</text><text x="281" class="highcharts-subtitle"
+                                    data-z-index="4" text-align="center" y="47" text-anchor="middle"
+                                    transform-origin="62.75390625 15" transform="translate(0,0) scale(1 1)"
+                                    style="font-size: 0.8em; fill: rgb(102, 102, 102);" aria-hidden="true">My Untitled
+                                    Chart</text><text x="10" text-anchor="start" class="highcharts-caption"
+                                    data-z-index="4" style="font-size: 0.8em; fill: rgb(102, 102, 102);"
+                                    text-align="left" y="397" transform-origin="10 15"
+                                    transform="translate(0,0) scale(1 1)" aria-hidden="true"></text>
+                                <g class="highcharts-datalabels-group" data-z-index="6" aria-hidden="true"></g>
+                                <g class="highcharts-legend highcharts-no-tooltip" data-z-index="7" visibility="hidden"
+                                    aria-hidden="true">
+                                    <rect fill="none" class="highcharts-legend-box" rx="0" ry="0" stroke="#999999"
+                                        stroke-width="0" filter="none" x="0" y="0" width="8" height="8"></rect>
+                                    <g data-z-index="1">
+                                        <g></g>
+                                    </g>
+                                </g><text x="552" class="highcharts-credits" text-anchor="end" data-z-index="8"
+                                    text-align="right" y="395"
+                                    style="cursor: pointer; font-size: 0.6em; fill: rgb(153, 153, 153);"
+                                    aria-label="Chart credits: Highcharts.com" aria-hidden="false">Highcharts.com</text>
+                            </svg>
+                            <div aria-hidden="false" class="highcharts-a11y-proxy-container-after"
+                                style="top: 0px; left: 0px; white-space: nowrap; position: absolute;">
+                                <div class="highcharts-a11y-proxy-group highcharts-a11y-proxy-group-zoom"></div>
+                                <div class="highcharts-a11y-proxy-group highcharts-a11y-proxy-group-chartMenu"><button
+                                        class="highcharts-a11y-proxy-element highcharts-no-tooltip"
+                                        aria-label="View chart menu, My Chart" aria-expanded="false"
+                                        title="Chart context menu"
+                                        style="border-width: 0px; background-color: transparent; cursor: pointer; outline: none; opacity: 0.001; z-index: 999; overflow: hidden; padding: 0px; margin: 0px; display: block; position: absolute; width: 28px; height: 28px; left: 525px; top: 6px;"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="highcharts-screen-reader-region-after-1" aria-hidden="false"
+                            style="position: relative;">
+                            <div aria-hidden="false"
+                                style="position: absolute; width: 1px; height: 1px; overflow: hidden; white-space: nowrap; clip: rect(1px, 1px, 1px, 1px); margin-top: -3px; opacity: 0.01;">
+                                <div id="highcharts-end-of-chart-marker-1" class="highcharts-exit-anchor" tabindex="0"
+                                    aria-hidden="false">End of interactive chart.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="highed-errorbar highed-box-size highed-transition"
+                        style="opacity: 0; pointer-events: none;">
+                        <div class="highed-errorbar-headline">This is an error!</div>
+                        <div class="highed-errorbar-body highed-scrollbar">Oh noes! something is very wrong!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="highed-overlay-modal"></div>
+    <div class="highed-overlay-modal" style="width: 600px; height: 600px;">
+        <div class="highed-tab-control" style="height: 590px; width: 590px;">
+            <div class="tabs" style="">
+                <div class="highed-tab-control-more fa fa-chevron-right" style="display: none;"></div>
+                <div class="indicator" style="width: 75px; left: 5px;"></div>
+                <div class="tab tab-selected">CSV</div>
+                <div class="tab" style="display: none;">JSON</div>
+                <div class="tab" style="display: none;">Plugins</div>
+                <div class="tab">Sample Data</div>
+            </div>
+            <div class="body">
+                <div class="tab-body tab-body-padded" style="opacity: 1; display: block;">
+                    <div class="highed-imp-help">Paste CSV into the below box, or upload a file. Click Import to import
+                        your data.</div><textarea class="highed-imp-pastearea"></textarea><button
+                        class="highed-imp-button">Import Pasted Data</button><button class="highed-imp-button">Upload
+                        &amp; Import File</button><button class="highed-imp-button">Import Live Data</button>
+                </div>
+                <div class="tab-body tab-body-padded">
+                    <div class="highed-imp-help">Paste JSON into the below box, or upload a file. Click Import to import
+                        your data. <br><b>The JSON is the data passed to the chart constructor, and may contain any of
+                            the valid <a href="http://api.highcharts.com/highcharts/" target="_blank">options</a>.</b>
+                    </div><textarea class="highed-imp-pastearea"></textarea><button class="highed-imp-button">Upload
+                        &amp; Import File</button><button class="highed-imp-button">Import</button>
+                </div>
+                <div class="tab-body tab-body-padded">
+                    <div class="highed-hsplitter">
+                        <div class="highed-scrollbar panel left " style="width: 30%;">
+                            <div class="highed-scrollbar highed-hsplitter-body ">
+                                <div class="highed-list"></div>
+                                <div class="highed-list-compact">compact</div>
+                            </div>
+                        </div>
+                        <div class="highed-scrollbar panel right " style="width: 70%;">
+                            <div class="highed-scrollbar highed-hsplitter-body "></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-body tab-body-padded" style="overflow: hidden;"><button
+                        class="highed-box-size highed-imp-button" style="width: 99%;">Dates on X</button><br><button
+                        class="highed-box-size highed-imp-button" style="width: 99%;">Categorized, four
+                        series</button><br><button class="highed-box-size highed-imp-button" style="width: 99%;">Basic
+                        Line Series</button><br><button class="highed-box-size highed-imp-button" style="width: 99%;">OS
+                        Usage Stats</button><br><button class="highed-box-size highed-imp-button"
+                        style="width: 99%;">Pacman Pie</button><br><button class="highed-box-size highed-imp-button"
+                        style="width: 99%;">Basic Pie Series</button><br></div>
+            </div>
+        </div>
+    </div>
+    <div class="highed-ctx-container-common highed-ctx-container"></div>
+    <div class="highed-ctx-container-common highed-ctx-container"></div>
+    <div class="highed-ctx-container-common highed-ctx-container">
+        <div class="highed-ctx-close-button">Close</div>
+        <div class="highed-ctx-item highed-ctx-item-responsive">Use <code>,</code> as delimiter</div>
+        <div class="highed-ctx-item highed-ctx-item-responsive">Use <code>;</code> as delimiter</div>
+    </div>
+    <div class="highed-ctx-container-common highed-ctx-container">
+        <div class="highed-ctx-close-button">Close</div>
+        <div class="highed-ctx-item highed-ctx-item-responsive">At the end</div>
+        <div class="highed-ctx-item highed-ctx-item-responsive">After highlighted</div>
+        <div class="highed-ctx-item highed-ctx-item-responsive">Before highlighted</div>
+    </div>
+    <div class="highed-ctx-container-common highed-ctx-container">
+        <div class="highed-ctx-close-button">Close</div>
+        <div class="highed-ctx-item highed-ctx-item-responsive">Sort Ascending<div
+                class="ctx-child-licon highed-ctx-child-licon-responsive fa fa-sort-amount-asc"></div>
+        </div>
+        <div class="highed-ctx-item highed-ctx-item-responsive">Sort Descending<div
+                class="ctx-child-licon highed-ctx-child-licon-responsive fa fa-sort-amount-desc"></div>
+        </div>
+        <div class="highed-ctx-sep"></div>
+        <div class="highed-ctx-item highed-ctx-item-responsive">Sort as Month Names Ascending<div
+                class="ctx-child-licon highed-ctx-child-licon-responsive fa fa-sort-amount-asc"></div>
+        </div>
+        <div class="highed-ctx-item highed-ctx-item-responsive">Sort as Month Names Decending<div
+                class="ctx-child-licon highed-ctx-child-licon-responsive fa fa-sort-amount-desc"></div>
+        </div>
+        <div class="highed-ctx-sep"></div>
+        <div class="highed-ctx-item highed-ctx-item-responsive">Delete Column<div
+                class="ctx-child-licon highed-ctx-child-licon-responsive fa fa-trash"></div>
+        </div>
+        <div class="highed-ctx-sep"></div>
+        <div class="highed-ctx-item highed-ctx-item-responsive">Insert Column Before<div
+                class="ctx-child-licon highed-ctx-child-licon-responsive fa fa-plus"></div>
+        </div>
+        <div class="highed-ctx-item highed-ctx-item-responsive">Insert Column After<div
+                class="ctx-child-licon highed-ctx-child-licon-responsive fa fa-plus"></div>
+        </div>
+    </div>
+    <div class="highed-ctx-container-common highed-ctx-container">
+        <div class="highed-ctx-close-button">Close</div>
+        <div class="highed-ctx-item highed-ctx-item-responsive">Sort Ascending<div
+                class="ctx-child-licon highed-ctx-child-licon-responsive fa fa-sort-amount-asc"></div>
+        </div>
+        <div class="highed-ctx-item highed-ctx-item-responsive">Sort Descending<div
+                class="ctx-child-licon highed-ctx-child-licon-responsive fa fa-sort-amount-desc"></div>
+        </div>
+        <div class="highed-ctx-sep"></div>
+        <div class="highed-ctx-item highed-ctx-item-responsive">Sort as Month Names Ascending<div
+                class="ctx-child-licon highed-ctx-child-licon-responsive fa fa-sort-amount-asc"></div>
+        </div>
+        <div class="highed-ctx-item highed-ctx-item-responsive">Sort as Month Names Decending<div
+                class="ctx-child-licon highed-ctx-child-licon-responsive fa fa-sort-amount-desc"></div>
+        </div>
+        <div class="highed-ctx-sep"></div>
+        <div class="highed-ctx-item highed-ctx-item-responsive">Delete Column<div
+                class="ctx-child-licon highed-ctx-child-licon-responsive fa fa-trash"></div>
+        </div>
+        <div class="highed-ctx-sep"></div>
+        <div class="highed-ctx-item highed-ctx-item-responsive">Insert Column Before<div
+                class="ctx-child-licon highed-ctx-child-licon-responsive fa fa-plus"></div>
+        </div>
+        <div class="highed-ctx-item highed-ctx-item-responsive">Insert Column After<div
+                class="ctx-child-licon highed-ctx-child-licon-responsive fa fa-plus"></div>
+        </div>
+    </div>
+    <div class="highed-ctx-container-common highed-ctx-container"></div>
+    <div class="highed-ctx-container-common highed-ctx-container"></div>
+    <div class="highed-ctx-container-common highed-ctx-container"></div>
+    <div class="highed-ctx-container-common highed-ctx-container"></div>
+    <div class="highed-ctx-container-common highed-ctx-container"></div>
+    <div class="highed-overlay-modal">
+        <div>
+            <div>
+                <div class="highed-toolbox-body-title">Manually Add/Edit Data</div>
+                <div class="highed-help-gif" style="background-image: url(&quot;help/dataImport.gif&quot;);"></div>
+                <div class="highed-scrollbar highed-help-desc">Click a cell to edit its contents.<br><br> The cells can
+                    be navigated using the arrow keys.<br><br> Pressing Enter creates a new row, or navigates to the row
+                    directly below the current row.</div>
+            </div>
+        </div>
+        <div class="highed-help-nav"><span class="highed-icon fa fa-circle"></span><span
+                class="highed-icon fa fa-circle-o"></span><span class="highed-icon fa fa-circle-o"></span></div>
+        <div class="highed-help-counter">1/3</div>
+    </div>
+    <div class="highed-overlay-modal">
+        <div>
+            <div>
+                <div class="highed-toolbox-body-title">Templates</div>
+                <div class="highed-help-gif" style="display: none;"></div>
+                <div class="highed-scrollbar highed-help-desc">Templates are pre-defined bundles of
+                    configuration.<br><br> Start by choosing the template category in the list to the left, then pick a
+                    suitable template for your data and use case in the template list.</div>
+            </div>
+        </div>
+        <div class="highed-help-nav" style="display: none;"><span class="highed-icon fa fa-circle"></span></div>
+        <div class="highed-help-counter" style="display: none;">1/1</div>
+    </div>
+    <div class="highed-overlay-modal">
+        <div>
+            <div>
+                <div class="highed-toolbox-body-title">Customize</div>
+                <div class="highed-help-gif" style="display: none;"></div>
+                <div class="highed-scrollbar highed-help-desc">The customize pane lets you customize your chart.<br><br>
+                    The customizer has three different sections:<br>
+                    <li>Simple: A simple customizer with the most used options</li>
+                    <li>Advanced: All options available in Highcharts/Highstock can be set here</li>
+                    <li>Custom code: Here, properties can be overridden programatically</li>
+                </div>
+            </div>
+        </div>
+        <div class="highed-help-nav" style="display: none;"><span class="highed-icon fa fa-circle"></span></div>
+        <div class="highed-help-counter" style="display: none;">1/1</div>
+    </div>
+    <div class="highed-overlay-modal">
+        <div>
+            <div>
+                <div class="highed-toolbox-body-title">Export Chart</div>
+                <div class="highed-help-gif" style="display: none;"></div>
+                <div class="highed-scrollbar highed-help-desc">The export pane lets you export your chart to HTML, SVG,
+                    JSON, or JavaScript.<br><br></div>
+            </div>
+        </div>
+        <div class="highed-help-nav" style="display: none;"><span class="highed-icon fa fa-circle"></span></div>
+        <div class="highed-help-counter" style="display: none;">1/1</div>
+    </div>
+</body>
+
+</html>

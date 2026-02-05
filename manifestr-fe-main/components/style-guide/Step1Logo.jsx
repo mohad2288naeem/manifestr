@@ -1,0 +1,564 @@
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import Image from 'next/image'
+import { Folder, Type, Palette, Grid, FileText, Plus, ArrowRight, Check, ChevronDown } from 'lucide-react'
+import Button from '../ui/Button'
+import Card from '../ui/Card'
+import Select from '../forms/Select'
+import LogoUploadZone from './LogoUploadZone'
+
+export default function StyleGuideStep1Logo({ data, updateData, onBack, onNext }) {
+  // Use data from props or fallbacks
+  const brandKitName = data?.brandKitName || ''
+  const uploadedFiles = data?.logos || []
+  const selectedColors = data?.colors?.selected || ['white', 'black']
+  const permittedBackgroundTypes = data?.backgrounds?.permitted || 'light-dark'
+  const darkBackgroundUses = data?.backgrounds?.darkUses || 'white-reversed'
+  const minimumContrastRatio = data?.backgrounds?.minContrast || ''
+  const logoUsageRulesEnabled = data?.logoRules?.enabled ?? true
+  const minimumSize = data?.logoRules?.minSize || '24px'
+  const maximumSize = data?.logoRules?.maxSize || '96px'
+  const clearSpace = data?.logoRules?.clearSpace || '4'
+  const scalingRule = data?.logoRules?.scaling || 'maintain-aspect-ratio'
+  const defaultPlacementZone = data?.logoRules?.placement || 'Top-left'
+  const allowAlternatePlacement = data?.logoRules?.allowAlternate || false
+
+  const steps = [
+    { id: 1, label: 'Logo', icon: Folder, active: true },
+    { id: 2, label: 'Typography', icon: Type, active: false },
+    { id: 3, label: 'Color', icon: Palette, active: false },
+    { id: 4, label: 'Style', icon: Grid, active: false },
+    { id: 5, label: 'Review & Apply', icon: FileText, active: false },
+  ]
+
+  const handleFilesChange = async (files) => {
+    // Process new files
+    // In a real flow, we might upload immediately or wait.
+    // Let's upload immediately here to get the URLs.
+
+    const newFiles = []
+
+    // Import upload services
+    try {
+      const { getPresignedUrl, uploadToS3 } = await import('../../services/uploads')
+
+      for (const fileItem of files) {
+        if (fileItem.file) { // Assuming fileItem has a 'file' object from dropzone
+          const file = fileItem.file
+          // 1. Get Presigned URL
+          const folderPath = 'style-guides/logos'
+          const { uploadUrl, fileKey } = await getPresignedUrl(file.name, file.type, folderPath)
+
+          // 2. Upload to S3
+          await uploadToS3(uploadUrl, file)
+
+          // 3. Store result
+          // We can reconstruct the URL if needed later, or store it now.
+          // Public URL: https://bucket.s3.region.amazonaws.com/key
+          // Ideally backend returns full URL or we know the bucket domain.
+          // For now, let's store fileKey and construct URL or store a flag.
+          // Or just store the file metadata.
+
+          newFiles.push({
+            ...fileItem,
+            fileKey: fileKey,
+            uploaded: true,
+            url: uploadUrl.split('?')[0] // Approximation of public URL
+          })
+        } else {
+          newFiles.push(fileItem)
+        }
+      }
+
+      // Update parent state
+      updateData({ logos: [...uploadedFiles, ...newFiles] })
+
+    } catch (err) {
+      console.error("Logo upload failed", err)
+      // Fallback: just store local preview/file if upload fails, or alert user
+      alert("Failed to upload logo. Please try again.")
+    }
+  }
+
+  // Update handlers
+  const updateField = (field, value) => updateData({ [field]: value })
+
+  const updateColors = (newSelected) => updateData({ colors: { ...data.colors, selected: newSelected } })
+
+  const updateBackgrounds = (field, value) => updateData({ backgrounds: { ...data.backgrounds, [field]: value } })
+
+  const updateRules = (field, value) => updateData({ logoRules: { ...data.logoRules, [field]: value } })
+
+
+  return (
+    <div className="min-h-[calc(100vh-72px)] pb-24" style={{ backgroundColor: 'rgba(242, 242, 247, 1)' }}>
+      {/* Left Sidebar - Fixed */}
+      <div className="hidden lg:block fixed top-[72px] left-0 w-[240px] h-[calc(100vh-72px)] bg-white border-r border-[#e4e4e7] py-8 z-40">
+        <div className="px-8">
+          <div className="space-y-2">
+            {steps.map((step) => {
+              const Icon = step.icon
+              return (
+                <motion.div
+                  key={step.id}
+                  whileHover={{ x: 4 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors ${step.active
+                    ? 'bg-[#f4f4f5] border border-[#e4e4e7]'
+                    : 'hover:bg-[#f4f4f5]'
+                    }`}
+                >
+                  <Icon className={`w-5 h-5 ${step.active ? 'text-[#18181b]' : 'text-[#71717a]'}`} />
+                  <span
+                    className={`text-[14px] leading-[20px] font-medium ${step.active ? 'text-[#18181b]' : 'text-[#71717a]'
+                      }`}
+                  >
+                    {step.label}
+                  </span>
+                </motion.div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="pl-0 lg:pl-[240px]">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-8">
+          {/* Header with Background */}
+          <div className="relative mb-8 -mx-4 md:-mx-8 px-4 md:px-8 pt-[51px] pb-8">
+            {/* Background Image */}
+            <div className="absolute top-0 left-0 right-0 h-[199px] overflow-hidden pointer-events-none z-0">
+              <div className="relative w-full h-full">
+                <Image
+                  src="/assets/banners/abstract-white-wave.png"
+                  alt="Background"
+                  fill
+                  className="object-cover object-top"
+                  priority
+                />
+              </div>
+            </div>
+
+            {/* Heading */}
+            <div className="relative z-10">
+              <h1 className="text-[32px] md:text-[48px] font-bold leading-[40px] md:leading-[56px] tracking-[-0.96px] text-[#18181b] mb-2">
+                CREATE A <span className="italic" style={{ fontFamily: "'Playfair Display', serif" }}>style guide</span>
+              </h1>
+            </div>
+          </div>
+
+          {/* Let's get started Section */}
+          <div className="mb-12 mt-12 md:mt-24">
+            <div className="flex flex-col md:flex-row items-start justify-between mb-6 gap-4 md:gap-0">
+              <div>
+                <h2 className="text-[20px] md:text-[24px] font-semibold leading-[28px] md:leading-[32px] text-[#18181b] mb-2">
+                  Let's get started
+                </h2>
+                <p className="text-[14px] md:text-[16px] leading-[20px] md:leading-[24px] text-[#71717a]">
+                  Ready to build your style guide? Let's start with the essentials.
+                </p>
+              </div>
+              <div className="flex items-center gap-3 w-full md:w-auto">
+                <Button variant="secondary" size="md" onClick={onBack} className="flex-1 md:flex-none justify-center">
+                  Skip
+                </Button>
+                <Button variant="secondary" size="md" className="flex-1 md:flex-none justify-center">
+                  Save & Exit
+                </Button>
+                <Button variant="primary" size="md" onClick={onNext} className="flex-1 md:flex-none justify-center">
+                  Continue <ArrowRight className="w-4 h-4 ml-1 hidden md:inline" />
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Brand Kit Name Section */}
+          <Card className="mb-6 bg-white">
+            <h3 className="text-[18px] md:text-[20px] font-semibold leading-[28px] text-[#18181b] mb-2">
+              Brand Kit Name
+            </h3>
+            <p className="text-[14px] leading-[20px] text-[#71717a] mb-4">
+              What would you like to call this brand kit? This will help you identify this kit when applying it to documents or workspaces.
+            </p>
+            <input
+              type="text"
+              value={brandKitName}
+              onChange={(e) => updateField('brandKitName', e.target.value)}
+              className="w-full max-w-[600px] px-4 py-3 bg-white border border-[#e4e4e7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#18181b] focus:border-transparent text-[16px] leading-[24px] text-[#18181b]"
+              placeholder="Enter brand kit name"
+            />
+          </Card>
+
+          {/* Upload Logos Section */}
+          <Card className="mb-6 bg-white">
+            <div className="flex flex-col md:flex-row items-start justify-between mb-4 gap-4 md:gap-0">
+              <div>
+                <h3 className="text-[18px] md:text-[20px] font-semibold leading-[28px] text-[#18181b] mb-2">
+                  Upload All Your Brand Logos
+                </h3>
+                <p className="text-[14px] leading-[20px] text-[#71717a]">
+                  Upload your logo files, including all variations and formats, to keep them organized by type.
+                </p>
+              </div>
+              <Button variant="primary" size="md">
+                <Plus className="w-4 h-4 mr-2" />
+                Add new
+              </Button>
+            </div>
+
+            {/* Upload Zone */}
+            <div className="mt-6">
+              <LogoUploadZone onFilesChange={handleFilesChange} />
+            </div>
+          </Card>
+
+          {/* Approved Background Colors Section */}
+          <Card className="bg-white">
+            <h3 className="text-[18px] md:text-[20px] font-semibold leading-[28px] text-[#18181b] mb-2">
+              Approved Background Colors
+            </h3>
+            <p className="text-[14px] leading-[20px] text-[#71717a] mb-6">
+              Select or upload color swatches that your logo can be used against.
+            </p>
+
+            {/* Color Swatches */}
+            <div className="flex items-start gap-4 flex-wrap">
+              {/* White */}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex flex-col items-center gap-2 cursor-pointer"
+                onClick={() => {
+                  updateColors(
+                    selectedColors.includes('white')
+                      ? selectedColors.filter((c) => c !== 'white')
+                      : [...selectedColors, 'white']
+                  )
+                }}
+              >
+                <div className="relative w-16 h-16 rounded-lg bg-white border-2 border-[#e4e4e7] flex items-center justify-center">
+                  {selectedColors.includes('white') && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="w-6 h-6 bg-[#18181b] rounded-full flex items-center justify-center"
+                    >
+                      <Check className="w-4 h-4 text-white" />
+                    </motion.div>
+                  )}
+                </div>
+                <span className="text-[12px] leading-[16px] text-[#71717a]">White</span>
+              </motion.div>
+
+              {/* Light Gray */}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex flex-col items-center gap-2 cursor-pointer"
+                onClick={() => {
+                  updateColors(
+                    selectedColors.includes('light-gray')
+                      ? selectedColors.filter((c) => c !== 'light-gray')
+                      : [...selectedColors, 'light-gray']
+                  )
+                }}
+              >
+                <div className="relative w-16 h-16 rounded-lg bg-[#f4f4f5] border-2 border-[#e4e4e7] flex items-center justify-center">
+                  {selectedColors.includes('light-gray') && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="w-6 h-6 bg-[#18181b] rounded-full flex items-center justify-center"
+                    >
+                      <Check className="w-4 h-4 text-white" />
+                    </motion.div>
+                  )}
+                </div>
+                <span className="text-[12px] leading-[16px] text-[#71717a]">Light Gray</span>
+              </motion.div>
+
+              {/* Gray */}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex flex-col items-center gap-2 cursor-pointer"
+                onClick={() => {
+                  updateColors(
+                    selectedColors.includes('gray')
+                      ? selectedColors.filter((c) => c !== 'gray')
+                      : [...selectedColors, 'gray']
+                  )
+                }}
+              >
+                <div className="relative w-16 h-16 rounded-lg bg-[#71717a] border-2 border-[#e4e4e7] flex items-center justify-center">
+                  {selectedColors.includes('gray') && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="w-6 h-6 bg-white rounded-full flex items-center justify-center"
+                    >
+                      <Check className="w-4 h-4 text-[#18181b]" />
+                    </motion.div>
+                  )}
+                </div>
+                <span className="text-[12px] leading-[16px] text-[#71717a]">Gray</span>
+              </motion.div>
+
+              {/* Black */}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex flex-col items-center gap-2 cursor-pointer"
+                onClick={() => {
+                  updateColors(
+                    selectedColors.includes('black')
+                      ? selectedColors.filter((c) => c !== 'black')
+                      : [...selectedColors, 'black']
+                  )
+                }}
+              >
+                <div className="relative w-16 h-16 rounded-lg bg-[#18181b] border-2 border-[#e4e4e7] flex items-center justify-center">
+                  {selectedColors.includes('black') && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="w-6 h-6 bg-white rounded-full flex items-center justify-center"
+                    >
+                      <Check className="w-4 h-4 text-[#18181b]" />
+                    </motion.div>
+                  )}
+                </div>
+                <span className="text-[12px] leading-[16px] text-[#71717a]">Black</span>
+              </motion.div>
+
+              {/* Add Color */}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex flex-col items-center gap-2 cursor-pointer"
+                onClick={() => {
+                  // Handle add color - could open a color picker or modal
+                  console.log('Add color')
+                }}
+              >
+                <div className="relative w-16 h-16 rounded-lg bg-white border-2 border-dashed border-[#e4e4e7] flex items-center justify-center hover:border-[#18181b] transition-colors">
+                  <Plus className="w-6 h-6 text-[#71717a]" />
+                </div>
+                <span className="text-[12px] leading-[16px] text-[#71717a]">Add Color</span>
+              </motion.div>
+            </div>
+          </Card>
+
+          {/* Background & Visibility Section */}
+          <Card className="mt-6 bg-white">
+            <h3 className="text-[18px] md:text-[20px] font-semibold leading-[28px] text-[#18181b] mb-6">
+              Background & Visibility
+            </h3>
+
+            <div className="space-y-4">
+              {/* Permitted Background Types */}
+              <div>
+                <label className="block text-[14px] leading-[20px] font-medium text-[#18181b] mb-2">
+                  Permitted Background Types
+                </label>
+                <Select
+                  value={permittedBackgroundTypes}
+                  onChange={(e) => updateBackgrounds('permitted', e.target.value)}
+                  options={[
+                    { value: 'light-dark', label: 'Light & Dark backgrounds' },
+                    { value: 'light-only', label: 'Light backgrounds only' },
+                    { value: 'dark-only', label: 'Dark backgrounds only' },
+                  ]}
+                  className="w-full max-w-[600px]"
+                />
+              </div>
+
+              {/* Dark Background Uses */}
+              <div>
+                <label className="block text-[14px] leading-[20px] font-medium text-[#18181b] mb-2">
+                  Dark Background Uses
+                </label>
+                <Select
+                  value={darkBackgroundUses}
+                  onChange={(e) => updateBackgrounds('darkUses', e.target.value)}
+                  options={[
+                    { value: 'white-reversed', label: 'White or Reversed Logo' },
+                    { value: 'white-only', label: 'White Logo only' },
+                    { value: 'reversed-only', label: 'Reversed Logo only' },
+                  ]}
+                  className="w-full max-w-[600px]"
+                />
+              </div>
+
+              {/* Minimum Contrast Ratio */}
+              <div>
+                <label className="block text-[14px] leading-[20px] font-medium text-[#18181b] mb-2">
+                  Minimum Contrast Ratio
+                </label>
+                <input
+                  type="text"
+                  value={minimumContrastRatio}
+                  onChange={(e) => updateBackgrounds('minContrast', e.target.value)}
+                  className="w-full max-w-[600px] px-4 py-3 bg-white border border-[#e4e4e7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#18181b] focus:border-transparent text-[16px] leading-[24px] text-[#18181b]"
+                  placeholder="e.g., 4.5:1"
+                />
+              </div>
+            </div>
+          </Card>
+
+          {/* Advanced: Logo Usage Rules Section */}
+          <Card className="mt-6 bg-white">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-[18px] md:text-[20px] font-semibold leading-[28px] text-[#18181b]">
+                Advanced: Logo Usage Rules
+              </h3>
+              <button
+                type="button"
+                onClick={() => updateRules('enabled', !logoUsageRulesEnabled)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${logoUsageRulesEnabled ? 'bg-[#18181b]' : 'bg-[#e4e4e7]'
+                  }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${logoUsageRulesEnabled ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                />
+              </button>
+            </div>
+
+            {logoUsageRulesEnabled && (
+              <div className="space-y-6">
+                {/* Size & Spacing */}
+                <div>
+                  <h4 className="text-[16px] font-semibold leading-[24px] text-[#18181b] mb-4">
+                    Size & Spacing
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Minimum Size */}
+                    <div>
+                      <label className="block text-[14px] leading-[20px] font-medium text-[#18181b] mb-2">
+                        Minimum Size
+                      </label>
+                      <input
+                        type="text"
+                        value={minimumSize}
+                        onChange={(e) => updateRules('minSize', e.target.value)}
+                        className="w-full px-4 py-3 bg-white border border-[#e4e4e7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#18181b] focus:border-transparent text-[16px] leading-[24px] text-[#18181b]"
+                        placeholder="24px"
+                      />
+                    </div>
+
+                    {/* Maximum Size */}
+                    <div>
+                      <label className="block text-[14px] leading-[20px] font-medium text-[#18181b] mb-2">
+                        Maximum Size
+                      </label>
+                      <input
+                        type="text"
+                        value={maximumSize}
+                        onChange={(e) => updateRules('maxSize', e.target.value)}
+                        className="w-full px-4 py-3 bg-white border border-[#e4e4e7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#18181b] focus:border-transparent text-[16px] leading-[24px] text-[#18181b]"
+                        placeholder="96px"
+                      />
+                    </div>
+
+                    {/* Clear Space */}
+                    <div>
+                      <label className="block text-[14px] leading-[20px] font-medium text-[#18181b] mb-2">
+                        Clear Space (x logo height)
+                      </label>
+                      <input
+                        type="text"
+                        value={clearSpace}
+                        onChange={(e) => updateRules('clearSpace', e.target.value)}
+                        className="w-full px-4 py-3 bg-white border border-[#e4e4e7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#18181b] focus:border-transparent text-[16px] leading-[24px] text-[#18181b]"
+                        placeholder="4"
+                      />
+                    </div>
+
+                    {/* Scaling Rule */}
+                    <div>
+                      <label className="block text-[14px] leading-[20px] font-medium text-[#18181b] mb-2">
+                        Scaling Rule
+                      </label>
+                      <Select
+                        value={scalingRule}
+                        onChange={(e) => updateRules('scaling', e.target.value)}
+                        options={[
+                          { value: 'maintain-aspect-ratio', label: 'Maintain aspect ratio' },
+                          { value: 'allow-stretch', label: 'Allow stretch' },
+                          { value: 'fixed-size', label: 'Fixed size' },
+                        ]}
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Placement */}
+                <div>
+                  <h4 className="text-[16px] font-semibold leading-[24px] text-[#18181b] mb-4">
+                    Placement
+                  </h4>
+                  <div className="space-y-4">
+                    {/* Default Placement Zone */}
+                    <div>
+                      <label className="block text-[14px] leading-[20px] font-medium text-[#18181b] mb-2">
+                        Default Placement Zone
+                      </label>
+                      <input
+                        type="text"
+                        value={defaultPlacementZone}
+                        onChange={(e) => updateRules('placement', e.target.value)}
+                        className="w-full max-w-[600px] px-4 py-3 bg-white border border-[#e4e4e7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#18181b] focus:border-transparent text-[16px] leading-[24px] text-[#18181b]"
+                        placeholder="Top-left"
+                      />
+                    </div>
+
+                    {/* Allow Alternate Placement */}
+                    <div className="flex items-center justify-between">
+                      <label className="text-[14px] leading-[20px] font-medium text-[#18181b]">
+                        Allow Alternate Placement
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => updateRules('allowAlternate', !allowAlternatePlacement)}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${allowAlternatePlacement ? 'bg-[#18181b]' : 'bg-[#e4e4e7]'
+                          }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${allowAlternatePlacement ? 'translate-x-6' : 'translate-x-1'
+                            }`}
+                        />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </Card>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="fixed bottom-0 left-0 lg:left-[240px] right-0 bg-white border-t border-[#e4e4e7] px-4 md:px-8 py-4 z-50">
+        <div className="max-w-[1280px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
+          <div className="text-[14px] leading-[20px] text-[#71717a]">
+            Step 1 of 6 — Next up: Typography
+          </div>
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            <Button variant="secondary" size="md" onClick={onBack} className="flex-1 md:flex-none justify-center">
+              Skip
+            </Button>
+            <Button variant="secondary" size="md" onClick={onBack} className="flex-1 md:flex-none justify-center">
+              Back
+            </Button>
+            <Button variant="primary" size="md" onClick={onNext} className="flex-1 md:flex-none justify-center">
+              Continue <ArrowRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

@@ -1,0 +1,86 @@
+import OpenAI from 'openai';
+import { ZodError } from 'zod';
+
+export const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+});
+
+export async function generateJSON<T>(schema: any, systemPrompt: string, userPrompt: string, maxRetries: number = 10): Promise<T> {
+    let attempt = 0;
+
+    // Initialize conversation history
+    const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+        { role: "system", content: systemPrompt + "\n RESPONSE MUST BE VALID JSON." },
+        { role: "user", content: userPrompt }
+    ];
+
+    console.log(`[OpenAI Input] System Prompt (first 100 chars): ${systemPrompt.substring(0, 100)}...`);
+    console.log(`[OpenAI User] User Prompt (first 100 chars): ${userPrompt.substring(0, 100)}...`);
+
+    while (attempt < maxRetries) {
+        attempt++;
+        let rawContent: string | null = null;
+
+        try {
+            console.log(`[OpenAI] Attempt ${attempt}/${maxRetries}...`);
+
+            const completion = await openai.chat.completions.create({
+                model: "gpt-4o-2024-08-06",
+                response_format: { type: "json_object" },
+                messages: messages,
+            });
+
+            rawContent = completion.choices[0].message.content;
+
+            if (!rawContent) {
+                throw new Error("No content generated");
+            }
+
+            // 1. Parse JSON
+            let json;
+            try {
+                json = JSON.parse(rawContent);
+            } catch (jsonError) {
+                throw new Error(`Invalid JSON format: ${(jsonError as Error).message}`);
+            }
+
+            // 2. Validate with Schema
+            if (schema && typeof schema.parse === 'function') {
+                const parsed = schema.parse(json);
+                console.log(`[OpenAI Output] Valid JSON generated on attempt ${attempt}`);
+                return parsed;
+            }
+
+            return json as T;
+
+        } catch (e) {
+            console.error(`[OpenAI] specific error on attempt ${attempt}:`, e);
+
+            // If we've reached max retries, throw the final error
+            if (attempt >= maxRetries) {
+                throw new Error(`Failed to generate/validate JSON after ${maxRetries} attempts. Last error: ${(e as Error).message}`);
+            }
+
+            // Prepare for retry: Feed back the error to the AI
+            let errorMessage = (e as Error).message;
+            if (e instanceof ZodError) {
+                // Format Zod errors to be more readable for the AI
+                errorMessage = `Schema Validation Failed: ${e.issues.map(err => `${err.path.join('.')}: ${err.message}`).join(', ')}`;
+            }
+
+            // Append the bad response and the error to the history
+            if (rawContent) {
+                messages.push({ role: "assistant", content: rawContent });
+            }
+
+            messages.push({
+                role: "user",
+                content: `The previous response was invalid. Please fix the following errors and return ONLY the valid JSON:\n\nError: ${errorMessage}`
+            });
+
+            console.log(`[OpenAI] Retrying with error feedback...`);
+        }
+    }
+
+    throw new Error("Unexpected loop exit");
+}
