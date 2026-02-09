@@ -1,18 +1,83 @@
-# global
+# === ENVIRONMENT FILES ===
 .env
 .env.*
-node_modules
-dist
-build
-.next
-logs
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# frontend
-manifestr-fe-main/node_modules
-manifestr-fe-main/.next
-manifestr-fe-main/.env*
+# === NODE MODULES ===
+node_modules/
+**/node_modules/
+manifestr-fe-main/node_modules/
+manifestr-be-main/node_modules/
 
-# backend
-manifestr-be-main/node_modules
-manifestr-be-main/dist
-manifestr-be-main/.env*
+# === BUILD OUTPUT ===
+dist/
+build/
+out/
+.next/
+**/dist/
+**/build/
+**/.next/
+manifestr-fe-main/.next/
+manifestr-be-main/dist/
+
+# === LOGS ===
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# === OS FILES ===
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# === LARGE FILES ===
+*.zip
+*.tar.gz
+*.rar
+*.7z
+*.dmg
+*.iso
+*.mp4
+*.mov
+*.avi
+*.mkv
+
+# === IDE ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.cursor/
+
+# === TYPESCRIPT ===
+*.tsbuildinfo
+
+# === CACHE ===
+.cache/
+.parcel-cache/
+.npm/
+.eslintcache
+.stylelintcache
+
+# === TESTING ===
+coverage/
+.nyc_output/
+
+# === MISC ===
+.temp/
+temp/
+tmp/
+*.tmp
