@@ -6,6 +6,7 @@ import { ChevronRight, ChevronDown, CheckCircle2, ChevronUp, Sun, Moon, Monitor,
 import Image from 'next/image'
 import AppHeader from '../components/layout/AppHeader'
 import ToggleSwitch from '../components/forms/ToggleSwitch'
+import { useAuth } from '../contexts/AuthContext'
 
 const tabs = ['General', 'Profile', 'Team', 'Plans', 'Billings', 'Security']
 
@@ -4785,6 +4786,37 @@ function DataMemoryTabContent() {
   )
 }
 
+// Logout Button Component
+function LogoutButton() {
+  const { logout } = useAuth()
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+
+  const handleLogout = async () => {
+    if (window.confirm('Are you sure you want to log out?')) {
+      setIsLoggingOut(true)
+      try {
+        await logout()
+      } catch (error) {
+        console.error('Logout error:', error)
+        setIsLoggingOut(false)
+      }
+    }
+  }
+
+  return (
+    <motion.button
+      onClick={handleLogout}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      disabled={isLoggingOut}
+      className="w-full bg-[#18181b] text-white rounded-md h-[40px] flex items-center justify-center gap-2 text-[14px] font-medium leading-[20px] hover:bg-[#27272a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      <LogOut className="w-4 h-4" />
+      {isLoggingOut ? 'Logging out...' : 'Log Out'}
+    </motion.button>
+  )
+}
+
 // Security Tab Component
 function SecurityTabContent() {
   const [currentPassword, setCurrentPassword] = useState('')
@@ -5244,6 +5276,26 @@ function SecurityTabContent() {
               </motion.div>
             )
           })}
+        </div>
+      </div>
+
+      {/* Logout Section */}
+      <div className="bg-[#f4f4f4] border border-[#e4e4e7] rounded-lg overflow-hidden">
+        <div className="pt-6 px-6 pb-0">
+          <div className="h-[52px] flex items-center justify-between">
+            <div className="flex flex-col gap-1">
+              <h3 className="text-[20px] font-semibold leading-[28px] text-[#18181b]">
+                Log Out
+              </h3>
+              <p className="text-[14px] leading-[20px] text-[#71717a]">
+                Sign out of your account on this device
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6">
+          <LogoutButton />
         </div>
       </div>
 

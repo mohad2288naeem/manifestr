@@ -55,8 +55,13 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
+        // Don't try to refresh token on login/signup requests - just let them fail
+        const isAuthRequest = originalRequest.url?.includes('/auth/login') ||
+            originalRequest.url?.includes('/auth/signup') ||
+            originalRequest.url?.includes('/auth/refresh-token');
+
         // Prevent infinite loops
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        if (error.response?.status === 401 && !originalRequest._retry && !isAuthRequest) {
             if (isRefreshing) {
                 return new Promise(function (resolve, reject) {
                     failedQueue.push({ resolve, reject });

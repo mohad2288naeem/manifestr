@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import '../styles/global.css'
+import '@blueprintjs/core/lib/css/blueprint.css'
 import "../components/tiptap-node/image-upload-node/image-upload-node.scss"
 import "../components/tiptap-node/blockquote-node/blockquote-node.scss"
 import "../components/tiptap-node/code-block-node/code-block-node.scss"

@@ -7,8 +7,15 @@ import Input from '../components/forms/Input'
 import Checkbox from '../components/forms/Checkbox'
 import Button from '../components/ui/Button'
 import GoogleIcon from '../components/icons/GoogleIcon'
+import { Toaster, Intent } from '@blueprintjs/core'
 
 import { useAuth } from '../contexts/AuthContext'
+
+// Create toaster instance
+const AppToaster = typeof window !== 'undefined' ? Toaster.create({
+  position: 'top',
+  maxToasts: 3,
+}) : null
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -43,18 +50,74 @@ export default function Login() {
     setErrors(newErrors)
 
     if (Object.keys(newErrors).length === 0) {
+      setIsSubmitting(true)
+
       try {
-        setIsSubmitting(true)
+        console.log('🔵 Login attempt started...')
         await login(email, password)
-      } catch (err) {
-        console.error('Login error:', err)
-        if (err.response?.status === 401) {
-          setServerError('Invalid email or password.')
-        } else {
-          setServerError(err.response?.data?.message || 'Something went wrong. Please try again.')
+        console.log('✅ Login successful!')
+
+        // Success - AuthContext handles redirect to /home
+        if (AppToaster) {
+          console.log('🎉 Showing success toast')
+          AppToaster.show({
+            message: 'Welcome back! Redirecting...',
+            intent: Intent.SUCCESS,
+            icon: 'tick-circle',
+            timeout: 2000,
+          })
         }
-      } finally {
+      } catch (err) {
+        console.log('❌ LOGIN ERROR CAUGHT:', err)
+        console.log('❌ Error status:', err.response?.status)
+        console.log('❌ Error message:', err.response?.data?.message)
+
+        // Always reset submitting state on error
         setIsSubmitting(false)
+        console.log('🔄 Button state reset to "Sign in"')
+
+        let errorMessage = 'Something went wrong. Please try again.'
+
+        // Handle specific error cases
+        if (err.response?.status === 401) {
+          // Invalid credentials
+          errorMessage = 'Incorrect password or email! Please login with correct credentials.'
+          console.log('🔴 401 Error - Wrong credentials!')
+        } else if (err.response?.data?.message) {
+          // Server provided a specific message
+          errorMessage = err.response.data.message
+        } else if (err.message) {
+          // Generic error message
+          errorMessage = err.message
+        }
+
+        console.log('📢 Error message:', errorMessage)
+
+        // Show beautiful toast notification
+        if (AppToaster) {
+          console.log('🍞 Showing toast with AppToaster:', AppToaster)
+          try {
+            AppToaster.show({
+              message: errorMessage,
+              intent: Intent.DANGER,
+              icon: 'error',
+              timeout: 5000,
+            })
+            console.log('✅ Toast shown successfully!')
+          } catch (toastError) {
+            console.error('❌ Toast error:', toastError)
+            // Fallback: at least show alert
+            alert(errorMessage)
+          }
+        } else {
+          console.error('❌ AppToaster is null!')
+          // Fallback: show alert
+          alert(errorMessage)
+        }
+
+        // Also set server error for the inline display
+        setServerError(errorMessage)
+        console.log('📝 Server error set:', errorMessage)
       }
     }
   }
@@ -115,12 +178,15 @@ export default function Login() {
                   {serverError}
                 </div>
               )}
-              <form onSubmit={handleSubmit} className="flex flex-col gap-6 items-start w-full rounded-xl">
+              <form onSubmit={handleSubmit} className="flex flex-col gap-6 items-start w-full rounded-xl" name="login-form">
                 <div className="flex flex-col gap-5 items-start w-full">
                   {/* Email Input */}
                   <Input
                     label="Email address"
                     type="email"
+                    name="email"
+                    id="email"
+                    autoComplete="email"
                     placeholder="your@email.com"
                     helperText={!touched || !errors.email ? "Your email stays private." : undefined}
                     error={touched && errors.email ? errors.email : undefined}
@@ -140,6 +206,9 @@ export default function Login() {
                   <Input
                     label="Password"
                     type="password"
+                    name="password"
+                    id="password"
+                    autoComplete="current-password"
                     placeholder="••••••••"
                     helperText={!touched || !errors.password ? "Your data is encrypted and secure." : undefined}
                     error={touched && errors.password ? errors.password : undefined}
