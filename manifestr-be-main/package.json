@@ -5,6 +5,7 @@
   "main": "app.ts",
   "scripts": {
     "build": "tsc",
+    "start": "nodemon src/index.ts",
     "start:prod": "ts-node src/index.ts",
     "start:dev": "nodemon src/index.ts",
     "start:agents:prod": "ts-node src/scripts/run-agents.ts",

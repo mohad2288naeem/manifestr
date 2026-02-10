@@ -32,7 +32,7 @@ class App {
         // Configure CORS
         const allowedOrigins = process.env.CORS_ALLOWED_ORIGINS
             ? process.env.CORS_ALLOWED_ORIGINS.split(',').map((origin) => origin.trim())
-            : ['http://localhost:5173', 'http://localhost:3000', `http://localhost:${this.port}`];
+            : ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:3001', `http://localhost:${this.port}`];
 
         this.app.use(
             cors({

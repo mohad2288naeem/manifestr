@@ -17,6 +17,8 @@ export default function ProfileDropdown() {
     await logout()
   }
 
+
+
   // Close popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -124,8 +126,8 @@ export default function ProfileDropdown() {
                       <button
                         onClick={() => setTheme('light')}
                         className={`px-2 py-1 rounded transition-colors ${theme === 'light'
-                            ? 'bg-white border border-[#e4e4e7]'
-                            : 'bg-transparent'
+                          ? 'bg-white border border-[#e4e4e7]'
+                          : 'bg-transparent'
                           }`}
                       >
                         <Sun className="w-4 h-4 text-[#18181b]" />
@@ -133,8 +135,8 @@ export default function ProfileDropdown() {
                       <button
                         onClick={() => setTheme('dark')}
                         className={`px-2 py-1 rounded transition-colors ${theme === 'dark'
-                            ? 'bg-white border border-[#e4e4e7]'
-                            : 'bg-transparent'
+                          ? 'bg-white border border-[#e4e4e7]'
+                          : 'bg-transparent'
                           }`}
                       >
                         <Moon className="w-4 h-4 text-[#18181b]" />
