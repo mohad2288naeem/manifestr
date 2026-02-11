@@ -79,7 +79,7 @@ export default function PhotoEditor({ imageSrc = '/assets/dummy/dummy-trainer.jp
                         height: img.height,
                         selectable: true,
                         draggable: false, // Keep it pinned
-                        alwaysOnBottom: true, // Keep at bottom
+                        alwaysOnTop: false, // Keep at bottom
                         name: 'base-image'
                     });
 

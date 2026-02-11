@@ -7,7 +7,12 @@ import { WORKBOOK_DATA } from './data';
 
 import '@univerjs/preset-sheets-core/lib/index.css';
 
-const UniverSheet = forwardRef(({ onAPIReady, data }, ref) => {
+interface UniverSheetProps {
+    onAPIReady?: (univerAPI: any) => void;
+    data?: any;
+}
+
+const UniverSheet = forwardRef<any, UniverSheetProps>(({ onAPIReady, data }, ref) => {
     const containerRef = useRef(null);
     const univerAPIRef = useRef(null);
 
