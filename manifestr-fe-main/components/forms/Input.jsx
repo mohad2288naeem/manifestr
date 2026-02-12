@@ -26,7 +26,7 @@ export default function Input({
     <div className={`flex flex-col gap-1.5 items-start relative w-full ${otherClasses}`}>
       {/* Label */}
       <div className="flex gap-0.5 items-start">
-        <label className="text-l2-medium text-base-muted-foreground+">
+        <label className="text-l2-medium text-[#52525B]">
           {label}
         </label>
         {required && (
@@ -70,7 +70,7 @@ export default function Input({
           {error}
         </p>
       ) : helperText && (
-        <p className="text-l2-regular text-base-muted-foreground">
+        <p className="text-l2-regular text-[#71717A]">
           {helperText}
         </p>
       )}

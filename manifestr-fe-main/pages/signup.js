@@ -273,7 +273,7 @@ export default function SignUp() {
 
       <div className="min-h-screen flex flex-col lg:flex-row bg-white">
         {/* Left Section - Sign Up Form */}
-        <div className="flex-1 flex flex-col items-center justify-center w-full lg:min-w-[480px] relative py-12 lg:py-0">
+        <div className="flex-1 flex flex-col items-center justify-center w-full lg:min-w-[480px] relative !py-14">
           {/* Logo - Top Left */}
           <div className="absolute left-6 top-6 lg:left-8 lg:top-8">
             <Logo size="md" />
@@ -281,20 +281,20 @@ export default function SignUp() {
 
           {/* Footer - Bottom Left */}
           <div className="absolute bottom-6 left-6 lg:bottom-8 lg:left-8 flex flex-wrap gap-3 items-center">
-            <p className="text-l2-regular text-[#71717b]">
+            <p className="text-l2-regular text-[#71717b] !m-0 !p-0">
               © MANIFESTR LLC 2050
             </p>
             <span className="hidden sm:inline text-zinc-300 text-base leading-6 tracking-[-0.3125px]">|</span>
             <Link
               href="/privacy"
-              className="text-l2-regular text-[#52525c] hover:opacity-80"
+              className="text-l2-regular !text-[#71717B] hover:opacity-80"
             >
               Privacy Policy
             </Link>
             <span className="hidden sm:inline text-zinc-300 text-base leading-6 tracking-[-0.3125px]">|</span>
             <Link
               href="/terms"
-              className="text-l2-regular text-[#52525c] hover:opacity-80"
+              className="text-l2-regular !text-[#71717B] hover:opacity-80"
             >
               Terms of Use
             </Link>
@@ -476,14 +476,14 @@ export default function SignUp() {
               </AnimatePresence>
 
               {/* Existing User Prompt */}
-              {(step === 1 || step === 3) && (
+              {step === 1 && (
                 <div className="flex gap-1 items-baseline justify-center">
-                  <p className="text-l2-regular text-base-muted-foreground">
+                  <p className="text-l2-regular text-[#71717A]">
                     Already have an account?
                   </p>
                   <Link
                     href="/login"
-                    className="text-l2-medium text-base-secondary hover:opacity-80"
+                    className="text-l2-medium !text-[#18181B] hover:opacity-80"
                   >
                     Log in
                   </Link>

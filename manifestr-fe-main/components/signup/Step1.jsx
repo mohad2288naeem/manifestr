@@ -16,7 +16,7 @@ export default function Step1({
   return (
     <form
       onSubmit={onSubmit}
-      className="flex flex-col gap-6 items-start w-full rounded-xl"
+      className="flex flex-col items-start w-full rounded-xl"
     >
       <div className="flex flex-col gap-5 items-start w-full">
         {/* Email Input */}
@@ -57,7 +57,7 @@ export default function Step1({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex flex-col gap-3 items-center w-full">
+      <div className="flex flex-col gap-3 items-center mt-6 w-full">
         <div className="flex flex-col gap-4 items-start w-full">
           <Button type="submit" variant="primary" size="md" className="w-full">
             Join MANIFESTR.

@@ -140,20 +140,20 @@ export default function Login() {
 
           {/* Footer - Bottom Left */}
           <div className="absolute bottom-6 left-6 lg:bottom-8 lg:left-8 flex flex-wrap gap-3 items-center">
-            <p className="text-l2-regular text-[#71717b]">
+            <p className="text-l2-regular text-[#71717b] !m-0 !p-0">
               © MANIFESTR LLC 2050
             </p>
             <span className="hidden sm:inline text-zinc-300 text-base leading-6 tracking-[-0.3125px]">|</span>
             <Link
               href="/privacy"
-              className="text-l2-regular text-[#52525c] hover:opacity-80"
+              className="text-l2-regular !text-[#71717B] hover:opacity-80"
             >
               Privacy Policy
             </Link>
             <span className="hidden sm:inline text-zinc-300 text-base leading-6 tracking-[-0.3125px]">|</span>
             <Link
               href="/terms"
-              className="text-l2-regular text-[#52525c] hover:opacity-80"
+              className="text-l2-regular !text-[#71717B] hover:opacity-80"
             >
               Terms of Use
             </Link>

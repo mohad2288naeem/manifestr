@@ -58,7 +58,7 @@ export default function Step3({
   return (
     <form
       onSubmit={onSubmit}
-      className="flex flex-col gap-6 items-start w-full rounded-xl"
+      className="flex flex-col items-start w-full rounded-xl"
     >
       <div className="flex flex-col gap-5 items-start w-full">
         {/* Date of Birth Input */}
@@ -85,7 +85,7 @@ export default function Step3({
         {/* Gender Radio Buttons */}
         <div className="flex flex-col gap-1.5 items-start w-full">
           <div className="flex gap-0.5 items-start">
-            <label className="text-l2-medium text-[#464649]">
+            <label className="text-l2-medium text-[#52525B]">
               Gender
             </label>
             <span className="text-l2-medium text-[#dc2626]">*</span>
@@ -119,7 +119,7 @@ export default function Step3({
       </div>
 
       {/* Checkboxes */}
-      <div className="flex flex-col gap-4 items-start w-full">
+      <div className="flex flex-col mt-6 gap-4 items-start w-full">
         <Checkbox
           checked={earlyAccess}
           onChange={onEarlyAccessChange}
@@ -138,7 +138,7 @@ export default function Step3({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex flex-col gap-4 items-start w-full">
+      <div className="flex flex-col mt-6 gap-4 items-start w-full">
         <Button
           type="submit"
           variant="primary"

@@ -17,7 +17,7 @@ export default function Step2({
   return (
     <form
       onSubmit={onSubmit}
-      className="flex flex-col gap-6 items-start w-full rounded-xl"
+      className="flex flex-col items-start w-full rounded-xl"
     >
       <div className="flex flex-col gap-5 items-start w-full">
         {/* First Name Input */}
@@ -44,7 +44,7 @@ export default function Step2({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex flex-col gap-4 items-start w-full">
+      <div className="flex flex-col mt-6 gap-4 items-start w-full">
         <Button 
           type="submit" 
           variant="primary" 
