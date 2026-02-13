@@ -281,7 +281,7 @@ export default function SignUp() {
 
           {/* Footer - Bottom Left */}
           <div className="absolute bottom-6 left-6 lg:bottom-8 lg:left-8 flex flex-wrap gap-3 items-center">
-            <p className="text-l2-regular text-[#71717b] !m-0 !p-0">
+            <p className="text-l2-regular text-[#71717b]">
               © MANIFESTR LLC 2050
             </p>
             <span className="hidden sm:inline text-zinc-300 text-base leading-6 tracking-[-0.3125px]">|</span>

@@ -1,7 +1,5 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import '../styles/global.css'
-import '@blueprintjs/core/lib/css/blueprint.css'
 import "../components/tiptap-node/image-upload-node/image-upload-node.scss"
 import "../components/tiptap-node/blockquote-node/blockquote-node.scss"
 import "../components/tiptap-node/code-block-node/code-block-node.scss"
@@ -28,14 +26,23 @@ import "../components/tiptap-ui-primitive/badge/badge.scss"
 import { SidebarProvider } from '../contexts/SidebarContext'
 import { AuthProvider } from '../contexts/AuthContext'
 import AuthGuard from '../components/auth/AuthGuard'
+import '../styles/global.css'
+import { useEffect } from 'react'
 
 const POLOTNO_EDITOR_PAGES = [
   '/presentation-editor',
   '/image-editor'
 ]
+
 export default function App({ Component, pageProps }) {
   const router = useRouter();
   const isPolotnoPage = POLOTNO_EDITOR_PAGES.some(path => router.pathname.startsWith(path));
+
+  useEffect(() => {
+    if (isPolotnoPage) {
+      import('@blueprintjs/core/lib/css/blueprint.css');
+    }
+  }, [isPolotnoPage]);
 
   return (
     <>
