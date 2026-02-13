@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Button from '../ui/Button'
 import Input from '../forms/Input'
 import Select from '../forms/Select'
+import { ArrowRight } from 'lucide-react'
 
 export default function Step1({ onNext, onSkip }) {
   const [areaOfExpertise, setAreaOfExpertise] = useState('')
@@ -22,7 +23,7 @@ export default function Step1({ onNext, onSkip }) {
   return (
     <div className="flex flex-col gap-8 w-full max-w-[400px] mx-auto">
       {/* Title and Description */}
-      <div className="flex flex-col gap-2 items-center text-center mt-[64px]">
+      <div className="flex flex-col gap-2 items-center text-center mt-5">
         <h1 className="text-[24px] leading-[40px] font-semibold text-[#09090b] font-hero">
           Let's set up MANIFESTR for you.
         </h1>
@@ -37,7 +38,7 @@ export default function Step1({ onNext, onSkip }) {
           {/* Card Header */}
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full bg-black" />
+              <div className="w-20 h-20 rounded-full bg-black shrink-0" />
               <h2 className="text-[20px] leading-[28px] font-semibold text-[#09090b] font-hero">
                 Your Work Profile
               </h2>
@@ -51,7 +52,11 @@ export default function Step1({ onNext, onSkip }) {
           <form onSubmit={handleSubmit} className="flex flex-col gap-6">
             {/* Area of Expertise */}
             <Select
-              label="What is your Area of Expertise?"
+              label={
+                <>
+                  What is your <span className="font-bold">Area of Expertise</span>?
+                </>
+              }
               placeholder="e.g., Digital Marketing, Management."
               value={areaOfExpertise}
               onChange={(e) => setAreaOfExpertise(e.target.value)}
@@ -70,7 +75,11 @@ export default function Step1({ onNext, onSkip }) {
 
             {/* Job Title */}
             <Input
-              label="What is your Job Title?"
+              label={
+                <>
+                  What is your <span className="font-bold">Job Title</span>?
+                </>
+              }
               type="text"
               placeholder="e.g., Marketing Director, Manager."
               value={jobTitle}
@@ -80,7 +89,11 @@ export default function Step1({ onNext, onSkip }) {
 
             {/* Industry */}
             <Select
-              label="Which industry do you operate in?"
+              label={
+                <>
+                  Which <span className="font-bold">industry</span> do you operate in?
+                </>
+              }
               placeholder="Select your industry."
               value={industry}
               onChange={(e) => setIndustry(e.target.value)}
@@ -106,7 +119,7 @@ export default function Step1({ onNext, onSkip }) {
                 className="w-full"
                 disabled={!isFormValid}
               >
-                Continue →
+                Continue <ArrowRight size={15} style={{marginLeft: 5}} />
               </Button>
               <Button
                 type="button"

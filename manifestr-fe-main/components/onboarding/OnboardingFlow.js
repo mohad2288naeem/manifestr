@@ -358,9 +358,9 @@ export default function OnboardingFlow({ onComplete, onSkip }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="min-h-screen bg-[#F4F4F5] relative overflow-hidden">
+      <div className="min-h-screen bg-[#F4F4F5] relative overflow-y-auto flex flex-col items-center">
         {/* Multiple Marquee Lines Filling Screen */}
-        <div className="absolute top-[-2%] left-0 w-full h-[200vh] overflow-hidden pointer-events-none opacity-[0.6] z-0">
+        <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-[0.6] z-0">
           {[...Array(8)].map((_, lineIndex) => {
             const lineHeight = 150
             const gap = -10
@@ -383,147 +383,149 @@ export default function OnboardingFlow({ onComplete, onSkip }) {
 
         {/* Stepper Header (only shown during steps) */}
         {onboardingStep > 0 && (
-          <div className="absolute top-0 left-0 w-full z-20">
+          <div className="fixed top-0 left-0 w-full z-20">
             <StepperHeader step={onboardingStep} totalSteps={4} />
           </div>
         )}
 
-        {/* Centered Content */}
-        <AnimatePresence mode="wait">
-          {onboardingStep === 0 && !showWelcome ? (
-            <motion.div
-              key="loader"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.4 }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col gap-6 items-center z-10"
-            >
-              {/* Logo */}
+        {/* Content Container with top padding to avoid header overlap */}
+        <div className={`w-full flex-1 flex flex-col items-center z-10 py-12 md:py-20 ${onboardingStep > 0 ? 'pt-24' : 'justify-center'}`}>
+          <AnimatePresence mode="wait">
+            {onboardingStep === 0 && !showWelcome ? (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-              >
-                <Logo size="xl" />
-              </motion.div>
-
-              {/* Loader */}
-              <motion.div
+                key="loader"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.3, duration: 0.4 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+                className="flex flex-col gap-6 items-center"
               >
-                <Loader message="Shaping your strategy..." duration={3000} />
+                {/* Logo */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                >
+                  <Logo size="xl" />
+                </motion.div>
+
+                {/* Loader */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3, duration: 0.4 }}
+                >
+                  <Loader message="Shaping your strategy..." duration={3000} />
+                </motion.div>
               </motion.div>
-            </motion.div>
-          ) : onboardingStep === 0 ? (
-            <motion.div
-              key="welcome"
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[520px] px-6 z-10"
-            >
-              {/* Welcome Modal */}
-              <div className="bg-white rounded-2xl shadow-[0px_44px_110px_0px_rgba(22,34,51,0.2)] p-8">
-                <div className="flex flex-col gap-6">
-                  {/* Title */}
-                  <motion.h1
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2, duration: 0.4 }}
-                    className="text-[28px] text-center leading-[36px] font-semibold text-[#09090b] font-hero"
-                  >
-                    Welcome to MANIFESTR
-                  </motion.h1>
-
-                  {/* Description */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3, duration: 0.4 }}
-                    className="flex flex-col gap-3"
-                  >
-                    <p className="text-l2-regular text-base-foreground">
-                      Your intelligent workspace for ideas that move faster.
-                    </p>
-                    <p className="text-l2-regular text-base-foreground">
-                      From today, you're not working alone.
-                    </p>
-                    <p className="text-l2-regular text-base-foreground">
-                      Every action, document, and idea is powered by intelligence built to help you work faster, think clearer, and execute smarter.
-                    </p>
-                    <p className="text-l2-regular text-base-foreground">
-                      This is your new command center for bringing ideas to life.
-                    </p>
-                  </motion.div>
-
-                  {/* Buttons */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4, duration: 0.4 }}
-                    className="flex flex-col gap-3"
-                  >
-                    <Button
-                      variant="primary"
-                      size="md"
-                      className="w-full"
-                      onClick={handleLetsGo}
+            ) : onboardingStep === 0 ? (
+              <motion.div
+                key="welcome"
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+                className="w-full max-w-[520px] px-6"
+              >
+                {/* Welcome Modal */}
+                <div className="bg-white rounded-2xl shadow-[0px_44px_110px_0px_rgba(22,34,51,0.2)] p-8">
+                  <div className="flex flex-col gap-6">
+                    {/* Title */}
+                    <motion.h1
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2, duration: 0.4 }}
+                      className="text-[28px] text-center leading-[36px] font-semibold text-[#09090b] font-hero"
                     >
-                      Lets Go →
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      size="md"
-                      className="w-full"
-                      onClick={handleSkip}
-                    >
-                      Skip for now
-                    </Button>
-                  </motion.div>
+                      Welcome to MANIFESTR
+                    </motion.h1>
 
-                  {/* AI Status Indicator */}
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.5, duration: 0.4 }}
-                    className="flex items-center justify-center gap-2 pt-2"
-                  >
-                    <div className="w-2 h-2 rounded-full bg-black" />
-                    <p className="text-l2-regular text-base-muted-foreground">
-                      MANIFESTR AI is ready to guide you
-                    </p>
-                  </motion.div>
+                    {/* Description */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3, duration: 0.4 }}
+                      className="flex flex-col gap-3"
+                    >
+                      <p className="text-l2-regular text-base-foreground">
+                        Your intelligent workspace for ideas that move faster.
+                      </p>
+                      <p className="text-l2-regular text-base-foreground">
+                        From today, you're not working alone.
+                      </p>
+                      <p className="text-l2-regular text-base-foreground">
+                        Every action, document, and idea is powered by intelligence built to help you work faster, think clearer, and execute smarter.
+                      </p>
+                      <p className="text-l2-regular text-base-foreground">
+                        This is your new command center for bringing ideas to life.
+                      </p>
+                    </motion.div>
+
+                    {/* Buttons */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4, duration: 0.4 }}
+                      className="flex flex-col gap-3"
+                    >
+                      <Button
+                        variant="primary"
+                        size="md"
+                        className="w-full"
+                        onClick={handleLetsGo}
+                      >
+                        Lets Go →
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        size="md"
+                        className="w-full"
+                        onClick={handleSkip}
+                      >
+                        Skip for now
+                      </Button>
+                    </motion.div>
+
+                    {/* AI Status Indicator */}
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.5, duration: 0.4 }}
+                      className="flex items-center justify-center gap-2 pt-2"
+                    >
+                      <div className="w-2 h-2 rounded-full bg-black" />
+                      <p className="text-l2-regular text-base-muted-foreground">
+                        MANIFESTR AI is ready to guide you
+                      </p>
+                    </motion.div>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              key={`step-${onboardingStep}`}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.4, ease: 'easeInOut' }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[800px] px-6 z-10"
-            >
-              {onboardingStep === 1 && (
-                <Step1 onNext={handleStepNext} onSkip={handleStepSkip} />
-              )}
-              {onboardingStep === 2 && (
-                <Step2 onNext={handleStepNext} onBack={handleStepBack} />
-              )}
-              {onboardingStep === 3 && (
-                <Step3 onNext={handleStepNext} onBack={handleStepBack} isSubmitting={isSubmitting} />
-              )}
-              {onboardingStep === 4 && (
-                <Step4 onFinish={handleFinish} />
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
+              </motion.div>
+            ) : (
+              <motion.div
+                key={`step-${onboardingStep}`}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.4, ease: 'easeInOut' }}
+                className="w-full max-w-[800px] px-6 my-auto"
+              >
+                {onboardingStep === 1 && (
+                  <Step1 onNext={handleStepNext} onSkip={handleStepSkip} />
+                )}
+                {onboardingStep === 2 && (
+                  <Step2 onNext={handleStepNext} onBack={handleStepBack} />
+                )}
+                {onboardingStep === 3 && (
+                  <Step3 onNext={handleStepNext} onBack={handleStepBack} isSubmitting={isSubmitting} />
+                )}
+                {onboardingStep === 4 && (
+                  <Step4 onFinish={handleFinish} />
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </>
   )

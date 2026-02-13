@@ -8,7 +8,7 @@ export default function StepperHeader({ step, totalSteps = 4 }) {
         <div className="flex h-[72px] items-center justify-between max-w-[1280px] w-full px-8">
           <Logo size="md" />
           <div className="flex gap-6 items-center justify-end">
-            <p className="text-l1-medium text-base-muted-foreground">
+            <p className="text-l1-medium text-base-muted-foreground text-[#71717A]">
               Step {step} of {totalSteps}
             </p>
           </div>
