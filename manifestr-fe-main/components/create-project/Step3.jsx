@@ -31,10 +31,11 @@ function WorkingStyleCard({ style, isSelected, onClick }) {
 
   return (
     <div
+      data-style-card="true"
       onClick={onClick}
       className={`flex flex-col items-start pb-[34px] pt-[42px] px-6 rounded-[24px] h-[360px] cursor-pointer transition-all duration-200 ${isSelected
-          ? 'border-2 border-green-500 shadow-[3px_3px_25px_0px_rgba(0,0,0,0.13)]'
-          : 'border-2 border-transparent shadow-[3px_3px_25px_0px_rgba(0,0,0,0.13)] hover:shadow-[3px_3px_30px_0px_rgba(0,0,0,0.18)]'
+          ? 'border-2 border-[#000000] shadow-[2px_2px_15px_0px_rgba(0,0,0,0.13)]'
+          : 'border-2 border-transparent shadow-[2px_2px_15px_0px_rgba(0,0,0,0.13)] hover:shadow-[3px_3px_30px_0px_rgba(0,0,0,0.18)]'
         }`}
     >
       <div className="flex flex-col gap-8 items-center mb-[-10px] w-full">
@@ -51,7 +52,7 @@ function WorkingStyleCard({ style, isSelected, onClick }) {
             </h3>
           </div>
           <div className="flex flex-col font-normal justify-center text-[16px] text-base-muted-foreground+ text-center tracking-[0.8px] w-full">
-            <p className="leading-[24px] whitespace-pre-wrap">
+            <p className="leading-[24px] whitespace-pre-wrap text-[#52525B]">
               {style.subtitle}
               <br aria-hidden="true" />
               <br aria-hidden="true" />
@@ -62,7 +63,7 @@ function WorkingStyleCard({ style, isSelected, onClick }) {
 
       {/* Description */}
       <div className="flex flex-col font-normal justify-center mb-[-10px] text-[16px] text-base-muted-foreground+ text-center w-full">
-        <p className="leading-[24px]">{style.description}</p>
+        <p className="leading-[24px] text-[#52525B]">{style.description}</p>
       </div>
     </div>
   )

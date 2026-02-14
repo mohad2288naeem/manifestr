@@ -34,7 +34,7 @@ export default function StatsCard() {
           </span>
         </div>
         <div>
-          <p className="text-[24px] font-semibold leading-[49px] text-black mb-0">You Are Level 2</p>
+          <p className="text-[24px] font-semibold leading-[35px] text-black mb-0">You Are Level 2</p>
           <p className="text-[14px] font-normal leading-[21px] text-black">500 points to the next level</p>
         </div>
       </div>

@@ -159,9 +159,10 @@ const documentTypesByOutput = {
 function DocumentCard({ document, isSelected, onClick }) {
   return (
     <div
+      data-doc-card="true"
       onClick={onClick}
       className={`flex flex-col items-start rounded-xl overflow-hidden cursor-pointer transition-all duration-200 ${isSelected
-          ? 'border-2 border-green-500 shadow-lg'
+          ? 'border-2 border-[#000000] shadow-lg'
           : 'border-2 border-transparent shadow-sm hover:shadow-md'
         }`}
     >
@@ -302,13 +303,13 @@ export default function Step2DocumentSelection({ selectedTool, selectedDocument,
       {/* Search Bar */}
       <div className="w-full max-w-[630px]">
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-base-muted-foreground" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#7c7c7c]" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Not Seeing it? Just type it in"
-            className="w-full h-[40px] pl-12 pr-4 border border-base-border rounded-lg bg-white text-[14px] leading-[20px] text-black placeholder:text-base-muted-foreground focus:outline-none focus:ring-2 focus:ring-base-secondary focus:border-transparent"
+            className="w-full h-[40px] pl-12 pr-4 border border-[#dadada] rounded-lg bg-[#f6f6f6] text-[14px] leading-[20px] text-black placeholder:text-base-muted-foreground focus:outline-none focus:ring-1 focus:ring-[#dadada] focus:border-[#dadada]"
           />
         </div>
       </div>
@@ -331,7 +332,7 @@ export default function Step2DocumentSelection({ selectedTool, selectedDocument,
             onChange={(e) => setConfidentialMode(e.target.checked)}
             className="sr-only peer"
           />
-          <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-base-secondary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-base-secondary"></div>
+          <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-base-secondary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#18181B]"></div>
         </label>
       </div>
     </div>

@@ -65,7 +65,7 @@ export default function Step4BriefMe({ projectData, updateProjectData }) {
         </div>
         <div className="flex flex-col gap-1.5 items-start w-[185px]">
           <div className="flex gap-2.5 items-center justify-center pt-0.5 pb-0 px-0 w-full">
-            <p className="font-medium leading-5 text-base-foreground text-sm w-full">
+            <p className="font-medium leading-5 text-base-foreground text-sm w-full text-left">
               {label}
             </p>
           </div>
@@ -95,7 +95,7 @@ export default function Step4BriefMe({ projectData, updateProjectData }) {
           </div>
         </div>
         <div className="flex flex-col grow items-start">
-          <p className="font-normal leading-5 text-base-muted-foreground+ text-sm w-full">
+          <p className="font-normal leading-5 text-base-muted-foreground+ text-sm w-full text-left">
             {label}
           </p>
         </div>

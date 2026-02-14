@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import StepperHeader from '../components/create-project/StepperHeader'
 import ToolCard from '../components/create-project/ToolCard'
@@ -197,6 +197,43 @@ export default function CreateProject() {
     dependenciesNA: false,
     approversNA: false,
   })
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }, [currentStep])
+
+  useEffect(() => {
+    const handleGlobalClick = (e) => {
+      if (currentStep === 1) {
+        const insideToolCard = e.target && typeof e.target.closest === 'function'
+          ? e.target.closest('[data-tool-card="true"]')
+          : null
+        if (!insideToolCard) {
+          setSelectedToolId(null)
+        }
+      } else if (currentStep === 2) {
+        const insideDocCard = e.target && typeof e.target.closest === 'function'
+          ? e.target.closest('[data-doc-card="true"]')
+          : null
+        if (!insideDocCard) {
+          setSelectedDocument(null)
+        }
+      } else if (currentStep === 3) {
+        const insideStyleCard = e.target && typeof e.target.closest === 'function'
+          ? e.target.closest('[data-style-card="true"]')
+          : null
+        if (!insideStyleCard) {
+          setSelectedStyle(null)
+        }
+      }
+    }
+    document.addEventListener('click', handleGlobalClick)
+    return () => {
+      document.removeEventListener('click', handleGlobalClick)
+    }
+  }, [currentStep])
 
   const updateProjectData = (updates) => {
     setProjectData((prev) => ({ ...prev, ...updates }))
@@ -487,7 +524,7 @@ export default function CreateProject() {
 
           {/* Footer Actions - Hide on Step 6 (loading screen) */}
           {currentStep !== 6 && (
-            <div className={`fixed bottom-0 right-0 z-50 backdrop-blur-sm transition-all duration-300 w-full ${currentStep === 4 && (selectedStyle === 'drop-zone' || selectedStyle === 'free-style')
+            <div className={`fixed bottom-0 right-0 z-50 backdrop-blur-sm bg-[#ffffffd5] transition-all duration-300 w-full ${currentStep === 4 && (selectedStyle === 'drop-zone' || selectedStyle === 'free-style')
               ? 'lg:left-[348px]'
               : 'left-0'
               }`}>
@@ -512,7 +549,7 @@ export default function CreateProject() {
                       (currentStep === 4 && !validateStep4()) ||
                       isGenerating
                     }
-                    className="h-[40px] px-8 md:px-20 flex items-center gap-2"
+                    className="h-[40px] w-[188px] flex items-center gap-2"
                   >
                     <span>
                       {isGenerating ? 'Clarifying...' :

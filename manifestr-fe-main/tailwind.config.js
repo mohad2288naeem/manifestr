@@ -65,6 +65,8 @@ module.exports = {
         'castoro-titling': ['Castoro Titling', 'serif'],
         // MonteCarlo font
         'monte-carlo': ['MonteCarlo', 'cursive'],
+        // IvyPresto Headline font
+        'ivy-presto': ['IvyPresto Headline', 'serif'],
       },
       fontSize: {
         // Typography scale from design system
