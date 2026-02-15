@@ -185,7 +185,10 @@ export default function CreateProject() {
     timeline: '',
     dependencies: '',
     approvers: '',
-    // Toggles/Flags
+    documentNameNA: false,
+    projectBrandNameNA: false,
+    websiteUrlNA: false,
+    roleNA: false,
     contextNotSure: false,
     primaryObjectiveNA: false,
     successDefinitionNA: false,
@@ -368,6 +371,10 @@ export default function CreateProject() {
         projectData.do
 
       const hasToggles =
+        projectData.documentNameNA ||
+        projectData.projectBrandNameNA ||
+        projectData.websiteUrlNA ||
+        projectData.roleNA ||
         projectData.contextNotSure ||
         projectData.primaryObjectiveNA ||
         projectData.successDefinitionNA ||

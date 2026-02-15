@@ -145,7 +145,6 @@ export default function Step4BriefMe({ projectData, updateProjectData }) {
           {/* Section Content */}
           {expandedSections.about && (
             <div className="flex flex-col gap-5 items-start w-full">
-              {/* Row 1 */}
               <div className="flex gap-5 items-start w-full">
                 <div className="flex-1 flex flex-col gap-2 items-start">
                   <Input
@@ -154,6 +153,12 @@ export default function Step4BriefMe({ projectData, updateProjectData }) {
                     className="bg-[#f7f7f7]"
                     value={data.documentName}
                     onChange={(e) => updateField('documentName', e.target.value)}
+                  />
+                  <ToggleSwitch
+                    label="N/A"
+                    checked={data.documentNameNA}
+                    onChange={() => updateField('documentNameNA', !data.documentNameNA)}
+                    textPlacement="left"
                   />
                 </div>
                 <div className="flex-1 flex flex-col gap-2 items-start">
@@ -164,10 +169,15 @@ export default function Step4BriefMe({ projectData, updateProjectData }) {
                     value={data.projectBrandName}
                     onChange={(e) => updateField('projectBrandName', e.target.value)}
                   />
+                  <ToggleSwitch
+                    label="N/A"
+                    checked={data.projectBrandNameNA}
+                    onChange={() => updateField('projectBrandNameNA', !data.projectBrandNameNA)}
+                    textPlacement="left"
+                  />
                 </div>
               </div>
 
-              {/* Row 2 */}
               <div className="flex gap-5 items-start w-full">
                 <div className="flex-1 flex flex-col gap-2 items-start">
                   <Input
@@ -177,6 +187,12 @@ export default function Step4BriefMe({ projectData, updateProjectData }) {
                     value={data.websiteUrl}
                     onChange={(e) => updateField('websiteUrl', e.target.value)}
                   />
+                  <ToggleSwitch
+                    label="N/A"
+                    checked={data.websiteUrlNA}
+                    onChange={() => updateField('websiteUrlNA', !data.websiteUrlNA)}
+                    textPlacement="left"
+                  />
                 </div>
                 <div className="flex-1 flex flex-col gap-2 items-start">
                   <Input
@@ -185,6 +201,12 @@ export default function Step4BriefMe({ projectData, updateProjectData }) {
                     className="bg-[#f7f7f7]"
                     value={data.role}
                     onChange={(e) => updateField('role', e.target.value)}
+                  />
+                  <ToggleSwitch
+                    label="N/A"
+                    checked={data.roleNA}
+                    onChange={() => updateField('roleNA', !data.roleNA)}
+                    textPlacement="left"
                   />
                 </div>
               </div>

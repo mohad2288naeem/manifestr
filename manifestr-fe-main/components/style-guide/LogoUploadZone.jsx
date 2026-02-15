@@ -90,13 +90,13 @@ export default function LogoUploadZone({ onFilesChange }) {
         transition={{ duration: 0.4 }}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
-        className="bg-[#f4f4f5] rounded-xl p-12 relative overflow-hidden min-h-[400px] flex items-center justify-center"
+        className="bg-[#f4f4f5] rounded-xl p-12 relative overflow-hidden min-h-[230px] flex items-center justify-center"
       >
         {/* Background Watermark */}
-        <div className="absolute bottom-8 left-0 right-0 text-center">
+        <div className="absolute -bottom-4 left-0 right-0 text-center">
           <p
-            className="text-[120px] font-medium text-[#18181b] opacity-[0.03] italic whitespace-nowrap"
-            style={{ fontFamily: "'Playfair Display', serif" }}
+            className="text-[90px] font-bold text-[#18181b] opacity-[0.03] italic whitespace-nowrap leading-none mb-0"
+            style={{ fontFamily: "'IvyPresto Headline', serif" }}
           >
             LIMITLESS POTENTIAL
           </p>
@@ -104,9 +104,14 @@ export default function LogoUploadZone({ onFilesChange }) {
 
         {/* Upload Content */}
         <div className="relative z-10 flex flex-col items-center gap-6 w-full">
-          {/* Logo Icon */}
-          <div className="w-16 h-16 flex items-center justify-center">
-            <div className="text-[48px] font-bold text-[#18181b]">M.</div>
+          <div className="w-14 h-14 flex items-center justify-center">
+            <Image
+              src="/assets/logos/M.logo.svg"
+              alt="Logo"
+              width={48}
+              height={48}
+              className="w-12 h-12"
+            />
           </div>
 
           {/* Instruction Text */}
