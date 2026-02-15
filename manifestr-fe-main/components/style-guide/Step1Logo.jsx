@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import Image from 'next/image'
 import { Folder, Type, Palette, Grid, FileText, Plus, ArrowRight, Check, ChevronDown, X } from 'lucide-react'
 import Button from '../ui/Button'
 import Card from '../ui/Card'
@@ -155,31 +154,14 @@ export default function StyleGuideStep1Logo({ data, updateData, onBack, onNext }
       {/* Main Content */}
       <div className="pl-0 lg:pl-[240px]">
         <div className="max-w-[1280px] mx-auto px-4 md:px-8">
-          {/* Header with Background */}
-          <div className="relative mb-8 -mx-4 md:-mx-8 px-4 md:px-8 pt-[51px] pb-8">
-            {/* Background Image */}
-            <div className="absolute top-0 left-0 right-0 h-[199px] overflow-hidden pointer-events-none z-0">
-              <div className="relative w-full h-full">
-                <Image
-                  src="/assets/banners/abstract-white-wave.png"
-                  alt="Background"
-                  fill
-                  className="object-cover object-top"
-                  priority
-                />
-              </div>
-            </div>
-
-            {/* Heading */}
-            <div className="relative z-10">
-              <h1 className="text-[32px] md:text-[48px] font-bold leading-[40px] md:leading-[56px] tracking-[-0.96px] text-[#18181b] mb-2">
-                CREATE A <span className="italic" style={{ fontFamily: "'Playfair Display', serif" }}>style guide</span>
-              </h1>
-            </div>
+          <div className="mb-8 pt-[51px]">
+            <h1 className="text-[32px] md:text-[48px] font-bold leading-[40px] md:leading-[56px] tracking-[-0.96px] text-[#18181b] mb-2">
+              CREATE A <span className="italic" style={{ fontFamily: "'Playfair Display', serif" }}>style guide</span>
+            </h1>
           </div>
 
           {/* Let's get started Section */}
-          <div className="mb-12 mt-12 md:mt-24">
+          <div className="mb-12 mt-5 md:mt-14">
             <div className="flex flex-col md:flex-row items-start justify-between mb-6 gap-4 md:gap-0">
               <div>
                 <h2 className="text-[20px] md:text-[24px] font-semibold leading-[28px] md:leading-[32px] text-[#18181b] mb-2">
@@ -534,7 +516,7 @@ export default function StyleGuideStep1Logo({ data, updateData, onBack, onNext }
                   type="text"
                   value={minimumContrastRatio}
                   onChange={(e) => updateBackgrounds('minContrast', e.target.value)}
-                  className="w-full max-w-[600px] px-4 py-3 bg-white border border-[#e4e4e7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#18181b] focus:border-transparent text-[16px] leading-[24px] text-[#18181b]"
+                  className="w-full px-4 py-3 bg-white border border-[#e4e4e7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#18181b] focus:border-transparent text-[16px] leading-[24px] text-[#18181b]"
                   placeholder="e.g., 4.5:1"
                 />
               </div>
@@ -634,9 +616,9 @@ export default function StyleGuideStep1Logo({ data, updateData, onBack, onNext }
                   <h4 className="text-[16px] font-semibold leading-[24px] text-[#18181b] mb-4">
                     Placement
                   </h4>
-                  <div className="flex flex-col md:flex-row md:items-end gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 md:items-end gap-4">
                     {/* Default Placement Zone */}
-                    <div className="flex-1 max-w-[600px]">
+                    <div className="flex-1">
                       <label className="block text-[14px] leading-[20px] font-medium text-[#18181b] mb-2">
                         Default Placement Zone
                       </label>
@@ -644,7 +626,7 @@ export default function StyleGuideStep1Logo({ data, updateData, onBack, onNext }
                         type="text"
                         value={defaultPlacementZone}
                         onChange={(e) => updateRules('placement', e.target.value)}
-                        className="w-full max-w-[600px] px-4 py-3 bg-white border border-[#e4e4e7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#18181b] focus:border-transparent text-[16px] leading-[24px] text-[#18181b]"
+                        className="w-full px-4 py-3 bg-white border border-[#e4e4e7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#18181b] focus:border-transparent text-[16px] leading-[24px] text-[#18181b]"
                         placeholder="Top-left"
                       />
                     </div>
