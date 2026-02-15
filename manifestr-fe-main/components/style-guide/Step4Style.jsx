@@ -255,9 +255,9 @@ export default function StyleGuideStep4Style({ data, updateData, onBack, onNext 
                       whileTap={{ scale: 0.95 }}
                       onClick={() => toggleToneDescriptor(descriptor)}
                       disabled={!isSelected && selectedToneDescriptors.length >= 3}
-                      className={`px-4 py-2 rounded-lg text-[14px] leading-[20px] font-medium transition-colors ${isSelected
-                        ? 'bg-[#18181b] text-white'
-                        : 'bg-[#f4f4f5] text-[#18181b] hover:bg-[#e4e4e7] disabled:opacity-50 disabled:cursor-not-allowed'
+                      className={`px-4 py-2 text-[14px] leading-[20px] font-medium transition-colors ${isSelected
+                        ? 'bg-[#18181b] text-white rounded-full'
+                        : 'bg-[#f4f4f5] text-[#18181b] hover:bg-[#e4e4e7] rounded-full disabled:opacity-50 disabled:cursor-not-allowed'
                         }`}
                     >
                       {descriptor}
@@ -287,7 +287,7 @@ export default function StyleGuideStep4Style({ data, updateData, onBack, onNext 
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => toggleAudience(audience)}
-                      className={`px-4 py-2 rounded-lg text-[14px] leading-[20px] font-medium transition-colors ${isSelected
+                      className={`px-4 py-2 rounded-full text-[14px] leading-[20px] font-medium transition-colors ${isSelected
                         ? 'bg-[#18181b] text-white'
                         : 'bg-[#f4f4f5] text-[#18181b] hover:bg-[#e4e4e7]'
                         }`}

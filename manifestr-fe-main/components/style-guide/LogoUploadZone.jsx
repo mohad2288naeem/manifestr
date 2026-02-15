@@ -60,10 +60,13 @@ export default function LogoUploadZone({ onFilesChange }) {
   }
 
   const toggleDropdown = (fileId) => {
-    setOpenDropdowns((prev) => ({
-      ...prev,
-      [fileId]: !prev[fileId],
-    }))
+    setOpenDropdowns((prev) => {
+      const isOpen = !!prev[fileId]
+      if (isOpen) {
+        return {}
+      }
+      return { [fileId]: true }
+    })
   }
 
   // Close dropdowns when clicking outside
