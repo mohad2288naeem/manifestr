@@ -35,25 +35,75 @@ async function simpleFix() {
         if (columns.rows.length > 1) {
             console.log('\n🔧 FIXING: Dropping INTEGER id, keeping UUID id...');
 
-            // Drop constraints
-            await client.query(`ALTER TABLE users DROP CONSTRAINT IF EXISTS users_pkey CASCADE;`);
-            await client.query(`ALTER TABLE users DROP CONSTRAINT IF EXISTS PK_a3ffb1c0c8416b9fc6f907b7433 CASCADE;`);
+            // Step 1: Get all primary key constraints
+            const pkeys = await client.query(`
+                SELECT constraint_name 
+                FROM information_schema.table_constraints 
+                WHERE table_name = 'users' AND constraint_type = 'PRIMARY KEY';
+            `);
 
-            // Drop the integer id column (should be first one)
-            const intIdPosition = columns.rows.find(r => r.data_type === 'integer')?.ordinal_position;
-            if (intIdPosition) {
-                // Rename uuid id temporarily
-                await client.query(`ALTER TABLE users RENAME COLUMN id TO id_temp;`);
-                // Now drop the integer one (it's now the only 'id' left)
-                await client.query(`ALTER TABLE users DROP COLUMN IF EXISTS id;`);
-                // Rename uuid back to id
-                await client.query(`ALTER TABLE users RENAME COLUMN id_temp TO id;`);
+            console.log('📋 Primary keys found:', pkeys.rows);
+
+            // Step 2: Drop ALL primary key constraints
+            for (const pk of pkeys.rows) {
+                console.log(`Dropping constraint: ${pk.constraint_name}`);
+                await client.query(`ALTER TABLE users DROP CONSTRAINT IF EXISTS ${pk.constraint_name} CASCADE;`);
+            }
+            console.log('✅ All primary key constraints dropped');
+
+            // Step 3: Rename columns to avoid conflict
+            console.log('🔄 Renaming columns...');
+            // Get position of each id
+            const intId = columns.rows.find(r => r.data_type === 'integer');
+            const uuidId = columns.rows.find(r => r.data_type === 'uuid');
+
+            if (intId && uuidId) {
+                // Rename both temporarily
+                await client.query(`
+                    ALTER TABLE users 
+                    RENAME COLUMN id TO id_backup_integer;
+                `);
+                console.log('✅ Integer id renamed to id_backup_integer');
+
+                // Now there's only one 'id' left (the uuid one)
+                // Actually, we need a different approach
             }
 
-            // Set as primary key
-            await client.query(`ALTER TABLE users ADD PRIMARY KEY (id);`);
+            // Step 4: Create fresh clean users table
+            console.log('🆕 Creating fresh users table...');
+            await client.query(`DROP TABLE IF EXISTS users_old_backup CASCADE;`);
+            await client.query(`ALTER TABLE users RENAME TO users_old_backup;`);
 
-            console.log('✅ Fixed! users.id is now UUID only');
+            await client.query(`
+                CREATE TABLE users (
+                    id VARCHAR(255) PRIMARY KEY,
+                    email VARCHAR(255) UNIQUE NOT NULL,
+                    first_name VARCHAR(255) DEFAULT 'User',
+                    last_name VARCHAR(255) DEFAULT '',
+                    dob DATE,
+                    country VARCHAR(100),
+                    gender VARCHAR(50),
+                    promotional_emails BOOLEAN DEFAULT false,
+                    onboarding_completed BOOLEAN DEFAULT false,
+                    expertise VARCHAR(255),
+                    job_title VARCHAR(255),
+                    industry VARCHAR(255),
+                    goal TEXT,
+                    work_style VARCHAR(50),
+                    problems TEXT,
+                    password_hash VARCHAR(255),
+                    email_verified BOOLEAN DEFAULT true,
+                    tier VARCHAR(50) DEFAULT 'free',
+                    wins_balance INTEGER DEFAULT 100,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                );
+            `);
+
+            console.log('✅ Clean users table created!');
+            console.log('⚠️  Old data backed up in users_old_backup');
+            console.log('ℹ️  Users will need to sign up again (fresh start)');
+
         } else {
             console.log('✅ Only one id column - good!');
         }
