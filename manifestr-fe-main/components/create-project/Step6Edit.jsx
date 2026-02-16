@@ -128,11 +128,11 @@ export default function Step6Edit({ generationId, outputType }) {
                 </div>
 
                 {/* Tasks List */}
-                <div className="flex flex-col gap-4 w-full mt-8 min-w-[400px]">
+                <div className="flex flex-col gap-2 w-full mt-8 min-w-[400px]">
                     {tasks.map((task) => (
                         <div
                             key={task.id}
-                            className="flex items-center gap-3 px-4 py-3 bg-white border border-[#e4e4e7] rounded-lg transition-all duration-300"
+                            className="flex items-center gap-3 transition-all duration-300"
                         >
                             {task.status === 'completed' ? (
                                 <div className="w-5 h-5 rounded-full bg-[#18181b] flex items-center justify-center shrink-0">

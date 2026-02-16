@@ -1,16 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
+import { supabaseAdmin } from '../lib/supabase';
 
 export interface AuthRequest extends Request {
     user?: {
-        userId: number;
+        userId: string;
         email: string;
+        email_confirmed_at?: string;
     };
 }
 
-export const authenticateToken = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authenticateToken = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
         const authHeader = req.headers.authorization;
 
@@ -30,8 +29,22 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
             });
         }
 
-        const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; email: string };
-        req.user = decoded;
+        // Verify token with Supabase
+        const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+
+        if (error || !user) {
+            return res.status(403).json({
+                status: 'error',
+                message: 'Forbidden: Invalid or expired token'
+            });
+        }
+
+        // Attach user info to request
+        req.user = {
+            userId: user.id,
+            email: user.email!,
+            email_confirmed_at: user.email_confirmed_at
+        };
 
         next();
     } catch (error) {

@@ -34,12 +34,12 @@ export default function Checkbox({
       {(label || supportingText) && (
         <div className="flex flex-col gap-0 flex-1">
           {label && (
-            <span className="text-l2-medium text-base-muted-foreground+ cursor-pointer">
+            <span className="text-l2-medium text-[#52525B] cursor-pointer">
               {label}
             </span>
           )}
           {supportingText && (
-            <p className="text-l2-regular text-base-muted-foreground">
+            <p className="text-l2-regular text-[#71717A]">
               {supportingText}
             </p>
           )}

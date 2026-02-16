@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Gem, AlertCircle, Settings, ChevronDown } from 'lucide-react'
+import { Gem, AlertCircle, Settings, ChevronDown, GemIcon } from 'lucide-react'
 
 export default function WinsDropdown() {
   const [isOpen, setIsOpen] = useState(false)
@@ -60,7 +60,7 @@ export default function WinsDropdown() {
         whileTap={{ scale: 0.95 }}
         className="bg-transparent flex items-center gap-2 px-1 py-1 rounded-md hover:bg-[#f4f4f5] transition-colors cursor-pointer"
       >
-        <Gem className="w-4 h-4 text-[#18181b]" />
+        <GemIcon stroke='#fff' fill='#71717A' className="w-4 h-4" />
         <span className="text-[14px] font-medium leading-[20px] text-[#18181b]">{currentBalance}</span>
       </motion.button>
 

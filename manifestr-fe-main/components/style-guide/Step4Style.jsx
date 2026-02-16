@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion'
-import Image from 'next/image'
 import { Folder, Type, Palette, Grid, FileText, Plus, ArrowRight, X, Volume2 } from 'lucide-react'
 import Button from '../ui/Button'
 import Card from '../ui/Card'
@@ -148,43 +147,26 @@ export default function StyleGuideStep4Style({ data, updateData, onBack, onNext 
       {/* Main Content */}
       <div className="pl-0 lg:pl-[240px]">
         <div className="max-w-[1280px] mx-auto px-4 md:px-8 pb-8">
-          {/* Header with Background */}
-          <div className="relative mb-8 -mx-4 md:-mx-8 px-4 md:px-8 pt-[51px] pb-8">
-            {/* Background Image */}
-            <div className="absolute top-0 left-0 right-0 h-[199px] overflow-hidden pointer-events-none z-0">
-              <div className="relative w-full h-full">
-                <Image
-                  src="/assets/banners/abstract-white-wave.png"
-                  alt="Background"
-                  fill
-                  className="object-cover object-top"
-                  priority
-                />
+          <div className="mb-8 pt-[51px]">
+            <div className="flex flex-col md:flex-row items-start justify-between gap-4 md:gap-0">
+              <div>
+                <h1 className="text-[32px] md:text-[48px] font-bold leading-[40px] md:leading-[56px] tracking-[-0.96px] text-[#18181b] mb-2">
+                  Style
+                </h1>
+                <p className="text-[14px] md:text-[16px] leading-[20px] md:leading-[24px] text-[#71717a]">
+                  Define visual properties like shadows, border and spacing
+                </p>
               </div>
-            </div>
-
-            {/* Heading */}
-            <div className="relative z-10">
-              <div className="flex flex-col md:flex-row items-start justify-between gap-4 md:gap-0">
-                <div>
-                  <h1 className="text-[32px] md:text-[48px] font-bold leading-[40px] md:leading-[56px] tracking-[-0.96px] text-[#18181b] mb-2">
-                    Style
-                  </h1>
-                  <p className="text-[14px] md:text-[16px] leading-[20px] md:leading-[24px] text-[#71717a]">
-                    Define visual properties like shadows, border and spacing
-                  </p>
-                </div>
-                <div className="flex items-center gap-3 w-full md:w-auto">
-                  <Button variant="secondary" size="md" onClick={onBack} className="flex-1 md:flex-none justify-center">
-                    Skip
-                  </Button>
-                  <Button variant="secondary" size="md" className="flex-1 md:flex-none justify-center">
-                    Save & Exit
-                  </Button>
-                  <Button variant="primary" size="md" onClick={onNext} className="flex-1 md:flex-none justify-center">
-                    Continue <ArrowRight className="w-4 h-4 ml-1 hidden md:inline" />
-                  </Button>
-                </div>
+              <div className="flex items-center gap-3 w-full md:w-auto">
+                <Button variant="secondary" size="md" onClick={onBack} className="flex-1 md:flex-none justify-center">
+                  Skip
+                </Button>
+                <Button variant="secondary" size="md" className="flex-1 md:flex-none justify-center">
+                  Save & Exit
+                </Button>
+                <Button variant="primary" size="md" onClick={onNext} className="flex-1 md:flex-none justify-center">
+                  Continue <ArrowRight className="w-4 h-4 ml-1 hidden md:inline" />
+                </Button>
               </div>
             </div>
           </div>
@@ -255,9 +237,9 @@ export default function StyleGuideStep4Style({ data, updateData, onBack, onNext 
                       whileTap={{ scale: 0.95 }}
                       onClick={() => toggleToneDescriptor(descriptor)}
                       disabled={!isSelected && selectedToneDescriptors.length >= 3}
-                      className={`px-4 py-2 rounded-lg text-[14px] leading-[20px] font-medium transition-colors ${isSelected
-                        ? 'bg-[#18181b] text-white'
-                        : 'bg-[#f4f4f5] text-[#18181b] hover:bg-[#e4e4e7] disabled:opacity-50 disabled:cursor-not-allowed'
+                      className={`px-4 py-2 text-[14px] leading-[20px] font-medium transition-colors ${isSelected
+                        ? 'bg-[#18181b] text-white rounded-full'
+                        : 'bg-[#f4f4f5] text-[#18181b] hover:bg-[#e4e4e7] rounded-full disabled:opacity-50 disabled:cursor-not-allowed'
                         }`}
                     >
                       {descriptor}
@@ -287,7 +269,7 @@ export default function StyleGuideStep4Style({ data, updateData, onBack, onNext 
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => toggleAudience(audience)}
-                      className={`px-4 py-2 rounded-lg text-[14px] leading-[20px] font-medium transition-colors ${isSelected
+                      className={`px-4 py-2 rounded-full text-[14px] leading-[20px] font-medium transition-colors ${isSelected
                         ? 'bg-[#18181b] text-white'
                         : 'bg-[#f4f4f5] text-[#18181b] hover:bg-[#e4e4e7]'
                         }`}

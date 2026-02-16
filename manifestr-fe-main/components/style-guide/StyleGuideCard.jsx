@@ -17,7 +17,7 @@ export default function StyleGuideCard({
       transition={{ delay: index * 0.1, duration: 0.4 }}
       whileHover={{ y: -4, scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      className="relative rounded-xl overflow-hidden cursor-pointer h-[280px] group"
+      className="relative rounded-3xl overflow-hidden cursor-pointer min-h-[200px] group"
       style={{
         background: gradient,
       }}

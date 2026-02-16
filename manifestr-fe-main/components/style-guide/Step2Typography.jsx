@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion'
-import Image from 'next/image'
 import { Folder, Type, Palette, Grid, FileText, Plus, ArrowRight } from 'lucide-react'
 import Button from '../ui/Button'
 import Select from '../forms/Select'
@@ -86,34 +85,17 @@ export default function StyleGuideStep2Typography({ data, updateData, onBack, on
       {/* Main Content */}
       <div className="pl-0 lg:pl-[240px]">
         <div className="max-w-[1280px] mx-auto px-4 md:px-8 pb-8">
-          {/* Header with Background */}
-          <div className="relative mb-8 -mx-4 md:-mx-8 px-4 md:px-8 pt-[51px] pb-8">
-            {/* Background Image */}
-            <div className="absolute top-0 left-0 right-0 h-[199px] overflow-hidden pointer-events-none z-0">
-              <div className="relative w-full h-full">
-                <Image
-                  src="/assets/banners/abstract-white-wave.png"
-                  alt="Background"
-                  fill
-                  className="object-cover object-top"
-                  priority
-                />
-              </div>
-            </div>
-
-            {/* Heading */}
-            <div className="relative z-10">
-              <h1 className="text-[32px] md:text-[48px] font-bold leading-[40px] md:leading-[56px] tracking-[-0.96px] text-[#18181b] mb-2">
-                Typography
-              </h1>
-              <p className="text-[14px] md:text-[16px] leading-[20px] md:leading-[24px] text-[#71717a]">
-                Establish a clear typographic hierarchy for your brand.
-              </p>
-            </div>
+          <div className="mb-8 pt-[51px]">
+            <h1 className="text-[32px] md:text-[48px] font-bold leading-[40px] md:leading-[56px] tracking-[-0.96px] text-[#18181b] mb-2">
+              Typography
+            </h1>
+            <p className="text-[14px] md:text-[16px] leading-[20px] md:leading-[24px] text-[#71717a]">
+              Establish a clear typographic hierarchy for your brand.
+            </p>
           </div>
 
           {/* Add Font Button */}
-          <div className="mb-6 mt-12 md:mt-16">
+          <div className="mb-6 mt-8 md:mt-12">
             <Button variant="primary" size="md">
               <Plus className="w-4 h-4 mr-2" />
               Add Font

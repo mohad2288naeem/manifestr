@@ -18,10 +18,7 @@ export class AIOrchestrator {
     /**
      * Starts the generation process
      */
-    /**
-     * Starts the generation process
-     */
-    async startGeneration(userId: number, promptData: Partial<UserPrompt>): Promise<GenerationJob> {
+    async startGeneration(userId: string, promptData: Partial<UserPrompt>): Promise<GenerationJob> {
         const jobRepo = AppDataSource.getRepository(GenerationJob);
 
         // 1. Create Job Entry
@@ -82,32 +79,28 @@ export class AIOrchestrator {
         return job;
     }
 
-    async getJobStatus(jobId: string, userId: number | string) {
+    async getJobStatus(jobId: string, userId: string) {
         const jobRepo = AppDataSource.getRepository(GenerationJob);
         // Ensure user owns the job
-        const uid = typeof userId === 'string' && userId !== 'anon' ? parseInt(userId) : (userId === 'anon' ? undefined : userId);
-
         if (userId === 'anon') {
             return jobRepo.findOne({ where: { id: jobId } });
         }
 
-        return jobRepo.findOne({ where: { id: jobId, userId: uid as number } });
+        return jobRepo.findOne({ where: { id: jobId, userId: userId } });
     }
 
-    async getUserJobs(userId: number | string) {
+    async getUserJobs(userId: string) {
         const jobRepo = AppDataSource.getRepository(GenerationJob);
-        const uid = typeof userId === 'string' ? parseInt(userId) : userId;
         return jobRepo.find({
-            where: { userId: uid },
+            where: { userId: userId },
             order: { created_at: "DESC" }
         });
     }
 
-    async getRecentJobs(userId: number | string, limit: number = 3) {
+    async getRecentJobs(userId: string, limit: number = 3) {
         const jobRepo = AppDataSource.getRepository(GenerationJob);
-        const uid = typeof userId === 'string' ? parseInt(userId) : userId;
         return jobRepo.find({
-            where: { userId: uid },
+            where: { userId: userId },
             order: { created_at: "DESC" },
             take: limit
         });

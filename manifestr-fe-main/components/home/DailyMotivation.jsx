@@ -78,7 +78,7 @@ export default function DailyMotivation() {
         ) : (
           <p className="text-[26.094px] font-extrabold leading-[31.53px] text-white text-center">
             <span className="font-hero">{quoteParts.prefix} </span>
-            <span className="italic" style={{ fontFamily: "'MonteCarlo', cursive", fontSize: '38px' }}>{quoteParts.word}&nbsp;</span>
+            <span className="italic" style={{ fontFamily: "'IvyPresto Headline', serif", fontSize: '38px' }}>{quoteParts.word}&nbsp;</span>
             <span className="font-hero">{quoteParts.suffix}</span>
           </p>
         )}

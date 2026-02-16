@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import { useState, useMemo, useRef, memo, useEffect } from 'react'
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion'
-import { Package, HelpCircle } from 'lucide-react'
+import { Inbox, Upload } from 'lucide-react'
 import AppHeader from '../components/layout/AppHeader'
 import Button from '../components/ui/Button'
 import StyleGuideStep1Logo from '../components/style-guide/Step1Logo'
@@ -408,10 +408,10 @@ export default function CreateStyleGuide() {
                   transition={{ duration: 0.6 }}
                   className="text-center mb-8"
                 >
-                  <h1 className="text-[64px] font-bold leading-[72px] tracking-[-1.28px] text-[#18181b] mb-4">
+                  <h1 className="text-[60px] font-bold leading-[72px] tracking-[-1.28px] text-[#18181b] mb-4">
                     Style Guide
                   </h1>
-                  <p className="text-[20px] leading-[28px] text-[#18181b]">
+                  <p className="text-[20px] leading-[28px] text-[#6A7282]">
                     Upload your brand kit or create your style from scratch.
                   </p>
                 </motion.div>
@@ -426,35 +426,35 @@ export default function CreateStyleGuide() {
                   {/* Icon */}
                   <div className="flex justify-center mb-6">
                     <div className="w-16 h-16 bg-[#f4f4f5] rounded-full flex items-center justify-center">
-                      <Package className="w-8 h-8 text-[#71717a]" />
+                      <Inbox className="w-8 h-8 text-[#71717a]" />
                     </div>
                   </div>
 
                   {/* Title */}
-                  <h2 className="text-[24px] font-semibold leading-[32px] text-[#18181b] text-center mb-3">
-                    Let's build your brand foundation.
+                  <h2 className="text-[20px] font-semibold leading-[32px] text-[#18181b] text-center mb-3">
+                    Let's build your brand foundation
                   </h2>
 
                   {/* Description */}
-                  <p className="text-[16px] leading-[24px] text-[#71717a] text-center mb-8">
+                  <p className="text-[14px] leading-[24px] text-[#71717a] text-center mb-8">
                     Upload your logo or brand kit — MANIFESTR AI will extract colors, fonts, and visuals to create your style guide in seconds.
                   </p>
 
                   {/* Buttons */}
-                  <div className="flex flex-col gap-3 mb-6">
+                  <div className="flex flex-col md:flex-row gap-3 mb-6">
                     <Button
                       variant="secondary"
-                      size="lg"
+                      size="md"
                       onClick={handleCreateManually}
-                      className="w-full"
+                      className="w-full md:w-auto md:flex-1"
                     >
                       Create Manually
                     </Button>
                     <Button
                       variant="primary"
-                      size="lg"
+                      size="md"
                       onClick={handleUploadBrandKit}
-                      className="w-full"
+                      className="w-full md:w-auto md:flex-1"
                     >
                       Upload Brand Kit
                     </Button>
@@ -462,9 +462,8 @@ export default function CreateStyleGuide() {
 
                   {/* Help Link */}
                   <div className="text-center">
-                    <button className="text-[14px] leading-[20px] text-[#71717a] hover:text-[#18181b] transition-colors flex items-center gap-1.5 mx-auto">
-                      <HelpCircle className="w-4 h-4" />
-                      <span>How MANIFESTR AI works</span>
+                    <button className="text-[14px] leading-[20px] text-[#99A1AF] hover:text-[#18181b] transition-colors mx-auto">
+                      How MANIFESTR AI works
                     </button>
                   </div>
                 </motion.div>
@@ -568,4 +567,3 @@ export default function CreateStyleGuide() {
     </>
   )
 }
-

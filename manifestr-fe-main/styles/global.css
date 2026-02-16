@@ -49,6 +49,7 @@
   --font-family-title: Roboto, sans-serif;
   --font-family-castoro-titling: 'Castoro Titling', serif;
   --font-family-monte-carlo: 'MonteCarlo', cursive;
+  --font-family-ivy-presto: 'IvyPresto Headline', serif;
 }
 
 /* Marquee animations for seamless looping - using will-change for smooth performance */

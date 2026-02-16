@@ -20,7 +20,7 @@ export default function ToggleCheckbox({
       onClick={handleClick}
       className={`bg-transparent border border-[#e4e4e7] flex gap-2 h-10 items-center px-3 py-[10px] rounded-md transition-all cursor-pointer ${
         checked
-          ? 'border-[#18181b] bg-[#18181b]/5'
+          ? 'border-[#18181b] bg-[#F4F4F5]'
           : 'border-[#e4e4e7] hover:border-base-foreground'
       } ${className}`}
     >
@@ -28,11 +28,11 @@ export default function ToggleCheckbox({
         <div
           className={`w-4 h-4 border rounded flex items-center justify-center transition-all ${
             checked
-              ? 'bg-[#18181b] border-[#18181b]'
+              ? 'bg-[#F4F4F5] border-[#71717A]'
               : 'bg-base-background border-[#e4e4e7]'
           }`}
         >
-          {checked && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+          {checked && <Check className="w-3 h-3 text-[#71717A]" strokeWidth={3} />}
         </div>
       </div>
       {label && (

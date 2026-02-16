@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import Button from '../ui/Button'
 import ToggleCheckbox from '../forms/ToggleCheckbox'
 import RadioButton from '../forms/RadioButton'
@@ -41,7 +41,7 @@ export default function Step2({ onNext, onBack }) {
   const isFormValid = selectedAchievements.length > 0 && workStyle
 
   return (
-    <div className="flex flex-col gap-8 w-full max-w-[400px] mx-auto">
+    <div className="flex flex-col gap-8 w-full max-w-[400px] mx-auto mt-5">
       {/* Main Card */}
       <div className="bg-white rounded-2xl shadow-[0px_44px_110px_0px_rgba(22,34,51,0.2)] p-8">
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
@@ -50,7 +50,7 @@ export default function Step2({ onNext, onBack }) {
             {/* Section Header */}
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-black" />
+                <div className="w-20 h-20 rounded-full bg-black shrink-0" />
                 <h2 className="text-[20px] leading-[28px] font-semibold text-[#09090b] font-hero">
                   What Do You Want to Achieve?
                 </h2>
@@ -113,14 +113,13 @@ export default function Step2({ onNext, onBack }) {
               className="w-full"
               disabled={!isFormValid}
             >
-              Continue →
+              Continue <ArrowRight size={15} style={{marginLeft: 5}} />
             </Button>
             <button
               type="button"
               onClick={onBack}
               className="flex items-center justify-center gap-2 text-l2-medium text-zinc-900 hover:opacity-80 self-center"
             >
-              <ArrowLeft className="w-4 h-4" />
               <span>Back</span>
             </button>
           </div>

@@ -58,8 +58,8 @@ export class VaultItem {
     meta: any;
 
     // Ownership
-    @Column({ type: "int" })
-    userId: number;
+    @Column({ type: "varchar", length: 255 })
+    userId: string; // Supabase UUID
 
     @ManyToOne(() => User, (user) => user.id)
     @JoinColumn({ name: "userId" })

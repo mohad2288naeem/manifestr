@@ -12,7 +12,7 @@ function renderTitle(title, textColor = 'text-black') {
         <span className={`font-hero font-extrabold text-[30px] leading-[44px] tracking-[-0.6px] ${textColor}`}>
           THE{' '}
         </span>
-        <span className={`font-accent italic font-bold text-[40px] leading-[44px] tracking-[-0.72px] ${textColor} lowercase`} style={{ fontFamily: "'Playfair Display', serif" }}>
+        <span className={`font-accent italic font-bold text-[40px] leading-[44px] tracking-[-0.72px] ${textColor} lowercase`} style={{ fontFamily: "'IvyPresto Headline', serif" }}>
           {rest}
         </span>
       </>
@@ -61,8 +61,9 @@ export default function ToolCard({
       transition={{ duration: 0.4 }}
       whileHover={{ y: -8, scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
+      data-tool-card="true"
       className={`relative bg-white rounded-xl overflow-hidden h-[369px] cursor-pointer group shadow-sm hover:shadow-xl transition-shadow duration-300 ${
-      isSelected ? 'border-2 border-green-500' : 'border-2 border-transparent'
+      isSelected ? 'border-2 border-[#000000]' : 'border-2 border-transparent'
       }`}
     >
       <div
@@ -71,10 +72,10 @@ export default function ToolCard({
         onMouseDown={() => setIsPressed(true)}
         onMouseUp={() => setIsPressed(false)}
         onClick={onClick}
-        className="relative w-full h-full"
+        className="flex flex-col p-3 h-full relative"
       >
         {/* Image Section */}
-        <div className="absolute left-3 top-3 w-[278px] h-[243px] rounded-xl overflow-hidden">
+        <div className="w-full h-[243px] rounded-xl overflow-hidden shrink-0">
           <div className="relative w-full h-full">
             {imageSrc && (
               <Image
@@ -98,15 +99,15 @@ export default function ToolCard({
         </div>
 
         {/* Title Section */}
-        <div className="absolute left-3 top-[265px] w-[278px] z-10">
+        <div className="mt-4 w-full z-10">
           <div className="flex flex-col items-center justify-center text-center">
             <h3>{renderTitle(title)}</h3>
           </div>
         </div>
 
         {/* Subtitle Section */}
-        <div className="absolute left-3 top-[319px] w-[279px] h-[20px] z-10">
-          <div className="flex items-center gap-1">
+        <div className="mt-auto mb-2 w-full z-10">
+          <div className="flex items-center justify-center gap-1">
             {subtitle.split(' • ').map((item, index, array) => (
               <div key={index} className="flex items-center">
                 <p className="text-[14px] leading-[20px] text-black font-normal">

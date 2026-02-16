@@ -8,9 +8,7 @@ export const UserPromptSchema = z.object({
     style_guide_id: z.number().optional().nullable(),
     output: z.enum(["presentation", "document", "spreadsheet"]).optional().nullable(),
     meta: z.any().optional(),
-    userId: z.union([z.string(), z.number()])
-        .transform((val) => Number(val))
-        .refine((val) => !isNaN(val), { message: "User ID must be a valid number" }), // We need to know who asked for it
+    userId: z.string().describe("Supabase UUID for the user"), // Supabase UUID
     jobId: z.string().uuid(),  // The tracking ID
 });
 

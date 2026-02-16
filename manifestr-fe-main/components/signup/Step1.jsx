@@ -17,6 +17,7 @@ export default function Step1({
     <form
       onSubmit={onSubmit}
       className="flex flex-col gap-6 items-start w-full rounded-xl"
+      autoComplete="off"
     >
       <div className="flex flex-col gap-5 items-start w-full">
         {/* Email Input */}
@@ -27,6 +28,7 @@ export default function Step1({
           error={touched && errors.email ? errors.email : undefined}
           value={email}
           onChange={onEmailChange}
+          autoComplete="off"
           required
         />
 
@@ -40,6 +42,7 @@ export default function Step1({
           value={password}
           onChange={onPasswordChange}
           showPasswordToggle
+          autoComplete="new-password"
           required
         />
 
@@ -52,6 +55,7 @@ export default function Step1({
           value={confirmPassword}
           onChange={onConfirmPasswordChange}
           showPasswordToggle
+          autoComplete="new-password"
           required
         />
       </div>

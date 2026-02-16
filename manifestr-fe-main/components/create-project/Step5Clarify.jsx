@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, ArrowRight, Pencil, CheckCircle2, Check, X } from 'lucide-react'
 
@@ -18,11 +18,46 @@ export default function Step5Clarify({ onSkip, projectData, updateProjectData, s
     const [sensitiveContent, setSensitiveContent] = useState(false)
     const [editingField, setEditingField] = useState(null)
 
-    // Create a local state for editing specific fields before saving
     const [tempValue, setTempValue] = useState("")
 
-    // Ensure projectData exists
     const data = projectData || {}
+
+    const fieldToSection = {
+        documentName: 'documentOverview',
+        projectBrandName: 'documentOverview',
+        websiteUrl: 'documentOverview',
+        primaryObjective: 'purposeObjectives',
+        keyMessage: 'keyMessage',
+        primaryAudience: 'audienceImpact',
+        think: 'audienceImpact',
+        feel: 'audienceImpact',
+        do: 'audienceImpact',
+        successDefinition: 'kpisSuccess',
+        structure: 'structureOutput',
+        tone: 'structureOutput',
+        dependencies: 'evidenceBenchmarks',
+        approvers: 'evidenceBenchmarks',
+        deliverables: 'deliverablesTimeline',
+        timeline: 'deliverablesTimeline',
+        budget: 'deliverablesTimeline',
+    }
+
+    const editingContainerRef = useRef(null)
+
+    useEffect(() => {
+        if (!editingField) return
+        const onDocClick = (e) => {
+            if (editingContainerRef.current && editingContainerRef.current.contains(e.target)) return
+            const current = editingField
+            const sectionKey = fieldToSection[current]
+            handleSave(current)
+            if (sectionKey) {
+                setExpandedSections((prev) => ({ ...prev, [sectionKey]: false }))
+            }
+        }
+        document.addEventListener('mousedown', onDocClick)
+        return () => document.removeEventListener('mousedown', onDocClick)
+    }, [editingField, tempValue])
 
     const toggleSection = (section) => {
         setExpandedSections((prev) => ({
@@ -57,6 +92,8 @@ export default function Step5Clarify({ onSkip, projectData, updateProjectData, s
             <motion.div
                 whileHover={{ scale: 1.01, y: -2 }}
                 whileTap={{ scale: 0.99 }}
+                ref={isEditing ? editingContainerRef : null}
+                data-editing-field={isEditing ? 'true' : undefined}
                 className="flex items-center justify-between px-4 py-4 bg-white border border-[#e4e4e7] rounded-lg hover:shadow-md transition-all duration-200 group"
             >
                 {!isEditing ? (
@@ -185,7 +222,7 @@ export default function Step5Clarify({ onSkip, projectData, updateProjectData, s
                     <h1 className="text-[28px] leading-[36px] font-semibold text-base-foreground">
                         Review & Approve Your Summary
                     </h1>
-                    <p className="text-[16px] leading-[24px] text-base-muted-foreground+ max-w-[935px]">
+                    <p className="text-[16px] leading-[24px] text-[#71717A] text-base-muted-foreground+ max-w-[935px]">
                         Your brief has been captured. Review the essentials, refine if needed, and confirm when you're ready for MANIFESTR to generate your document.
                     </p>
                 </div>
@@ -193,10 +230,10 @@ export default function Step5Clarify({ onSkip, projectData, updateProjectData, s
                     onClick={onSkip}
                     className="h-[35px] px-2 bg-[#18181b] text-white rounded flex items-center gap-2 hover:opacity-90 transition-opacity whitespace-nowrap cursor-pointer"
                 >
-                    <span className="text-[11px] leading-[16.5px] font-medium px-2">
+                    <span className="text-[14px] leading-[16.5px] font-medium px-2">
                         Confident it's all correct? Skip this review
                     </span>
-                    <ArrowRight className="w-3 h-3 mr-2" />
+                    <ArrowRight className="w-4 h-4 mr-2" />
                 </button>
             </div>
 

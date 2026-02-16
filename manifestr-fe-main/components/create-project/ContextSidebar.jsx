@@ -19,8 +19,32 @@ export default function ContextSidebar() {
   const [sensitivityLevel, setSensitivityLevel] = useState('')
 
   const handleSkip = (field) => {
-    console.log(`Skip ${field}`)
-    // Handle skip logic
+    switch (field) {
+      case 'audience':
+        setAudience('')
+        break
+      case 'toneStyle':
+        setToneStyle('')
+        break
+      case 'desiredPages':
+        setDesiredPages('')
+        break
+      case 'mandatories':
+        setMandatories('')
+        break
+      case 'priorityFocus':
+        setPriorityFocus({
+          dataAccuracy: false,
+          visualStorytelling: false,
+          persuasiveness: false,
+        })
+        break
+      case 'sensitivityLevel':
+        setSensitivityLevel('')
+        break
+      default:
+        break
+    }
   }
 
   const handleSave = () => {

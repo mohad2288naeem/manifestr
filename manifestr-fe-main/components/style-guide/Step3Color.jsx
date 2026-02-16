@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import Image from 'next/image'
 import { Folder, Type, Palette, Grid, FileText, Plus, ArrowRight, X, Pencil } from 'lucide-react'
 import Button from '../ui/Button'
 import Card from '../ui/Card'
@@ -38,6 +37,11 @@ export default function StyleGuideStep3Color({ data, updateData, onBack, onNext 
   const secondaryColors = data?.colors?.secondary || defaultSecondaryCallback()
   const otherColors = data?.colors?.other || defaultOtherCallback()
 
+  const colorNames = data?.colors?.names || {}
+  const primaryTitle = colorNames.primary || 'Primary Colors'
+  const secondaryTitle = colorNames.secondary || 'Secondary Colors'
+  const otherTitle = colorNames.other || 'Others'
+
   const steps = [
     { id: 1, label: 'Logo', icon: Folder, active: false },
     { id: 2, label: 'Typography', icon: Type, active: false },
@@ -49,8 +53,20 @@ export default function StyleGuideStep3Color({ data, updateData, onBack, onNext 
   const updateColorCategory = (category, newColors) => {
     updateData({
       colors: {
-        ...data?.colors,
+        ...(data?.colors || {}),
         [category]: newColors
+      }
+    })
+  }
+
+  const updateColorNames = (category, name) => {
+    updateData({
+      colors: {
+        ...(data?.colors || {}),
+        names: {
+          ...(data?.colors?.names || {}),
+          [category]: name
+        }
       }
     })
   }
@@ -61,9 +77,10 @@ export default function StyleGuideStep3Color({ data, updateData, onBack, onNext 
     updateColorCategory(category, updated)
   }
 
-  const addColor = (category, currentColors) => {
+  const addColor = (category, currentColors, hex) => {
     const newId = Math.max(...currentColors.map((c) => c.id), 0) + 1
-    const updated = [...currentColors, { id: newId, hex: '#000000' }]
+    const newHex = hex || '#000000'
+    const updated = [...currentColors, { id: newId, hex: newHex }]
     updateColorCategory(category, updated)
   }
 
@@ -129,16 +146,54 @@ export default function StyleGuideStep3Color({ data, updateData, onBack, onNext 
   }
 
   const ColorCard = ({ title, category, colors }) => {
+    const [isEditingTitle, setIsEditingTitle] = useState(false)
+    const [tempTitle, setTempTitle] = useState(title)
+    const [isAddingNew, setIsAddingNew] = useState(false)
+    const [newHex, setNewHex] = useState('#000000')
+
     return (
       <Card className="bg-white mb-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <h3 className="text-[20px] font-semibold leading-[28px] text-[#18181b]">
-              {title}
-            </h3>
-            <Pencil className="w-4 h-4 text-[#71717a] cursor-pointer hover:text-[#18181b] transition-colors" />
+            {isEditingTitle ? (
+              <input
+                type="text"
+                value={tempTitle}
+                onChange={(e) => setTempTitle(e.target.value)}
+                onBlur={() => {
+                  setIsEditingTitle(false)
+                  updateColorNames(category, tempTitle || title)
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    setIsEditingTitle(false)
+                    updateColorNames(category, tempTitle || title)
+                  }
+                }}
+                className="text-[20px] font-semibold leading-[28px] text-[#18181b] bg-transparent border-b border-[#e4e4e7] focus:outline-none focus:border-[#18181b]"
+                autoFocus
+              />
+            ) : (
+              <h3 className="text-[20px] font-semibold leading-[28px] text-[#18181b]">
+                {title}
+              </h3>
+            )}
+            <Pencil
+              className="w-4 h-4 text-[#71717a] cursor-pointer hover:text-[#18181b] transition-colors"
+              onClick={() => {
+                setTempTitle(title)
+                setIsEditingTitle(true)
+              }}
+            />
           </div>
-          <Button variant="primary" size="md" onClick={() => addColor(category, colors)}>
+          <Button
+            variant="primary"
+            size="md"
+            onClick={() => {
+              setNewHex('#000000')
+              setIsAddingNew(true)
+            }}
+          >
             <Plus className="w-4 h-4 mr-2" />
             Add new
           </Button>
@@ -159,13 +214,55 @@ export default function StyleGuideStep3Color({ data, updateData, onBack, onNext 
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="flex flex-col items-center gap-2 cursor-pointer"
-            onClick={() => addColor(category, colors)}
+            onClick={() => {
+              setNewHex('#000000')
+              setIsAddingNew(true)
+            }}
           >
             <div className="w-16 h-16 rounded-lg bg-white border-2 border-dashed border-[#e4e4e7] flex items-center justify-center hover:border-[#18181b] transition-colors">
               <Plus className="w-6 h-6 text-[#71717a]" />
             </div>
             <span className="text-[12px] leading-[16px] text-[#71717a]">Add new</span>
           </motion.div>
+
+          {isAddingNew && (
+            <div className="mt-4 flex items-center gap-3 w-full">
+              <input
+                type="color"
+                value={newHex}
+                onChange={(e) => setNewHex(e.target.value)}
+                className="w-10 h-10 border border-[#e4e4e7] rounded cursor-pointer"
+              />
+              <input
+                type="text"
+                value={newHex}
+                onChange={(e) => setNewHex(e.target.value)}
+                className="w-[120px] px-3 py-2 border border-[#e4e4e7] rounded-md text-[14px] leading-[20px] text-[#18181b]"
+                placeholder="#000000"
+              />
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (newHex) {
+                      addColor(category, colors, newHex)
+                    }
+                    setIsAddingNew(false)
+                  }}
+                  className="px-3 py-2 rounded-md bg-[#18181b] text-white text-[12px] leading-[18px] font-medium hover:opacity-90 cursor-pointer"
+                >
+                  Add
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsAddingNew(false)}
+                  className="px-3 py-2 rounded-md border border-[#e4e4e7] text-[12px] leading-[18px] text-[#18181b] hover:bg-[#f4f4f5] cursor-pointer"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </Card>
     )
@@ -206,43 +303,26 @@ export default function StyleGuideStep3Color({ data, updateData, onBack, onNext 
       {/* Main Content */}
       <div className="pl-0 lg:pl-[240px]">
         <div className="max-w-[1280px] mx-auto px-4 md:px-8 pb-8">
-          {/* Header with Background */}
-          <div className="relative mb-8 -mx-4 md:-mx-8 px-4 md:px-8 pt-[51px] pb-8">
-            {/* Background Image */}
-            <div className="absolute top-0 left-0 right-0 h-[199px] overflow-hidden pointer-events-none z-0">
-              <div className="relative w-full h-full">
-                <Image
-                  src="/assets/banners/abstract-white-wave.png"
-                  alt="Background"
-                  fill
-                  className="object-cover object-top"
-                  priority
-                />
+          <div className="mb-8 pt-[51px]">
+            <div className="flex flex-col md:flex-row items-start justify-between gap-4 md:gap-0">
+              <div>
+                <h1 className="text-[32px] md:text-[48px] font-bold leading-[40px] md:leading-[56px] tracking-[-0.96px] text-[#18181b] mb-2">
+                  Color
+                </h1>
+                <p className="text-[14px] md:text-[16px] leading-[20px] md:leading-[24px] text-[#71717a]">
+                  Define visual properties like shadows, border and spacing
+                </p>
               </div>
-            </div>
-
-            {/* Heading */}
-            <div className="relative z-10">
-              <div className="flex flex-col md:flex-row items-start justify-between gap-4 md:gap-0">
-                <div>
-                  <h1 className="text-[32px] md:text-[48px] font-bold leading-[40px] md:leading-[56px] tracking-[-0.96px] text-[#18181b] mb-2">
-                    Color
-                  </h1>
-                  <p className="text-[14px] md:text-[16px] leading-[20px] md:leading-[24px] text-[#71717a]">
-                    Define visual properties like shadows, border and spacing
-                  </p>
-                </div>
-                <div className="flex items-center gap-3 w-full md:w-auto">
-                  <Button variant="secondary" size="md" onClick={onBack} className="flex-1 md:flex-none justify-center">
-                    Skip
-                  </Button>
-                  <Button variant="secondary" size="md" className="flex-1 md:flex-none justify-center">
-                    Save & Exit
-                  </Button>
-                  <Button variant="primary" size="md" onClick={onNext} className="flex-1 md:flex-none justify-center">
-                    Continue <ArrowRight className="w-4 h-4 ml-1 hidden md:inline" />
-                  </Button>
-                </div>
+              <div className="flex items-center gap-3 w-full md:w-auto">
+                <Button variant="secondary" size="md" onClick={onBack} className="flex-1 md:flex-none justify-center">
+                  Skip
+                </Button>
+                <Button variant="secondary" size="md" className="flex-1 md:flex-none justify-center">
+                  Save & Exit
+                </Button>
+                <Button variant="primary" size="md" onClick={onNext} className="flex-1 md:flex-none justify-center">
+                  Continue <ArrowRight className="w-4 h-4 ml-1 hidden md:inline" />
+                </Button>
               </div>
             </div>
           </div>
@@ -250,19 +330,19 @@ export default function StyleGuideStep3Color({ data, updateData, onBack, onNext 
           {/* Color Cards */}
           <div className="mt-16">
             <ColorCard
-              title="Primary Colors"
+              title={primaryTitle}
               category="primary"
               colors={primaryColors}
             />
 
             <ColorCard
-              title="Secondary Colors"
+              title={secondaryTitle}
               category="secondary"
               colors={secondaryColors}
             />
 
             <ColorCard
-              title="Others"
+              title={otherTitle}
               category="other"
               colors={otherColors}
             />

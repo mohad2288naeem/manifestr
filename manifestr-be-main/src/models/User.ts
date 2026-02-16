@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { RefreshToken } from './RefreshToken';
 export enum UserTier {
     FREE = 'free',
@@ -8,8 +8,8 @@ export enum UserTier {
 
 @Entity('users')
 export class User {
-    @PrimaryGeneratedColumn()
-    id!: number;
+    @PrimaryColumn({ type: 'varchar', length: 255 })
+    id!: string; // Supabase UUID
 
     @Column({ type: 'varchar', length: 255 })
     first_name!: string;
@@ -53,8 +53,11 @@ export class User {
     @Column({ type: 'varchar', length: 255, unique: true })
     email!: string;
 
-    @Column({ type: 'varchar', length: 255 })
-    password_hash!: string;
+    @Column({ type: 'varchar', length: 255, nullable: true })
+    password_hash!: string; // Made nullable since we're using Supabase Auth
+
+    @Column({ type: 'boolean', default: false })
+    email_verified!: boolean;
 
     @Column({ type: 'enum', enum: UserTier, default: UserTier.FREE })
     tier!: UserTier;

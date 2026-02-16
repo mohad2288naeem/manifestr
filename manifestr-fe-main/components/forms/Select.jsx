@@ -18,7 +18,7 @@ export default function Select({
     <div className={`flex flex-col gap-1.5 items-start relative w-full ${className}`}>
       {/* Label */}
       <div className="flex gap-0.5 items-start">
-        <label className="text-l2-medium text-base-muted-foreground+">
+        <label className="text-l2-medium text-[#52525B]">
           {label}
         </label>
         {required && (

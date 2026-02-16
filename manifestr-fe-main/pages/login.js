@@ -146,14 +146,14 @@ export default function Login() {
             <span className="hidden sm:inline text-zinc-300 text-base leading-6 tracking-[-0.3125px]">|</span>
             <Link
               href="/privacy"
-              className="text-l2-regular text-[#52525c] hover:opacity-80"
+              className="text-l2-regular !text-[#71717B] hover:opacity-80"
             >
               Privacy Policy
             </Link>
             <span className="hidden sm:inline text-zinc-300 text-base leading-6 tracking-[-0.3125px]">|</span>
             <Link
               href="/terms"
-              className="text-l2-regular text-[#52525c] hover:opacity-80"
+              className="text-l2-regular !text-[#71717B] hover:opacity-80"
             >
               Terms of Use
             </Link>

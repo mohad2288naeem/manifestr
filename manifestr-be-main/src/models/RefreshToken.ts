@@ -6,8 +6,8 @@ export class RefreshToken {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column()
-    user_id!: number;
+    @Column({ type: 'varchar', length: 255, nullable: true })
+    user_id!: string; // Supabase UUID
 
     @Column({ type: 'varchar', length: 500 })
     token!: string;

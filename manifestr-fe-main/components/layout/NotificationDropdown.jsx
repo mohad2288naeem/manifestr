@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bell, Settings, ArrowRight } from 'lucide-react'
+import { Bell, Settings, ArrowRight, LucideBell, BellDot, BellDotIcon, BellElectric } from 'lucide-react'
 
 export default function NotificationDropdown() {
   const router = useRouter()
@@ -79,7 +79,7 @@ export default function NotificationDropdown() {
         whileTap={{ scale: 0.95 }}
         className="bg-white border border-[#e4e4e7] rounded-md p-3 hover:bg-[#f4f4f5] transition-colors cursor-pointer relative"
       >
-        <Bell className="w-5 h-5 text-[#18181b]" />
+        <Bell stroke='#71717A' fill='#71717A' className="w-5 h-5" />
         {/* {notifications.filter(n => n.unread).length > 0 && (
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#18181b] rounded-full" />
         )} */}
