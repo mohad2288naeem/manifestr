@@ -146,11 +146,9 @@ export default function SignUp() {
 
     if (Object.keys(newErrors).length === 0) {
       setIsSubmitting(true)
-      // Visual transition starts immediately
-      setShowOnboarding(true)
 
       try {
-        await signup({
+        const result = await signup({
           email,
           password,
           first_name: firstName,
@@ -160,9 +158,15 @@ export default function SignUp() {
           gender: gender ? gender.toLowerCase() : '',
           promotional_emails: earlyAccess
         })
-        // Signup success!
-        // We stay in OnboardingFlow (showOnboarding is true).
-        // The loader in OnboardingFlow will eventually finish and show steps.
+
+        // Check if email verification is required
+        if (result.requiresVerification) {
+          // Redirect to verification page
+          router.push(`/verify-email?email=${encodeURIComponent(result.email || email)}`)
+        } else {
+          // User authenticated immediately - show onboarding
+          setShowOnboarding(true)
+        }
       } catch (err) {
         console.error('Signup error:', err)
         if (err.response?.status === 409) {
@@ -170,8 +174,6 @@ export default function SignUp() {
         } else {
           setServerError(err.response?.data?.message || 'Failed to create account. Please try again.')
         }
-        // revert to form
-        setShowOnboarding(false)
       } finally {
         setIsSubmitting(false)
       }

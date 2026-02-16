@@ -18,6 +18,7 @@ const api = axios.create({
 
 let isRefreshing = false;
 let failedQueue = [];
+let isRedirectingToLogin = false; // Prevent multiple simultaneous redirects
 
 const processQueue = (error, token = null) => {
     failedQueue.forEach(prom => {
@@ -89,16 +90,48 @@ api.interceptors.response.use(
                 return api(originalRequest);
             } catch (err) {
                 processQueue(err, null);
-                // Logout user if refresh fails
-                if (typeof window !== 'undefined') {
+                // Logout user if refresh fails - use replace to avoid stacking URLs
+                if (typeof window !== 'undefined' && !isRedirectingToLogin) {
+                    isRedirectingToLogin = true;
+                    console.error('Auth refresh failed - redirecting to login');
+
+                    // Clear ALL auth data
                     localStorage.removeItem('accessToken');
+                    localStorage.removeItem('refreshToken');
                     localStorage.removeItem('user');
-                    Router.push('/login');
+                    localStorage.removeItem('pendingUser');
+                    localStorage.removeItem('pendingVerificationEmail');
+
+                    // Use replace instead of push to avoid /home/login/home/login loop
+                    Router.replace('/login');
+
+                    // Reset flag after redirect
+                    setTimeout(() => {
+                        isRedirectingToLogin = false;
+                    }, 1000);
                 }
                 return Promise.reject(err);
             } finally {
                 isRefreshing = false;
             }
+        }
+
+        // If we get 401 on auth requests themselves, clear everything and redirect
+        if (error.response?.status === 401 && isAuthRequest && typeof window !== 'undefined' && !isRedirectingToLogin) {
+            isRedirectingToLogin = true;
+            console.error('🚨 Auth endpoint returned 401 - clearing session');
+
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('user');
+            localStorage.removeItem('pendingUser');
+            localStorage.removeItem('pendingVerificationEmail');
+
+            Router.replace('/login');
+
+            setTimeout(() => {
+                isRedirectingToLogin = false;
+            }, 1000);
         }
 
         return Promise.reject(error);
