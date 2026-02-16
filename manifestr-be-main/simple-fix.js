@@ -33,44 +33,35 @@ async function simpleFix() {
         console.log('📋 ID columns found:', columns.rows);
 
         if (columns.rows.length > 1) {
-            console.log('\n🔧 FIXING: Dropping INTEGER id, keeping UUID id...');
+            console.log('\n🔧 FIXING: Creating fresh users table with UUID id...');
 
-            // Step 1: Get all primary key constraints
-            const pkeys = await client.query(`
-                SELECT constraint_name 
+            // Step 1: Drop ALL foreign key constraints that depend on users table
+            console.log('1️⃣ Dropping all foreign key constraints...');
+            const fkConstraints = await client.query(`
+                SELECT constraint_name, table_name
                 FROM information_schema.table_constraints 
-                WHERE table_name = 'users' AND constraint_type = 'PRIMARY KEY';
+                WHERE constraint_type = 'FOREIGN KEY'
+                AND constraint_name IN (
+                    SELECT constraint_name
+                    FROM information_schema.constraint_column_usage
+                    WHERE table_name = 'users'
+                );
             `);
 
-            console.log('📋 Primary keys found:', pkeys.rows);
-
-            // Step 2: Drop ALL primary key constraints
-            for (const pk of pkeys.rows) {
-                console.log(`Dropping constraint: ${pk.constraint_name}`);
-                await client.query(`ALTER TABLE users DROP CONSTRAINT IF EXISTS ${pk.constraint_name} CASCADE;`);
+            for (const fk of fkConstraints.rows) {
+                console.log(`Dropping ${fk.table_name}.${fk.constraint_name}`);
+                await client.query(`ALTER TABLE ${fk.table_name} DROP CONSTRAINT IF EXISTS ${fk.constraint_name} CASCADE;`);
             }
-            console.log('✅ All primary key constraints dropped');
+            console.log('✅ All foreign keys dropped');
 
-            // Step 3: Rename columns to avoid conflict
-            console.log('🔄 Renaming columns...');
-            // Get position of each id
-            const intId = columns.rows.find(r => r.data_type === 'integer');
-            const uuidId = columns.rows.find(r => r.data_type === 'uuid');
+            // Step 2: Drop ALL primary key constraints on users
+            console.log('2️⃣ Dropping primary key constraints...');
+            await client.query(`ALTER TABLE users DROP CONSTRAINT IF EXISTS users_pkey CASCADE;`);
+            await client.query(`ALTER TABLE users DROP CONSTRAINT IF EXISTS PK_a3ffb1c0c8416b9fc6f907b7433 CASCADE;`);
+            console.log('✅ Primary keys dropped');
 
-            if (intId && uuidId) {
-                // Rename both temporarily
-                await client.query(`
-                    ALTER TABLE users 
-                    RENAME COLUMN id TO id_backup_integer;
-                `);
-                console.log('✅ Integer id renamed to id_backup_integer');
-
-                // Now there's only one 'id' left (the uuid one)
-                // Actually, we need a different approach
-            }
-
-            // Step 4: Create fresh clean users table
-            console.log('🆕 Creating fresh users table...');
+            // Step 3: Create fresh clean users table
+            console.log('3️⃣ Creating fresh users table...');
             await client.query(`DROP TABLE IF EXISTS users_old_backup CASCADE;`);
             await client.query(`ALTER TABLE users RENAME TO users_old_backup;`);
 
@@ -108,9 +99,18 @@ async function simpleFix() {
             console.log('✅ Only one id column - good!');
         }
 
-        // Fix refresh_tokens foreign key
+        // Fix refresh_tokens table
+        console.log('\n🔧 Fixing refresh_tokens table...');
         await client.query(`ALTER TABLE refresh_tokens DROP CONSTRAINT IF EXISTS refresh_tokens_user_id_fkey CASCADE;`);
-        await client.query(`ALTER TABLE refresh_tokens ALTER COLUMN user_id TYPE VARCHAR(255) USING user_id::VARCHAR(255);`);
+        await client.query(`ALTER TABLE refresh_tokens DROP CONSTRAINT IF EXISTS FK_3ddc983c5f7bcf132fd8732c3f4 CASCADE;`);
+        await client.query(`ALTER TABLE refresh_tokens DROP CONSTRAINT IF EXISTS refresh_tokens_pkey CASCADE;`);
+
+        try {
+            await client.query(`ALTER TABLE refresh_tokens ALTER COLUMN user_id TYPE VARCHAR(255) USING user_id::VARCHAR(255);`);
+            console.log('✅ refresh_tokens.user_id converted to VARCHAR');
+        } catch (e) {
+            console.log('ℹ️  refresh_tokens.user_id already correct type or will be recreated');
+        }
 
         // Create early_access
         await client.query(`
