@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -6,12 +6,15 @@ const UNPROTECTED_ROUTES = [
     '/',
     '/login',
     '/signup',
-    '/forgot-password'
+    '/forgot-password',
+    '/verify-email'
 ];
 
 export default function AuthGuard({ children }) {
     const { user, loading } = useAuth();
     const router = useRouter();
+    const lastRedirectTime = useRef(0);
+    const lastRedirectPath = useRef('');
 
     const GUEST_ONLY_ROUTES = [
         '/login',
@@ -21,19 +24,35 @@ export default function AuthGuard({ children }) {
 
     useEffect(() => {
         if (!loading) {
-            // Check if current path matches any unprotected route
+            const now = Date.now();
             const isUnprotected = UNPROTECTED_ROUTES.includes(router.pathname);
             const isGuestOnly = GUEST_ONLY_ROUTES.includes(router.pathname);
 
+            if (now - lastRedirectTime.current < 2000 && lastRedirectPath.current === router.pathname) {
+                console.warn(' AuthGuard: Preventing rapid redirect loop');
+                return;
+            }
+
+            if (user && typeof window !== 'undefined' && !localStorage.getItem('accessToken')) {
+                console.warn(' User object exists but no token - clearing stale auth');
+                localStorage.removeItem('user');
+                return;
+            }
+
             if (!isUnprotected && !user) {
-                router.push('/login');
+                console.log('Protected route without auth - redirecting to login');
+                lastRedirectTime.current = now;
+                lastRedirectPath.current = '/login';
+                router.replace('/login');
             } else if (isGuestOnly && user) {
-                router.push('/home');
+                console.log('Authenticated user on guest-only route - redirecting to home');
+                lastRedirectTime.current = now;
+                lastRedirectPath.current = '/home';
+                router.replace('/home');
             }
         }
     }, [user, loading, router.pathname]);
 
-    // While loading auth state, show nothing or a loading spinner
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-screen bg-white">
@@ -45,12 +64,10 @@ export default function AuthGuard({ children }) {
     const isUnprotected = UNPROTECTED_ROUTES.includes(router.pathname);
     const isGuestOnly = GUEST_ONLY_ROUTES.includes(router.pathname);
 
-    // If user is unauthenticated and route is protected, don't render
     if (!user && !isUnprotected) {
         return null;
     }
 
-    // If user is authenticated and route is guest only, don't render
     if (user && isGuestOnly) {
         return null;
     }

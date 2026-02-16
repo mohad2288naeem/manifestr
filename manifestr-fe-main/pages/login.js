@@ -10,6 +10,7 @@ import GoogleIcon from '../components/icons/GoogleIcon'
 import { Toaster, Intent } from '@blueprintjs/core'
 
 import { useAuth } from '../contexts/AuthContext'
+import { useRouter } from 'next/router'
 
 // Create toaster instance
 const AppToaster = typeof window !== 'undefined' ? Toaster.create({
@@ -18,11 +19,13 @@ const AppToaster = typeof window !== 'undefined' ? Toaster.create({
 }) : null
 
 export default function Login() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
   const [errors, setErrors] = useState({})
   const [serverError, setServerError] = useState('')
+  const [emailNotVerified, setEmailNotVerified] = useState(false)
   const [touched, setTouched] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { login } = useAuth()
@@ -53,13 +56,13 @@ export default function Login() {
       setIsSubmitting(true)
 
       try {
-        console.log('🔵 Login attempt started...')
+        console.log(' Login attempt started...')
         await login(email, password)
-        console.log('✅ Login successful!')
+        console.log(' Login successful!')
 
         // Success - AuthContext handles redirect to /home
         if (AppToaster) {
-          console.log('🎉 Showing success toast')
+          console.log('Showing success toast')
           AppToaster.show({
             message: 'Welcome back! Redirecting...',
             intent: Intent.SUCCESS,
@@ -68,27 +71,41 @@ export default function Login() {
           })
         }
       } catch (err) {
-        console.log('❌ LOGIN ERROR CAUGHT:', err)
-        console.log('❌ Error status:', err.response?.status)
-        console.log('❌ Error message:', err.response?.data?.message)
+        console.log(' LOGIN ERROR CAUGHT:', err)
+        console.log(' Error status:', err.response?.status)
+        console.log(' Error message:', err.response?.data?.message)
 
         // Always reset submitting state on error
         setIsSubmitting(false)
-        console.log('🔄 Button state reset to "Sign in"')
+        console.log(' Button state reset to "Sign in"')
 
         let errorMessage = 'Something went wrong. Please try again.'
+        let isEmailNotVerified = false
 
         // Handle specific error cases
         if (err.response?.status === 401) {
-          // Invalid credentials
-          errorMessage = 'Incorrect password or email! Please login with correct credentials.'
-          console.log('🔴 401 Error - Wrong credentials!')
+          const message = err.response?.data?.message || ''
+
+          // Check if it's an email verification error
+          if (message.toLowerCase().includes('verify your email')) {
+            errorMessage = message
+            isEmailNotVerified = true
+            setEmailNotVerified(true)
+            console.log(' Email not verified!')
+          } else {
+            // Invalid credentials
+            errorMessage = 'Incorrect password or email! Please login with correct credentials.'
+            setEmailNotVerified(false)
+            console.log(' 401 Error - Wrong credentials!')
+          }
         } else if (err.response?.data?.message) {
           // Server provided a specific message
           errorMessage = err.response.data.message
+          setEmailNotVerified(false)
         } else if (err.message) {
           // Generic error message
           errorMessage = err.message
+          setEmailNotVerified(false)
         }
 
         console.log('📢 Error message:', errorMessage)
@@ -175,7 +192,16 @@ export default function Login() {
               {/* Form */}
               {serverError && (
                 <div className="w-full bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
-                  {serverError}
+                  <p>{serverError}</p>
+                  {emailNotVerified && (
+                    <button
+                      type="button"
+                      onClick={() => router.push(`/verify-email?email=${encodeURIComponent(email)}`)}
+                      className="mt-2 text-sm text-red-700 font-medium underline hover:opacity-80"
+                    >
+                      Resend verification email →
+                    </button>
+                  )}
                 </div>
               )}
               <form onSubmit={handleSubmit} className="flex flex-col gap-6 items-start w-full rounded-xl" name="login-form">
