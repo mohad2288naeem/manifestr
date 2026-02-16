@@ -1,8 +1,8 @@
 import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { AppDataSource } from './lib/data-source';
 import { setupSwagger } from './lib/swagger';
+import { supabaseAdmin } from './lib/supabase';
 import { BaseController } from './controllers/base.controller';
 import { AuthController } from './controllers/auth.controller';
 import { AIController } from './controllers/ai.controller';
@@ -91,21 +91,22 @@ class App {
          */
         this.app.get('/health', async (req: Request, res: Response) => {
             try {
-                const isConnected = AppDataSource.isInitialized;
-                if (isConnected) {
-                    await AppDataSource.query('SELECT 1');
-                    return res.json({
-                        status: 'success',
-                        message: 'Application is healthy',
-                        details: { database: 'connected' },
-                    });
-                } else {
-                    return res.status(503).json({
-                        status: 'error',
-                        message: 'Application is unhealthy',
-                        details: { database: 'not connected' },
-                    });
-                }
+                // Test Supabase connection
+                const { data, error } = await supabaseAdmin
+                    .from('users')
+                    .select('count')
+                    .limit(1);
+
+                if (error) throw error;
+
+                return res.json({
+                    status: 'success',
+                    message: 'Application is healthy',
+                    details: {
+                        database: 'connected',
+                        supabase: 'connected'
+                    },
+                });
             } catch (error) {
                 return res.status(503).json({
                     status: 'error',

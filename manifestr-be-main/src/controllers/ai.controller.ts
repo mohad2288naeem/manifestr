@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseController } from './base.controller';
 import OpenAI from 'openai';
-import { AppDataSource } from '../lib/data-source';
-import { MotivationQuote } from '../models/MotivationQuote';
+import SupabaseDB from '../lib/supabase-db';
 import { AIOrchestrator } from '../services/ai-orchestrator.service';
 import { UserPromptSchema } from '../agents/protocols/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -339,30 +338,20 @@ export class AIController extends BaseController {
      *                     quote: { type: string }
      */
     private getMotivationQuote = async (req: Request, res: Response) => {
-        // ... (Keeping original logic but simplified/cleaned for brevity if needed? 
-        // I will copy the original logic exactly to avoid regression, but fixing the key issue.)
         try {
-            const quoteRepo = AppDataSource.getRepository(MotivationQuote);
-            const lastShown = await quoteRepo.find({ order: { last_shown_at: 'DESC' }, take: 1 });
+            // Try to get from database first (if table exists)
+            const dbQuote = await SupabaseDB.getRandomMotivationQuote();
 
-            if (lastShown.length > 0) {
-                const quote = lastShown[0];
-                const hoursSinceShown = (new Date().getTime() - quote.last_shown_at.getTime()) / (1000 * 60 * 60);
-                if (hoursSinceShown < 12) {
-                    return res.status(200).json({ status: "success", message: "Quote retrieved", details: { quote: quote.text } });
-                }
+            if (dbQuote && dbQuote.quote) {
+                return res.status(200).json({
+                    status: "success",
+                    message: "Quote retrieved",
+                    details: { quote: dbQuote.quote }
+                });
             }
 
-            const count = await quoteRepo.count();
-            if (count > 5 && Math.random() > 0.7) {
-                const randomQuote = await quoteRepo.createQueryBuilder('quote').orderBy('RANDOM()').getOne();
-                if (randomQuote) {
-                    randomQuote.last_shown_at = new Date();
-                    await quoteRepo.save(randomQuote);
-                    return res.status(200).json({ status: "success", message: "Quote refreshed", details: { quote: randomQuote.text } });
-                }
-            }
-
+            // Generate fresh quote with OpenAI
+            console.log('Generating fresh motivation quote with OpenAI...');
             const completion = await this.openai.chat.completions.create({
                 messages: [
                     { role: "system", content: "You are a motivation engine. Generate a short motivational quote (43-50 chars), ending with a VERB. No quotes." },
@@ -373,14 +362,21 @@ export class AIController extends BaseController {
             });
 
             const content = completion.choices[0].message.content?.trim() || "Rise up every morning to actively learn";
-            const newQuote = quoteRepo.create({ text: content, last_shown_at: new Date() });
-            await quoteRepo.save(newQuote);
 
-            return res.status(200).json({ status: "success", message: "Quote generated", details: { quote: content } });
+            return res.status(200).json({
+                status: "success",
+                message: "Quote generated",
+                details: { quote: content }
+            });
 
         } catch (error) {
             console.error('Error serving quote:', error);
-            return res.status(500).json({ status: "error", message: "Failed to generate quote", details: String(error) });
+            // Return fallback quote instead of error
+            return res.status(200).json({
+                status: "success",
+                message: "Quote retrieved (fallback)",
+                details: { quote: "Think bold. Move fast. Stay limitless." }
+            });
         }
     }
 }

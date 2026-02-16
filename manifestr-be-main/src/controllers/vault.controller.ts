@@ -1,9 +1,7 @@
 import { Response } from 'express';
 import { BaseController } from './base.controller';
 import { authenticateToken, AuthRequest } from '../middleware/auth.middleware';
-import { AppDataSource } from '../lib/data-source';
-import { VaultItem, VaultItemType, VaultItemStatus } from '../models/VaultItem';
-import { IsNull, Like } from 'typeorm';
+import SupabaseDB from '../lib/supabase-db';
 import { s3Util } from '../utils/s3.util';
 import { validate as uuidValidate } from 'uuid';
 
@@ -49,24 +47,31 @@ export class VaultController extends BaseController {
         try {
             const userId = req.user!.userId;
             const { parentId, search } = req.query;
-            const repo = AppDataSource.getRepository(VaultItem);
 
-            let where: any = { userId };
+            // Get all user's vault items
+            let items = await SupabaseDB.getUserVaultItems(userId);
 
+            // Filter by search
             if (search) {
-                where.title = Like(`%${search}%`);
+                items = items.filter(item =>
+                    item.title.toLowerCase().includes((search as string).toLowerCase())
+                );
             } else if (parentId && parentId !== 'root') {
                 if (!uuidValidate(parentId as string)) {
                     return res.status(400).json({ status: "error", message: "Invalid parentId" });
                 }
-                where.parent_id = parentId;
+                items = items.filter(item => item.parent_id === parentId);
             } else {
-                where.parent_id = IsNull(); // Root items
+                // Root items only
+                items = items.filter(item => !item.parent_id);
             }
 
-            const items = await repo.find({
-                where,
-                order: { type: 'DESC', title: 'ASC' } // Folders first
+            // Sort: folders first, then by title
+            items.sort((a, b) => {
+                if (a.type !== b.type) {
+                    return a.type === 'folder' ? -1 : 1;
+                }
+                return a.title.localeCompare(b.title);
             });
 
             return res.json({
@@ -132,22 +137,20 @@ export class VaultController extends BaseController {
                 return res.status(400).json({ status: "error", message: "Invalid parentId" });
             }
 
-            const repo = AppDataSource.getRepository(VaultItem);
-            const newItem = repo.create({
-                userId,
+            // Create vault item using Supabase
+            console.log('[Vault] Creating item...');
+            const newItem = await SupabaseDB.createVaultItem(userId, {
                 title,
-                type: VaultItemType.FILE,
+                type: 'file',
                 file_key: fileKey,
                 parent_id: validatedParentId,
-                status: status || VaultItemStatus.DRAFT,
+                status: status || 'Draft',
                 project,
                 size,
                 thumbnail_url: thumbnailUrl
             });
 
-            console.log('[Vault] Saving item:', newItem);
-            await repo.save(newItem);
-            console.log('[Vault] Item saved:', newItem.id);
+            console.log('[Vault] Item created:', newItem.id);
             return res.status(201).json({ status: "success", data: newItem });
 
         } catch (error: any) {
@@ -204,17 +207,15 @@ export class VaultController extends BaseController {
                 return res.status(400).json({ status: "error", message: "Invalid parentId" });
             }
 
-            const repo = AppDataSource.getRepository(VaultItem);
-            const newItem = repo.create({
-                userId,
+            // Create folder using Supabase
+            const newItem = await SupabaseDB.createVaultItem(userId, {
                 title,
-                type: VaultItemType.FOLDER,
+                type: 'folder',
                 parent_id: validatedParentId,
-                status: VaultItemStatus.DRAFT,
+                status: 'Draft',
                 project
             });
 
-            await repo.save(newItem);
             return res.status(201).json({ status: "success", data: newItem });
 
         } catch (error) {
@@ -259,35 +260,29 @@ export class VaultController extends BaseController {
             const { id } = req.params;
             const { title, status, parentId } = req.body;
 
-            const repo = AppDataSource.getRepository(VaultItem);
-            const item = await repo.findOne({ where: { id, userId } });
-
+            // Check if item exists
+            const item = await SupabaseDB.getVaultItemById(id, userId);
             if (!item) return res.status(404).json({ status: "error", message: "Item not found" });
 
-            if (title) item.title = title;
-            if (status) item.status = status;
+            // Build updates object
+            const updates: any = {};
+            if (title) updates.title = title;
+            if (status) updates.status = status;
 
             if (parentId !== undefined) {
-                if (parentId === 'root') {
-                    item.parent_id = null; // Explicit null, typeorm might complain if not handled or type is strictly string
-                    // Wait, VaultItem.parent_id is string | null in DB? 
-                    // Let's assume TypeORM handles null fine if column is nullable.
-                    // But typescript might complain if 'null' is assigned to something strictly typed?
-                    // VaultItem model says `parent_id: string;` but usually nullable columns are `string | null`.
-                    // Let's cast to any or fix model if needed, but 'null' is fine for nullable column.
-                    (item as any).parent_id = null;
-                } else if (parentId === null) {
-                    (item as any).parent_id = null;
+                if (parentId === 'root' || parentId === null) {
+                    updates.parent_id = null;
                 } else {
                     if (!uuidValidate(parentId)) {
                         return res.status(400).json({ status: "error", message: "Invalid parentId" });
                     }
-                    item.parent_id = parentId;
+                    updates.parent_id = parentId;
                 }
             }
 
-            await repo.save(item);
-            return res.json({ status: "success", data: item });
+            // Update using Supabase
+            const updatedItem = await SupabaseDB.updateVaultItem(id, userId, updates);
+            return res.json({ status: "success", data: updatedItem });
 
         } catch (error) {
             console.error('[Vault] updateItem Error:', error);
@@ -321,13 +316,12 @@ export class VaultController extends BaseController {
             const userId = req.user!.userId;
             const { id } = req.params;
 
-            const repo = AppDataSource.getRepository(VaultItem);
-            const item = await repo.findOne({ where: { id, userId } });
-
+            // Get item using Supabase
+            const item = await SupabaseDB.getVaultItemById(id, userId);
             if (!item) return res.status(404).json({ status: "error", message: "Item not found" });
 
             // If it's a file, delete from S3
-            if (item.type === VaultItemType.FILE && item.file_key) {
+            if (item.type === 'file' && item.file_key) {
                 try {
                     await s3Util.deleteFile(item.file_key);
                 } catch (e) {
@@ -335,12 +329,8 @@ export class VaultController extends BaseController {
                 }
             }
 
-            // If it's a folder, we should recursively delete children, 
-            // but for MVP we might just error if not empty or use database cascade.
-            // Using TypeORM cascade relies on FK setup. For now, simple delete.
-            // A better approach for folders is to find all descendants.
-
-            await repo.remove(item);
+            // Delete using Supabase (CASCADE will handle children if folder)
+            await SupabaseDB.deleteVaultItem(id, userId);
             return res.json({ status: "success", message: "Item deleted" });
 
         } catch (error) {

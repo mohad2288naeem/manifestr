@@ -1,8 +1,6 @@
 import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
-import { AppDataSource } from "../lib/data-source"; // Adjust path if needed
-import { GenerationJob, GenerationStatus } from "../models/GenerationJob";
+import SupabaseDB from "../lib/supabase-db";
 import { UserPrompt } from "../agents/protocols/types";
-import { User } from "../models/User";
 import OpenAI from "openai";
 import { fetchUnsplashImage } from "../utils/image.util";
 
@@ -18,33 +16,33 @@ export class AIOrchestrator {
     /**
      * Starts the generation process
      */
-    async startGeneration(userId: string, promptData: Partial<UserPrompt>): Promise<GenerationJob> {
-        const jobRepo = AppDataSource.getRepository(GenerationJob);
+    async startGeneration(userId: string, promptData: Partial<UserPrompt>): Promise<any> {
+        // 1. Generate metadata first
+        let title = "New Generation";
+        let coverImage = null;
 
-        // 1. Create Job Entry
-        const job = jobRepo.create({
-            userId: userId,
-            prompt: promptData.prompt!,
-            output_type: promptData.output as any,
-            status: GenerationStatus.QUEUED,
-            tokens_used: 0,
-        });
-
-        // 2. Generate Metadata (Title & Cover) - Run in parallel
         try {
-            const [title, coverImage] = await Promise.all([
+            [title, coverImage] = await Promise.all([
                 this.generateTitle(promptData.prompt!),
                 fetchUnsplashImage(promptData.prompt!)
             ]);
-            job.title = title;
-            job.cover_image = coverImage;
         } catch (error) {
             console.error("Error generating metadata:", error);
-            // Fallbacks
-            job.title = "New Generation";
         }
 
-        await jobRepo.save(job);
+        // 2. Create Job Entry using Supabase
+        const job = await SupabaseDB.createGenerationJob(userId, {
+            type: promptData.output as string,
+            input_data: {
+                prompt: promptData.prompt,
+                style_guide_id: promptData.style_guide_id,
+                output: promptData.output,
+                meta: promptData.meta,
+                title,
+                cover_image: coverImage
+            },
+            status: 'queued'
+        });
 
         // 2. Push to First Queue (Intent)
         // Construct the payload for the first agent
@@ -57,22 +55,24 @@ export class AIOrchestrator {
             jobId: job.id,
         };
 
+        // 3. Push to SQS Queue
         try {
             await this.sqsClient.send(new SendMessageCommand({
                 QueueUrl: process.env.SQS_QUEUE_INTENT_URL!,
                 MessageBody: JSON.stringify({ jobId: job.id }),
-                MessageGroupId: job.id, // Required for FIFO queues - ensures ordering per job
-                MessageDeduplicationId: `${job.id}-${Date.now()}`, // Unique per message
+                MessageGroupId: job.id,
+                MessageDeduplicationId: `${job.id}-${Date.now()}`,
             }));
 
-            // Update status to confirm it's in queue (though QUEUED is default)
             console.log(`[Orchestrator] Job ${job.id} pushed to Intent Queue`);
 
         } catch (e) {
             console.error("Failed to push to SQS:", e);
-            job.status = GenerationStatus.FAILED;
-            job.error_message = "Failed to queue job: " + (e as Error).message;
-            await jobRepo.save(job);
+            // Update job status to failed
+            await SupabaseDB.updateGenerationJob(job.id, userId, {
+                status: 'failed',
+                error: "Failed to queue job: " + (e as Error).message
+            });
             throw e;
         }
 
@@ -80,30 +80,19 @@ export class AIOrchestrator {
     }
 
     async getJobStatus(jobId: string, userId: string) {
-        const jobRepo = AppDataSource.getRepository(GenerationJob);
-        // Ensure user owns the job
-        if (userId === 'anon') {
-            return jobRepo.findOne({ where: { id: jobId } });
-        }
-
-        return jobRepo.findOne({ where: { id: jobId, userId: userId } });
+        // Get job using Supabase
+        return await SupabaseDB.getGenerationJobById(jobId, userId);
     }
 
     async getUserJobs(userId: string) {
-        const jobRepo = AppDataSource.getRepository(GenerationJob);
-        return jobRepo.find({
-            where: { userId: userId },
-            order: { created_at: "DESC" }
-        });
+        // Get all user jobs using Supabase
+        return await SupabaseDB.getUserGenerationJobs(userId);
     }
 
     async getRecentJobs(userId: string, limit: number = 3) {
-        const jobRepo = AppDataSource.getRepository(GenerationJob);
-        return jobRepo.find({
-            where: { userId: userId },
-            order: { created_at: "DESC" },
-            take: limit
-        });
+        // Get recent jobs using Supabase
+        const jobs = await SupabaseDB.getUserGenerationJobs(userId);
+        return jobs.slice(0, limit);
     }
 
     private async generateTitle(prompt: string): Promise<string> {

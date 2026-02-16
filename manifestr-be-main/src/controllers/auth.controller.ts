@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseController } from './base.controller';
-import { AppDataSource } from '../lib/data-source';
-import { User } from '../models/User';
 import { supabaseAdmin, supabase } from '../lib/supabase';
+import SupabaseDB from '../lib/supabase-db';
 
 interface ApiResponse {
     status: "success" | "error";
@@ -241,22 +240,17 @@ export class AuthController extends BaseController {
 
             console.log('User created in Supabase (email auto-verified):', authData.user.id);
 
-            // Create user record in our database
-            const userRepo = AppDataSource.getRepository(User);
-            const user = userRepo.create({
-                id: authData.user.id, // Use Supabase user ID
+            // Create user record in our database using Supabase
+            const user = await SupabaseDB.createUser({
+                id: authData.user.id,
                 email,
                 first_name,
                 last_name,
                 dob,
                 country,
                 gender,
-                promotional_emails,
-                wins_balance: 100,
-                email_verified: true // Auto-verified!
+                promotional_emails
             });
-
-            await userRepo.save(user);
 
             // Now sign them in to get tokens
             const { data: sessionData, error: sessionError } = await supabaseAdmin.auth.signInWithPassword({
@@ -311,25 +305,21 @@ export class AuthController extends BaseController {
                 return this.sendResponse(res, 401, 'error', 'Please verify your email before logging in');
             }
 
-            // Fetch user from our database
-            const userRepo = AppDataSource.getRepository(User);
-            let user = await userRepo.findOne({ where: { id: data.user.id } });
+            // Fetch user from our database using Supabase
+            let user = await SupabaseDB.getUserById(data.user.id);
 
-            // If user doesn't exist in our DB (shouldn't happen), create it
+            // If user doesn't exist in our DB, create it
             if (!user) {
-                user = userRepo.create({
+                console.log('Creating user record for existing Supabase auth user:', data.user.id);
+                user = await SupabaseDB.createUser({
                     id: data.user.id,
                     email: data.user.email!,
-                    first_name: data.user.user_metadata.first_name || '',
-                    last_name: data.user.user_metadata.last_name || '',
-                    email_verified: true,
-                    wins_balance: 100
+                    first_name: data.user.user_metadata?.first_name || 'User',
+                    last_name: data.user.user_metadata?.last_name || ''
                 });
-                await userRepo.save(user);
             } else {
                 // Update email verification status
-                user.email_verified = true;
-                await userRepo.save(user);
+                user = await SupabaseDB.updateUser(data.user.id, { email_verified: true });
             }
 
             return this.sendResponse(res, 200, 'success', 'Login successful', {
@@ -389,13 +379,16 @@ export class AuthController extends BaseController {
                 return this.sendResponse(res, 400, 'error', 'Invalid or expired verification token');
             }
 
-            // Update user in our database
-            const userRepo = AppDataSource.getRepository(User);
-            const user = await userRepo.findOne({ where: { id: data.user.id } });
-
-            if (user) {
-                user.email_verified = true;
-                await userRepo.save(user);
+            // Update user in our database using Supabase
+            let user = null;
+            try {
+                user = await SupabaseDB.getUserById(data.user.id);
+                if (user) {
+                    user = await SupabaseDB.updateUser(data.user.id, { email_verified: true });
+                }
+            } catch (err) {
+                // User might not exist yet
+                console.log('User not found in DB:', err);
             }
 
             return this.sendResponse(res, 200, 'success', 'Email verified successfully', {
@@ -463,20 +456,20 @@ export class AuthController extends BaseController {
                 return this.sendResponse(res, 400, 'error', 'Missing required fields');
             }
 
-            const userRepo = AppDataSource.getRepository(User);
-            const user = await userRepo.findOne({ where: { id: supabaseUser.id } });
+            // Update user using Supabase
+            let user = await SupabaseDB.getUserById(supabaseUser.id);
 
             if (!user) return this.sendResponse(res, 404, 'error', 'User not found');
 
-            user.expertise = expertise;
-            user.job_title = job_title;
-            user.industry = industry;
-            user.goal = goal;
-            user.work_style = work_style;
-            user.problems = problems;
-            user.onboarding_completed = true;
-
-            await userRepo.save(user);
+            user = await SupabaseDB.updateUser(supabaseUser.id, {
+                expertise,
+                job_title,
+                industry,
+                goal,
+                work_style,
+                problems,
+                onboarding_completed: true
+            });
 
             return this.sendResponse(res, 200, 'success', 'Onboarding completed', { user: this.sanitizeUser(user) });
 
@@ -500,8 +493,8 @@ export class AuthController extends BaseController {
                 return this.sendResponse(res, 401, 'error', 'Unauthorized or invalid token');
             }
 
-            const userRepo = AppDataSource.getRepository(User);
-            const user = await userRepo.findOne({ where: { id: supabaseUser.id } });
+            // Get user using Supabase
+            const user = await SupabaseDB.getUserById(supabaseUser.id);
 
             if (!user) return this.sendResponse(res, 404, 'error', 'User not found');
 
@@ -513,8 +506,9 @@ export class AuthController extends BaseController {
         }
     };
 
-    private sanitizeUser(user: User) {
-        const { password_hash, ...safeUser } = user as any;
+    private sanitizeUser(user: any) {
+        // Remove sensitive fields
+        const { password_hash, ...safeUser } = user;
         return safeUser;
     }
 }

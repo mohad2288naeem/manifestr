@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { BaseController } from './base.controller';
-import { AppDataSource } from '../lib/data-source';
-import { EarlyAccess } from '../models/EarlyAccess';
+import SupabaseDB from '../lib/supabase-db';
 
 interface ApiResponse {
     status: "success" | "error";
@@ -68,25 +67,20 @@ export class EarlyAccessController extends BaseController {
                 return this.sendResponse(res, 400, 'error', 'Invalid email format');
             }
 
-            const earlyAccessRepo = AppDataSource.getRepository(EarlyAccess);
-
             // Check if email already exists
-            const existingEntry = await earlyAccessRepo.findOne({ where: { email } });
+            const existingEntry = await SupabaseDB.getEarlyAccessByEmail(email);
             if (existingEntry) {
                 return this.sendResponse(res, 409, 'error', 'This email is already registered for early access', {
                     registered_at: existingEntry.created_at
                 });
             }
 
-            // Create new early access entry
-            const earlyAccessEntry = earlyAccessRepo.create({
+            // Create new early access entry using Supabase
+            const earlyAccessEntry = await SupabaseDB.createEarlyAccess({
                 first_name,
                 last_name,
-                email,
-                status: 'pending'
+                email
             });
-
-            await earlyAccessRepo.save(earlyAccessEntry);
 
             console.log('New early access registration:', email);
 
@@ -106,18 +100,12 @@ export class EarlyAccessController extends BaseController {
 
     private list = async (req: Request, res: Response) => {
         try {
-            const earlyAccessRepo = AppDataSource.getRepository(EarlyAccess);
-
-            // Get all early access registrations
-            const entries = await earlyAccessRepo.find({
-                order: {
-                    created_at: 'DESC'
-                }
-            });
+            // Get all early access registrations using Supabase
+            const entries = await SupabaseDB.listEarlyAccess();
 
             return this.sendResponse(res, 200, 'success', 'Early access registrations retrieved successfully', {
-                total: entries.length,
-                registrations: entries
+                total: entries?.length || 0,
+                registrations: entries || []
             });
 
         } catch (error) {
