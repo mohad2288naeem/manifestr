@@ -9,6 +9,83 @@ export async function initDatabase() {
     try {
         console.log('🔍 Checking database schema...');
 
+        // ===== CRITICAL: FIX USER ID TYPE =====
+        // Production has INTEGER id, but we need VARCHAR for Supabase UUIDs
+        console.log('🔧 Checking user ID column type...');
+        try {
+            const result = await AppDataSource.query(`
+                SELECT data_type 
+                FROM information_schema.columns 
+                WHERE table_name = 'users' AND column_name = 'id';
+            `);
+
+            if (result[0]?.data_type === 'integer') {
+                console.log('⚠️  CRITICAL: users.id is INTEGER, converting to VARCHAR for Supabase UUIDs');
+
+                // Step 1: Check if there are any users with data
+                const userCount = await AppDataSource.query(`SELECT COUNT(*) as count FROM users;`);
+                const hasData = parseInt(userCount[0]?.count || '0') > 0;
+
+                if (hasData) {
+                    console.log(`⚠️  WARNING: ${userCount[0].count} users exist - this migration will preserve data`);
+                }
+
+                // Step 2: Drop known foreign key constraints (will be auto-recreated)
+                const dropConstraints = [
+                    `ALTER TABLE refresh_tokens DROP CONSTRAINT IF EXISTS FK_refresh_tokens_user CASCADE;`,
+                    `ALTER TABLE refresh_tokens DROP CONSTRAINT IF EXISTS refresh_tokens_user_id_fkey CASCADE;`,
+                    `ALTER TABLE vault_items DROP CONSTRAINT IF EXISTS FK_vault_items_user CASCADE;`,
+                    `ALTER TABLE style_guides DROP CONSTRAINT IF EXISTS FK_style_guides_user CASCADE;`,
+                    `ALTER TABLE generation_jobs DROP CONSTRAINT IF EXISTS FK_generation_jobs_user CASCADE;`,
+                    `ALTER TABLE transactions DROP CONSTRAINT IF EXISTS FK_e9acc6efa76de013e8c1553ed2b CASCADE;`,
+                    `ALTER TABLE jobs DROP CONSTRAINT IF EXISTS FK_9027c8f0ba75fbc1ac46647d043 CASCADE;`,
+                    `ALTER TABLE conversations DROP CONSTRAINT IF EXISTS FK_3a9ae579e61e81cc0e989afeb4a CASCADE;`,
+                ];
+
+                for (const drop of dropConstraints) {
+                    try {
+                        await AppDataSource.query(drop);
+                    } catch (e) {
+                        // Constraint might not exist, that's ok
+                    }
+                }
+
+                // Step 3: Convert id column to VARCHAR
+                await AppDataSource.query(`
+                    ALTER TABLE users ALTER COLUMN id TYPE VARCHAR(255) USING id::VARCHAR(255);
+                `);
+
+                // Step 4: Convert foreign key columns to VARCHAR in all related tables
+                const fkMigrations = [
+                    { table: 'refresh_tokens', column: 'user_id' },
+                    { table: 'vault_items', column: 'userId' },
+                    { table: 'style_guides', column: 'userId' },
+                    { table: 'generation_jobs', column: 'userId' },
+                    { table: 'transactions', column: 'user_id' },
+                    { table: 'jobs', column: 'user_id' },
+                    { table: 'conversations', column: 'user_id' },
+                ];
+
+                for (const { table, column } of fkMigrations) {
+                    try {
+                        await AppDataSource.query(`
+                            ALTER TABLE ${table} ALTER COLUMN ${column} TYPE VARCHAR(255) USING ${column}::VARCHAR(255);
+                        `);
+                        console.log(`✅ Converted ${table}.${column} to VARCHAR`);
+                    } catch (e) {
+                        // Table/column might not exist, that's ok
+                    }
+                }
+
+                console.log('✅ users.id converted to VARCHAR successfully');
+            } else {
+                console.log('✅ users.id already VARCHAR type');
+            }
+        } catch (err: any) {
+            console.error('❌ Error fixing user ID type:', err.message);
+            console.log('⚠️  Server will continue but login may fail for existing users');
+        }
+
         // ===== USERS TABLE MIGRATIONS =====
         const userColumnMigrations = [
             `ALTER TABLE users ADD COLUMN IF NOT EXISTS email_verified BOOLEAN DEFAULT false;`,
