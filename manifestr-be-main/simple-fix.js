@@ -2,10 +2,18 @@
 require('dotenv').config();
 const { Client } = require('pg');
 
-const DIRECT_URL = 'postgresql://postgres:L0pjxBE7tZZCWT5H@db.buhxshqfkypquptmmdyy.supabase.co:5432/postgres';
+// Use the same DATABASE_URL from .env (pooler)
+const DATABASE_URL = process.env.DATABASE_URL;
+
+if (!DATABASE_URL) {
+    console.error('❌ DATABASE_URL not found in .env');
+    process.exit(1);
+}
+
+console.log('🔗 Using DATABASE_URL from .env (pooler connection)');
 
 const client = new Client({
-    connectionString: DIRECT_URL,
+    connectionString: DATABASE_URL,
     ssl: { rejectUnauthorized: false }
 });
 
