@@ -2,12 +2,7 @@ import { Request, Response } from 'express';
 import { BaseController } from './base.controller';
 import { AppDataSource } from '../lib/data-source';
 import { User } from '../models/User';
-import { RefreshToken } from '../models/RefreshToken';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
-const REFRESH_SECRET = process.env.REFRESH_SECRET || 'superrefreshsecret';
+import { supabaseAdmin, supabase } from '../lib/supabase';
 
 interface ApiResponse {
     status: "success" | "error";
@@ -24,7 +19,7 @@ export class AuthController extends BaseController {
          * /auth/signup:
          *   post:
          *     tags: [Auth]
-         *     summary: Register a new user
+         *     summary: Register a new user with email verification
          *     requestBody:
          *       required: true
          *       content:
@@ -43,7 +38,7 @@ export class AuthController extends BaseController {
          *               promotional_emails: { type: boolean }
          *     responses:
          *       201:
-         *         description: User created successfully
+         *         description: User created successfully, verification email sent
          *         content:
          *           application/json:
          *             schema:
@@ -75,12 +70,12 @@ export class AuthController extends BaseController {
          *             schema:
          *               $ref: '#/components/schemas/ApiResponse'
          *       401:
-         *         description: Invalid credentials
+         *         description: Invalid credentials or email not verified
          * 
          * /auth/refresh-token:
          *   post:
          *     tags: [Auth]
-         *     summary: Refresh access token using rotation
+         *     summary: Refresh access token
          *     requestBody:
          *       content:
          *         application/json:
@@ -96,38 +91,42 @@ export class AuthController extends BaseController {
          *       403:
          *         description: Invalid or expired token
          * 
-         * /auth/sessions:
-         *   get:
-         *     tags: [Auth]
-         *     summary: List active device sessions
-         *     security:
-         *       - bearerAuth: []
-         *     responses:
-         *       200:
-         *         description: List of sessions
-         *         content:
-         *           application/json:
-         *             schema:
-         *               $ref: '#/components/schemas/ApiResponse'
-         * 
-         * /auth/sessions/revoke:
+         * /auth/verify-email:
          *   post:
          *     tags: [Auth]
-         *     summary: Revoke a specific session
-         *     security:
-         *       - bearerAuth: []
+         *     summary: Verify email with token from email link
          *     requestBody:
          *       required: true
          *       content:
          *         application/json:
          *           schema:
          *             type: object
-         *             required: [sessionId]
+         *             required: [token]
          *             properties:
-         *               sessionId: { type: number }
+         *               token: { type: string }
+         *               type: { type: string }
          *     responses:
          *       200:
-         *         description: Session revoked
+         *         description: Email verified successfully
+         *       400:
+         *         description: Invalid or expired token
+         * 
+         * /auth/resend-verification:
+         *   post:
+         *     tags: [Auth]
+         *     summary: Resend verification email
+         *     requestBody:
+         *       required: true
+         *       content:
+         *         application/json:
+         *           schema:
+         *             type: object
+         *             required: [email]
+         *             properties:
+         *               email: { type: string, format: email }
+         *     responses:
+         *       200:
+         *         description: Verification email sent
          * 
          * /auth/onboarding:
          *   post:
@@ -175,11 +174,10 @@ export class AuthController extends BaseController {
             { verb: 'POST', path: '/signup', handler: this.signup },
             { verb: 'POST', path: '/login', handler: this.login },
             { verb: 'POST', path: '/refresh-token', handler: this.refreshToken },
-            { verb: 'GET', path: '/sessions', handler: this.getSessions },
+            { verb: 'POST', path: '/verify-email', handler: this.verifyEmail },
+            { verb: 'POST', path: '/resend-verification', handler: this.resendVerification },
             { verb: 'POST', path: '/onboarding', handler: this.submitOnboarding },
             { verb: 'GET', path: '/me', handler: this.getMe },
-            { verb: 'GET', path: '/sessions', handler: this.getSessions },
-            { verb: 'POST', path: '/sessions/revoke', handler: this.revokeSession },
         ];
     }
 
@@ -187,66 +185,6 @@ export class AuthController extends BaseController {
         const response: ApiResponse = { status, message, details };
         return res.status(statusCode).json(response);
     }
-
-    // ... (signup, login, refreshToken methods remain the same) ...
-
-    private submitOnboarding = async (req: Request, res: Response) => {
-        try {
-            const authHeader = req.headers.authorization;
-            if (!authHeader) return this.sendResponse(res, 401, 'error', 'Unauthorized');
-
-            const token = authHeader.split(' ')[1];
-            const decoded: any = jwt.verify(token, JWT_SECRET);
-
-            const { expertise, job_title, industry, goal, work_style, problems } = req.body;
-
-            if (!expertise || !job_title || !industry || !goal || !work_style || !problems) {
-                console.log('There is an error', expertise, job_title, industry, goal, work_style, problems)
-                return this.sendResponse(res, 400, 'error', 'Missing required fields');
-            }
-
-            const userRepo = AppDataSource.getRepository(User);
-            const user = await userRepo.findOne({ where: { id: decoded.userId } });
-
-            if (!user) return this.sendResponse(res, 404, 'error', 'User not found');
-
-            user.expertise = expertise;
-            user.job_title = job_title;
-            user.industry = industry;
-            user.goal = goal; // Stored as comma-separated string (frontend handles splitting)
-            user.work_style = work_style;
-            user.problems = problems; // Stored as comma-separated string
-            user.onboarding_completed = true;
-
-            await userRepo.save(user);
-
-            return this.sendResponse(res, 200, 'success', 'Onboarding completed', { user: this.sanitizeUser(user) });
-
-        } catch (error) {
-            console.error(error);
-            return this.sendResponse(res, 500, 'error', 'Internal server error', error instanceof Error ? error.message : String(error));
-        }
-    };
-
-    private getMe = async (req: Request, res: Response) => {
-        try {
-            const authHeader = req.headers.authorization;
-            if (!authHeader) return this.sendResponse(res, 401, 'error', 'Unauthorized');
-
-            const token = authHeader.split(' ')[1];
-            const decoded: any = jwt.verify(token, JWT_SECRET);
-
-            const userRepo = AppDataSource.getRepository(User);
-            const user = await userRepo.findOne({ where: { id: decoded.userId } });
-
-            if (!user) return this.sendResponse(res, 404, 'error', 'User not found');
-
-            return this.sendResponse(res, 200, 'success', 'User profile retrieved', { user: this.sanitizeUser(user) });
-
-        } catch (error) {
-            return this.sendResponse(res, 401, 'error', 'Unauthorized or invalid token');
-        }
-    };
 
     private signup = async (req: Request, res: Response) => {
         try {
@@ -256,41 +194,96 @@ export class AuthController extends BaseController {
                 return this.sendResponse(res, 400, 'error', 'Missing required fields');
             }
 
-            const userRepo = AppDataSource.getRepository(User);
-            const existingUser = await userRepo.findOne({ where: { email } });
+            // Use admin.createUser with email_confirm: true to skip verification!
+            const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+                email,
+                password,
+                email_confirm: true, // AUTO-CONFIRM EMAIL - No verification needed!
+                user_metadata: {
+                    first_name,
+                    last_name,
+                    dob,
+                    country,
+                    gender,
+                    promotional_emails
+                }
+            });
 
-            if (existingUser) {
-                return this.sendResponse(res, 409, 'error', 'User already exists');
+
+            // const { data: authData, error: authError } = await supabase.auth.signUp({
+            //     email,
+            //     password,
+            //     options: {
+            //         data: {
+            //             first_name,
+            //             last_name,
+            //             dob,
+            //             country,
+            //             gender,
+            //             promotional_emails
+            //         },
+            //         emailRedirectTo: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email`
+            //     }
+            // });
+
+
+            if (authError) {
+                if (authError.message.includes('already registered') || authError.message.includes('already been registered')) {
+                    return this.sendResponse(res, 409, 'error', 'User already exists');
+                }
+                console.error('❌ Supabase signup error:', authError);
+                return this.sendResponse(res, 400, 'error', authError.message);
             }
 
-            const hashedPassword = await bcrypt.hash(password, 10);
+            if (!authData.user) {
+                return this.sendResponse(res, 400, 'error', 'Failed to create user');
+            }
+
+            console.log('User created in Supabase (email auto-verified):', authData.user.id);
+
+            // Create user record in our database
+            const userRepo = AppDataSource.getRepository(User);
             const user = userRepo.create({
+                id: authData.user.id, // Use Supabase user ID
                 email,
-                password_hash: hashedPassword,
                 first_name,
                 last_name,
                 dob,
                 country,
                 gender,
                 promotional_emails,
-                wins_balance: 100
+                wins_balance: 100,
+                email_verified: true // Auto-verified!
             });
 
             await userRepo.save(user);
 
-            const { accessToken, refreshToken } = await this.createSession(user, req);
+            // Now sign them in to get tokens
+            const { data: sessionData, error: sessionError } = await supabaseAdmin.auth.signInWithPassword({
+                email,
+                password
+            });
 
-            // Set cookie for refresh token
-            res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 7 * 24 * 60 * 60 * 1000 });
+            if (sessionError || !sessionData.session) {
+                console.error('Failed to create session after signup:', sessionError);
+                // User created but login failed - return success anyway
+                return this.sendResponse(res, 201, 'success', 'Account created! Please log in.', {
+                    user: this.sanitizeUser(user),
+                    requiresVerification: false
+                });
+            }
 
-            return this.sendResponse(res, 201, 'success', 'User created successfully', {
+            console.log('User logged in automatically after signup');
+
+            return this.sendResponse(res, 201, 'success', 'Account created and logged in successfully!', {
                 user: this.sanitizeUser(user),
-                accessToken,
-                refreshToken
+                accessToken: sessionData.session.access_token,
+                refreshToken: sessionData.session.refresh_token,
+                requiresVerification: false
             });
 
         } catch (error) {
-            console.error(error);
+            console.error('Signup error:', error);
             return this.sendResponse(res, 500, 'error', 'Internal server error', error instanceof Error ? error.message : String(error));
         }
     };
@@ -303,148 +296,225 @@ export class AuthController extends BaseController {
                 return this.sendResponse(res, 400, 'error', 'Email and password are required');
             }
 
-            const userRepo = AppDataSource.getRepository(User);
-            const user = await userRepo.findOne({ where: { email } });
+            // Authenticate with Supabase
+            const { data, error } = await supabaseAdmin.auth.signInWithPassword({
+                email,
+                password,
+            });
 
-            if (!user || !(await bcrypt.compare(password, user.password_hash))) {
+            if (error) {
                 return this.sendResponse(res, 401, 'error', 'Invalid credentials');
             }
 
-            const { accessToken, refreshToken } = await this.createSession(user, req);
+            // Check if email is verified
+            if (!data.user.email_confirmed_at) {
+                return this.sendResponse(res, 401, 'error', 'Please verify your email before logging in');
+            }
 
-            res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 7 * 24 * 60 * 60 * 1000 });
+            // Fetch user from our database
+            const userRepo = AppDataSource.getRepository(User);
+            let user = await userRepo.findOne({ where: { id: data.user.id } });
+
+            // If user doesn't exist in our DB (shouldn't happen), create it
+            if (!user) {
+                user = userRepo.create({
+                    id: data.user.id,
+                    email: data.user.email!,
+                    first_name: data.user.user_metadata.first_name || '',
+                    last_name: data.user.user_metadata.last_name || '',
+                    email_verified: true,
+                    wins_balance: 100
+                });
+                await userRepo.save(user);
+            } else {
+                // Update email verification status
+                user.email_verified = true;
+                await userRepo.save(user);
+            }
 
             return this.sendResponse(res, 200, 'success', 'Login successful', {
                 user: this.sanitizeUser(user),
-                accessToken,
-                refreshToken
+                accessToken: data.session.access_token,
+                refreshToken: data.session.refresh_token
             });
 
         } catch (error) {
-            console.error(error);
+            console.error('Login error:', error);
             return this.sendResponse(res, 500, 'error', 'Internal server error', error instanceof Error ? error.message : String(error));
         }
     };
 
     private refreshToken = async (req: Request, res: Response) => {
         try {
-            const refreshToken = req.body.refreshToken || req.cookies.refreshToken;
+            const refreshToken = req.body.refreshToken || req.cookies?.refreshToken;
 
             if (!refreshToken) {
                 return this.sendResponse(res, 401, 'error', 'No refresh token provided');
             }
 
-            try {
-                jwt.verify(refreshToken, REFRESH_SECRET);
-            } catch (err) {
-                return this.sendResponse(res, 403, 'error', 'Invalid refresh token signature');
+            // Refresh the session with Supabase
+            const { data, error } = await supabaseAdmin.auth.refreshSession({ refresh_token: refreshToken });
+
+            if (error || !data.session) {
+                return this.sendResponse(res, 403, 'error', 'Invalid or expired refresh token');
             }
 
-            const tokenRepo = AppDataSource.getRepository(RefreshToken);
-            const storedToken = await tokenRepo.findOne({ where: { token: refreshToken }, relations: ['user'] });
-
-            if (!storedToken || storedToken.revoked || storedToken.expires_at < new Date()) {
-                return this.sendResponse(res, 403, 'error', 'Invalid or expired session');
-            }
-
-            // Revoke the old token (Rotation)
-            storedToken.revoked = true;
-            await tokenRepo.save(storedToken);
-
-            // Create new session/token
-            const { accessToken, refreshToken: newRefreshToken } = await this.createSession(storedToken.user, req);
-
-            res.cookie('refreshToken', newRefreshToken, { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 7 * 24 * 60 * 60 * 1000 });
-
-            return this.sendResponse(res, 200, 'success', 'Token refreshed', { accessToken, refreshToken: newRefreshToken });
+            return this.sendResponse(res, 200, 'success', 'Token refreshed', {
+                accessToken: data.session.access_token,
+                refreshToken: data.session.refresh_token
+            });
 
         } catch (error) {
-            console.error(error);
+            console.error('Refresh token error:', error);
             return this.sendResponse(res, 500, 'error', 'Internal server error');
         }
     };
 
-    private getSessions = async (req: Request, res: Response) => {
+    private verifyEmail = async (req: Request, res: Response) => {
         try {
-            // NOTE: In a real middleware-protected route, req.user would be set.
-            // For now, we assume the user must provide valid access token in header to verify identity manually if middleware isn't global.
-            // Simplified: Expect userId from query or decode token here for demonstration.
+            const { token, type } = req.body;
+
+            if (!token) {
+                return this.sendResponse(res, 400, 'error', 'Verification token is required');
+            }
+
+            // Verify the token with Supabase
+            const { data, error } = await supabaseAdmin.auth.verifyOtp({
+                token_hash: token,
+                type: type || 'signup'
+            });
+
+            if (error || !data.user) {
+                console.error('Email verification error:', error);
+                return this.sendResponse(res, 400, 'error', 'Invalid or expired verification token');
+            }
+
+            // Update user in our database
+            const userRepo = AppDataSource.getRepository(User);
+            const user = await userRepo.findOne({ where: { id: data.user.id } });
+
+            if (user) {
+                user.email_verified = true;
+                await userRepo.save(user);
+            }
+
+            return this.sendResponse(res, 200, 'success', 'Email verified successfully', {
+                user: user ? this.sanitizeUser(user) : null,
+                accessToken: data.session?.access_token,
+                refreshToken: data.session?.refresh_token
+            });
+
+        } catch (error) {
+            console.error('Verify email error:', error);
+            return this.sendResponse(res, 500, 'error', 'Internal server error');
+        }
+    };
+
+    private resendVerification = async (req: Request, res: Response) => {
+        try {
+            const { email } = req.body;
+
+            if (!email) {
+                return this.sendResponse(res, 400, 'error', 'Email is required');
+            }
+
+            // Use resend to trigger email automatically
+            const { error } = await supabase.auth.resend({
+                type: 'signup',
+                email: email,
+                options: {
+                    emailRedirectTo: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email`
+                }
+            });
+
+            if (error) {
+                console.error('❌ Resend verification error:', error);
+                // Don't reveal if user exists or not for security
+                return this.sendResponse(res, 200, 'success', 'If an account exists with this email, a verification email has been sent');
+            }
+
+            console.log('✅ Verification email re-sent to:', email);
+
+            return this.sendResponse(res, 200, 'success', 'Verification email sent successfully');
+
+        } catch (error) {
+            console.error('Resend verification error:', error);
+            return this.sendResponse(res, 500, 'error', 'Internal server error');
+        }
+    };
+
+    private submitOnboarding = async (req: Request, res: Response) => {
+        try {
             const authHeader = req.headers.authorization;
             if (!authHeader) return this.sendResponse(res, 401, 'error', 'Unauthorized');
 
             const token = authHeader.split(' ')[1];
-            const decoded: any = jwt.verify(token, JWT_SECRET);
 
-            const tokenRepo = AppDataSource.getRepository(RefreshToken);
-            const sessions = await tokenRepo.find({
-                where: { user: { id: decoded.userId }, revoked: false },
-                order: { last_active: 'DESC' }
-            });
+            // Verify token with Supabase
+            const { data: { user: supabaseUser }, error } = await supabaseAdmin.auth.getUser(token);
 
-            return this.sendResponse(res, 200, 'success', 'Active sessions retrieved', { sessions });
+            if (error || !supabaseUser) {
+                return this.sendResponse(res, 401, 'error', 'Unauthorized or invalid token');
+            }
+
+            const { expertise, job_title, industry, goal, work_style, problems } = req.body;
+
+            if (!expertise || !job_title || !industry || !goal || !work_style || !problems) {
+                return this.sendResponse(res, 400, 'error', 'Missing required fields');
+            }
+
+            const userRepo = AppDataSource.getRepository(User);
+            const user = await userRepo.findOne({ where: { id: supabaseUser.id } });
+
+            if (!user) return this.sendResponse(res, 404, 'error', 'User not found');
+
+            user.expertise = expertise;
+            user.job_title = job_title;
+            user.industry = industry;
+            user.goal = goal;
+            user.work_style = work_style;
+            user.problems = problems;
+            user.onboarding_completed = true;
+
+            await userRepo.save(user);
+
+            return this.sendResponse(res, 200, 'success', 'Onboarding completed', { user: this.sanitizeUser(user) });
 
         } catch (error) {
+            console.error('Onboarding error:', error);
+            return this.sendResponse(res, 500, 'error', 'Internal server error', error instanceof Error ? error.message : String(error));
+        }
+    };
+
+    private getMe = async (req: Request, res: Response) => {
+        try {
+            const authHeader = req.headers.authorization;
+            if (!authHeader) return this.sendResponse(res, 401, 'error', 'Unauthorized');
+
+            const token = authHeader.split(' ')[1];
+
+            // Verify token with Supabase
+            const { data: { user: supabaseUser }, error } = await supabaseAdmin.auth.getUser(token);
+
+            if (error || !supabaseUser) {
+                return this.sendResponse(res, 401, 'error', 'Unauthorized or invalid token');
+            }
+
+            const userRepo = AppDataSource.getRepository(User);
+            const user = await userRepo.findOne({ where: { id: supabaseUser.id } });
+
+            if (!user) return this.sendResponse(res, 404, 'error', 'User not found');
+
+            return this.sendResponse(res, 200, 'success', 'User profile retrieved', { user: this.sanitizeUser(user) });
+
+        } catch (error) {
+            console.error('Get me error:', error);
             return this.sendResponse(res, 401, 'error', 'Unauthorized or invalid token');
         }
     };
 
-    private revokeSession = async (req: Request, res: Response) => {
-        try {
-            const { sessionId } = req.body;
-            if (!sessionId) return this.sendResponse(res, 400, 'error', 'Session ID required');
-
-            const tokenRepo = AppDataSource.getRepository(RefreshToken);
-            const session = await tokenRepo.findOne({ where: { id: sessionId } });
-
-            if (!session) return this.sendResponse(res, 404, 'error', 'Session not found');
-
-            session.revoked = true;
-            await tokenRepo.save(session);
-
-            return this.sendResponse(res, 200, 'success', 'Session revoked');
-
-        } catch (error) {
-            return this.sendResponse(res, 500, 'error', 'Internal server error');
-        }
-    }
-
-    // --- Helpers ---
-
-    private async createSession(user: User, req: Request) {
-        const accessToken = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: '15m' });
-        const refreshToken = jwt.sign({ userId: user.id }, REFRESH_SECRET, { expiresIn: '7d' });
-
-        const tokenRepo = AppDataSource.getRepository(RefreshToken);
-        const deviceName = req.headers['x-device-name'] as string || this.parseDeviceName(req.headers['user-agent']);
-        const ipAddress = (req.ip || req.socket.remoteAddress || '').replace('::ffff:', '');
-
-        const session = tokenRepo.create({
-            user,
-            token: refreshToken,
-            expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-            device_name: deviceName,
-            ip_address: ipAddress,
-            user_agent: req.headers['user-agent'] || 'Unknown',
-            last_active: new Date()
-        });
-
-        await tokenRepo.save(session);
-
-        return { accessToken, refreshToken };
-    }
-
-    private parseDeviceName(userAgent: string | undefined): string {
-        if (!userAgent) return 'Unknown Device';
-        if (userAgent.includes('iPhone')) return 'iPhone';
-        if (userAgent.includes('iPad')) return 'iPad';
-        if (userAgent.includes('Android')) return 'Android Device';
-        if (userAgent.includes('Macintosh')) return 'Mac';
-        if (userAgent.includes('Windows')) return 'Windows PC';
-        return 'Browser';
-    }
-
     private sanitizeUser(user: User) {
-        const { password_hash, ...safeUser } = user;
+        const { password_hash, ...safeUser } = user as any;
         return safeUser;
     }
 }

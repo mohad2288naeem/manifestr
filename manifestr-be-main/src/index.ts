@@ -1,4 +1,6 @@
-import 'dotenv/config';
+// Load environment variables FIRST (using require to ensure it runs before any imports)
+require('dotenv').config();
+
 import 'reflect-metadata';
 import App from './app';
 import { AppDataSource } from './lib/data-source';

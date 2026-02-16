@@ -64,8 +64,8 @@ export class GenerationJob {
     error_message: string;
 
     // Relations
-    @Column({ type: "int" })
-    userId: number;
+    @Column({ type: "varchar", length: 255 })
+    userId: string; // Supabase UUID
 
     @ManyToOne(() => User, (user) => user.id)
     @JoinColumn({ name: "userId" })
