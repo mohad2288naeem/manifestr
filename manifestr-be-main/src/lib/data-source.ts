@@ -7,6 +7,7 @@ import { MotivationQuote } from '../models/MotivationQuote';
 import { GenerationJob } from '../models/GenerationJob';
 import { VaultItem } from '../models/VaultItem';
 import { StyleGuide } from '../models/StyleGuide';
+import { EarlyAccess } from '../models/EarlyAccess';
 
 const databaseUrl = process.env.DATABASE_URL;
 
@@ -26,7 +27,8 @@ export const AppDataSource = new DataSource({
         MotivationQuote,
         GenerationJob,
         VaultItem,
-        StyleGuide
+        StyleGuide,
+        EarlyAccess
     ],
     migrations: [],
     subscribers: [],

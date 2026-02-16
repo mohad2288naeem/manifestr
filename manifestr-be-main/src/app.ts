@@ -10,6 +10,7 @@ import { DocumentGeneratorController } from './controllers/document.generator.co
 import { UploadController } from './controllers/upload.controller';
 import { VaultController } from './controllers/vault.controller';
 import { StyleGuideController } from './controllers/style-guide.controller';
+import { EarlyAccessController } from './controllers/early-access.controller';
 
 class App {
     public app: Application;
@@ -66,6 +67,7 @@ class App {
             new UploadController(),
             new VaultController(),
             new StyleGuideController(),
+            new EarlyAccessController(),
         ];
 
         controllers.forEach((controller) => {
