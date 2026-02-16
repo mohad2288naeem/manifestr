@@ -151,7 +151,7 @@ export default function Settings() {
           >
             {/* Page Header - Full Width */}
             <motion.div variants={itemVariants} className="pt-12 w-full mb-8">
-              <div className="w-full px-8">
+              <div className="max-w-[1280px] mx-auto px-8">
                 <div className="flex flex-col gap-2 mb-6">
                   <h1 className="text-[30px] font-bold leading-[38px] text-[#18181b]">
                     Control Room
@@ -163,7 +163,7 @@ export default function Settings() {
 
                 {/* Tabs Navigation */}
                 <motion.div variants={itemVariants} className="border-b border-[#e4e4e7] overflow-x-auto scrollbar-hide">
-                  <div className="flex items-center gap-6 h-[48px] min-w-max px-2">
+                  <div className="flex justify-between items-center gap-6 h-[48px] min-w-max px-2">
                     {tabs.map((tab) => (
                       <motion.button
                         key={tab}
@@ -184,7 +184,7 @@ export default function Settings() {
             </motion.div>
 
             {/* Content Container */}
-            <div className="max-w-[1280px] mx-auto px-4 md:px-8">
+            <div className="max-w-[1280px] mx-auto px-8">
 
               {/* Settings Content */}
               <AnimatePresence mode="wait">
@@ -347,11 +347,11 @@ function GeneralTabContent({
       >
         <div className="space-y-6">
           {/* Theme Mode */}
-          <div>
+          <div className="max-w-[550px] w-full">
             <label className="block text-[14px] leading-[20px] text-[#18181b] font-medium mb-3">
               Theme Mode
             </label>
-            <div className="flex items-center gap-2 bg-[#f4f4f5] border border-[#e4e4e7] rounded-md p-1">
+            <div className="flex flex-wrap items-center gap-2 p-1">
               {[
                 { value: 'light', label: 'Light mode', icon: Sun },
                 { value: 'dark', label: 'Dark mode', icon: Moon },
@@ -364,7 +364,7 @@ function GeneralTabContent({
                   whileTap={{ scale: 0.98 }}
                   className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md transition-colors ${themeMode === value
                     ? 'bg-white border border-[#18181b] shadow-sm'
-                    : 'bg-transparent'
+                    : 'bg-[#fff] border border-[#E4E4E7]'
                     }`}
                 >
                   <Icon className={`w-4 h-4 ${themeMode === value ? 'text-[#18181b]' : 'text-[#71717a]'}`} />
@@ -378,7 +378,7 @@ function GeneralTabContent({
           </div>
 
           {/* Language Settings */}
-          <div>
+          <div className="max-w-[450px] w-full">
             <label className="block text-[14px] leading-[20px] text-[#18181b] font-medium mb-3">
               Language Settings
             </label>
@@ -425,99 +425,102 @@ function GeneralTabContent({
             </div>
           </div>
 
-          {/* Time Zone */}
-          <div>
-            <label className="block text-[14px] leading-[20px] text-[#18181b] font-medium mb-3">
-              Time Zone
-            </label>
-            <div className="relative" ref={timeZoneDropdownRef}>
-              <motion.button
-                onClick={() => {
-                  setShowTimeZoneDropdown(!showTimeZoneDropdown)
-                  setShowLanguageDropdown(false)
-                  setShowDateFormatDropdown(false)
-                }}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
-                className="w-full bg-white border border-[#e4e4e7] rounded-md px-3 py-2 flex items-center justify-between hover:border-[#18181b] transition-colors"
-              >
-                <span className="text-[14px] leading-[20px] text-[#18181b]">
-                  {timeZone === 'auto-detect' ? 'Auto-detect' : timeZone}
-                </span>
-                <ChevronDown className={`w-4 h-4 text-[#71717a] transition-transform ${showTimeZoneDropdown ? 'rotate-180' : ''}`} />
-              </motion.button>
-              <AnimatePresence>
-                {showTimeZoneDropdown && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#e4e4e7] rounded-md shadow-lg z-10 overflow-hidden"
-                  >
-                    {['Auto-detect', 'UTC', 'EST', 'PST', 'GMT'].map((tz) => (
-                      <motion.button
-                        key={tz}
-                        onClick={() => {
-                          setTimeZone(tz.toLowerCase().replace(' ', '-'))
-                          setShowTimeZoneDropdown(false)
-                        }}
-                        whileHover={{ backgroundColor: '#f4f4f5' }}
-                        className="w-full px-3 py-2 text-left text-[14px] leading-[20px] text-[#18181b]"
-                      >
-                        {tz}
-                      </motion.button>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+          {/* Time Zone & Date Format */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Time Zone */}
+            <div>
+              <label className="block text-[14px] leading-[20px] text-[#18181b] font-medium mb-3">
+                Time Zone
+              </label>
+              <div className="relative" ref={timeZoneDropdownRef}>
+                <motion.button
+                  onClick={() => {
+                    setShowTimeZoneDropdown(!showTimeZoneDropdown)
+                    setShowLanguageDropdown(false)
+                    setShowDateFormatDropdown(false)
+                  }}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  className="w-full bg-white border border-[#e4e4e7] rounded-md px-3 py-2 flex items-center justify-between hover:border-[#18181b] transition-colors"
+                >
+                  <span className="text-[14px] leading-[20px] text-[#18181b]">
+                    {timeZone === 'auto-detect' ? 'Auto-detect' : timeZone}
+                  </span>
+                  <ChevronDown className={`w-4 h-4 text-[#71717a] transition-transform ${showTimeZoneDropdown ? 'rotate-180' : ''}`} />
+                </motion.button>
+                <AnimatePresence>
+                  {showTimeZoneDropdown && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#e4e4e7] rounded-md shadow-lg z-10 overflow-hidden"
+                    >
+                      {['Auto-detect', 'UTC', 'EST', 'PST', 'GMT'].map((tz) => (
+                        <motion.button
+                          key={tz}
+                          onClick={() => {
+                            setTimeZone(tz.toLowerCase().replace(' ', '-'))
+                            setShowTimeZoneDropdown(false)
+                          }}
+                          whileHover={{ backgroundColor: '#f4f4f5' }}
+                          className="w-full px-3 py-2 text-left text-[14px] leading-[20px] text-[#18181b]"
+                        >
+                          {tz}
+                        </motion.button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
-          </div>
 
-          {/* Date Format */}
-          <div>
-            <label className="block text-[14px] leading-[20px] text-[#18181b] font-medium mb-3">
-              Date Format
-            </label>
-            <div className="relative" ref={dateFormatDropdownRef}>
-              <motion.button
-                onClick={() => {
-                  setShowDateFormatDropdown(!showDateFormatDropdown)
-                  setShowLanguageDropdown(false)
-                  setShowTimeZoneDropdown(false)
-                }}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
-                className="w-full bg-white border border-[#e4e4e7] rounded-md px-3 py-2 flex items-center justify-between hover:border-[#18181b] transition-colors"
-              >
-                <span className="text-[14px] leading-[20px] text-[#18181b]">
-                  {dateFormat}
-                </span>
-                <ChevronDown className={`w-4 h-4 text-[#71717a] transition-transform ${showDateFormatDropdown ? 'rotate-180' : ''}`} />
-              </motion.button>
-              <AnimatePresence>
-                {showDateFormatDropdown && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#e4e4e7] rounded-md shadow-lg z-10 overflow-hidden"
-                  >
-                    {['DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY-MM-DD', 'DD-MM-YYYY'].map((format) => (
-                      <motion.button
-                        key={format}
-                        onClick={() => {
-                          setDateFormat(format)
-                          setShowDateFormatDropdown(false)
-                        }}
-                        whileHover={{ backgroundColor: '#f4f4f5' }}
-                        className="w-full px-3 py-2 text-left text-[14px] leading-[20px] text-[#18181b]"
-                      >
-                        {format}
-                      </motion.button>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+            {/* Date Format */}
+            <div>
+              <label className="block text-[14px] leading-[20px] text-[#18181b] font-medium mb-3">
+                Date Format
+              </label>
+              <div className="relative" ref={dateFormatDropdownRef}>
+                <motion.button
+                  onClick={() => {
+                    setShowDateFormatDropdown(!showDateFormatDropdown)
+                    setShowLanguageDropdown(false)
+                    setShowTimeZoneDropdown(false)
+                  }}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  className="w-full bg-white border border-[#e4e4e7] rounded-md px-3 py-2 flex items-center justify-between hover:border-[#18181b] transition-colors"
+                >
+                  <span className="text-[14px] leading-[20px] text-[#18181b]">
+                    {dateFormat}
+                  </span>
+                  <ChevronDown className={`w-4 h-4 text-[#71717a] transition-transform ${showDateFormatDropdown ? 'rotate-180' : ''}`} />
+                </motion.button>
+                <AnimatePresence>
+                  {showDateFormatDropdown && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#e4e4e7] rounded-md shadow-lg z-10 overflow-hidden"
+                    >
+                      {['DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY-MM-DD', 'DD-MM-YYYY'].map((format) => (
+                        <motion.button
+                          key={format}
+                          onClick={() => {
+                            setDateFormat(format)
+                            setShowDateFormatDropdown(false)
+                          }}
+                          whileHover={{ backgroundColor: '#f4f4f5' }}
+                          className="w-full px-3 py-2 text-left text-[14px] leading-[20px] text-[#18181b]"
+                        >
+                          {format}
+                        </motion.button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           </div>
 
@@ -547,43 +550,46 @@ function GeneralTabContent({
             <label className="block text-[14px] leading-[20px] text-[#18181b] font-medium mb-3">
               Font Size
             </label>
-            <div className="flex items-center gap-6">
-              {['small', 'medium', 'large'].map((size) => (
-                <motion.label
-                  key={size}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="flex items-center gap-2 cursor-pointer"
-                >
-                  <div className="relative w-4 h-4">
+            <div className="flex flex-wrap items-center gap-3">
+              {['Small', 'Medium', 'Large'].map((label) => {
+                const value = label.toLowerCase()
+                const isActive = fontSize === value
+                return (
+                  <motion.label
+                    key={value}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`inline-flex items-center gap-2 min-w-[96px] px-4 py-2 rounded-md border text-[14px] leading-[20px] transition-colors cursor-pointer ${
+                      isActive
+                        ? 'border-[#18181b] bg-white text-[#18181b] font-medium'
+                        : 'border-[#e4e4e7] bg-white text-[#71717a] hover:border-[#18181b]'
+                    }`}
+                  >
                     <input
                       type="radio"
                       name="fontSize"
-                      value={size}
-                      checked={fontSize === size}
-                      onChange={(e) => setFontSize(e.target.value)}
-                      className="absolute inset-0 w-4 h-4 border border-[#e4e4e7] rounded-full appearance-none cursor-pointer transition-all bg-white"
-                      style={{
-                        backgroundColor: fontSize === size ? '#18181b' : '#ffffff',
-                        borderColor: fontSize === size ? '#18181b' : '#e4e4e7',
-                      }}
+                      value={value}
+                      checked={isActive}
+                      onChange={() => setFontSize(value)}
+                      className="sr-only"
                     />
-                    {fontSize === size && (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                    <span className="flex items-center gap-2">
+                      <span
+                        className={`flex items-center justify-center w-4 h-4 rounded-full border ${
+                          isActive
+                            ? 'border-[#18181b] bg-white'
+                            : 'border-[#e4e4e7] bg-white'
+                        }`}
                       >
-                        <div className="w-1.5 h-1.5 bg-white rounded-full" />
-                      </motion.div>
-                    )}
-                  </div>
-                  <span className="text-[14px] leading-[20px] text-[#71717a] capitalize">
-                    {size}
-                  </span>
-                </motion.label>
-              ))}
+                        {isActive && (
+                          <span className="w-2 h-2 rounded-full bg-[#18181b]" />
+                        )}
+                      </span>
+                      <span>{label}</span>
+                    </span>
+                  </motion.label>
+                )
+              })}
             </div>
           </div>
 
@@ -593,42 +599,57 @@ function GeneralTabContent({
               Adjust Font
             </label>
             <div className="space-y-2">
-              <div className="relative">
+              <div className="relative max-w-[400px] w-full">
                 <input
                   type="range"
                   min="0"
                   max="100"
                   value={fontAdjust}
                   onChange={(e) => setFontAdjust(Number(e.target.value))}
-                  className="w-full h-2 rounded-lg cursor-pointer"
+                  className="w-full h-2 rounded-lg cursor-pointer bg-[#ffffff]"
                   style={{
-                    background: `linear-gradient(to right, #18181b 0%, #18181b ${fontAdjust}%, #f4f4f5 ${fontAdjust}%, #f4f4f5 100%)`,
+                    background: `linear-gradient(to right, #18181b 0%, #18181b ${fontAdjust}%, #ffffff ${fontAdjust}%, #ffffff 100%)`,
                   }}
                 />
-              </div>
-              <div className="text-[14px] leading-[20px] text-[#71717a] text-right">
-                {fontAdjust}%
+                <div
+                  className="absolute top-full mt-2 text-[14px] leading-[20px] text-[#71717a] pointer-events-none"
+                  style={{
+                    left: `${fontAdjust}%`,
+                    transform: 'translateX(-50%)',
+                  }}
+                >
+                  {fontAdjust}%
+                </div>
               </div>
             </div>
           </div>
 
           {/* Reduced Motion */}
           <div>
-            <ToggleSwitch
-              checked={reducedMotion}
-              onChange={(checked) => setReducedMotion(checked)}
-              label="Reduced motion"
-              labelPosition="right"
-            />
+            <div className="flex items-center gap-2">
+              <input
+                id="reduced-motion"
+                type="checkbox"
+                checked={reducedMotion}
+                onChange={(e) => setReducedMotion(e.target.checked)}
+                className="w-4 h-4 rounded border border-[#E4E4E7]"
+              />
+              <label
+                htmlFor="reduced-motion"
+                className="text-[14px] leading-[20px] text-[#18181b]"
+              >
+                Reduced motion
+              </label>
+            </div>
           </div>
 
           {/* High Contrast Mode */}
           <div>
-            <div className="flex items-center justify-between">
+            <div className="flex gap-2 items-center">
               <span className="text-[14px] leading-[20px] text-[#18181b]">
                 High contrast mode
               </span>
-              <span className="text-[14px] leading-[20px] text-[#71717a]">
+              <span className="text-[12px] leading-[20px] border border-[#E4E4E7] rounded-full px-1 bg-[#fff] text-[#71717a]">
                 Coming soon
               </span>
             </div>
@@ -754,24 +775,6 @@ function TeamTabContent() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [showActionsMenu, showInviteModal])
 
-  const getRoleBadgeColor = (role) => {
-    switch (role) {
-      case 'Owner': return 'bg-[#fef3c7] text-[#92400e]'
-      case 'Admin': return 'bg-[#dbeafe] text-[#1e40af]'
-      case 'Editor': return 'bg-[#d1fae5] text-[#065f46]'
-      case 'Viewer': return 'bg-[#e5e7eb] text-[#374151]'
-      default: return 'bg-[#f4f4f5] text-[#71717a]'
-    }
-  }
-
-  const getStatusBadgeColor = (status) => {
-    switch (status) {
-      case 'Active': return 'bg-[#d1fae5] text-[#065f46]'
-      case 'Pending': return 'bg-[#fef3c7] text-[#92400e]'
-      default: return 'bg-[#f4f4f5] text-[#71717a]'
-    }
-  }
-
   // Modal helper functions
   const removeEmail = (index) => {
     setInviteEmails(prev => prev.filter((_, i) => i !== index))
@@ -822,11 +825,11 @@ function TeamTabContent() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.1 }}
-        className="bg-white rounded-xl p-6 shadow-[0px_1px_3px_rgba(0,0,0,0.1),0px_1px_2px_rgba(0,0,0,0.06)]"
+        className="bg-[#f4f4f4] border border-[#e4e4e7] rounded-xl overflow-hidden"
       >
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col lg:flex-row">
           {/* Left Section - Title and Description */}
-          <div className="flex flex-col gap-1">
+          <div className="w-full lg:w-[260px] bg-[#f4f4f4] px-6 py-6 border-b border-[#e4e4e7] lg:border-b-0 lg:border-r">
             <h3 className="text-[20px] font-semibold leading-[30px] text-[#18181b]">
               Team Management
             </h3>
@@ -835,45 +838,94 @@ function TeamTabContent() {
             </p>
           </div>
 
-          {/* Right Section - Rounded Card with Seat Usage Meter */}
-          <div className="bg-white border border-[#e4e4e7] rounded-xl p-4 flex items-center gap-6 shadow-[0px_1px_3px_rgba(0,0,0,0.1),0px_1px_2px_rgba(0,0,0,0.06)]">
-            {/* Seat Count Text - Left side of card */}
-            <span className="text-[20px] font-semibold leading-[30px] text-[#18181b]">
-              8 of 10 seats
-            </span>
+          {/* Right Section - Seat Usage Card */}
+          <div className="flex-1 bg-[#f4f4f4] px-6 py-6">
+            <div className="bg-white border border-[#e4e4e7] rounded-xl px-6 py-2 flex flex-col gap-6 lg:flex-row lg:items-center">
+              {/* Seat usage title and count */}
+              <div className="flex flex-col gap-1">
+                <span className="text-[12px] leading-[16px] text-[#71717a]">
+                  Seat Usage
+                </span>
+                <span className="text-[20px] font-semibold leading-[30px] text-[#18181b]">
+                  8 of 10 seats
+                </span>
+              </div>
 
-            {/* Semi-circular Progress Gauge - Green, 80% */}
-            <div className="relative w-20 h-20">
-              <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 80 80">
-                {/* Background arc */}
-                <circle
-                  cx="40"
-                  cy="40"
-                  r="36"
-                  fill="none"
-                  stroke="#e4e4e7"
-                  strokeWidth="6"
-                  strokeLinecap="round"
-                />
-                {/* Progress arc (80% = 8/10) - Green */}
-                <circle
-                  cx="40"
-                  cy="40"
-                  r="36"
-                  fill="none"
-                  stroke="#22c55e"
-                  strokeWidth="6"
-                  strokeLinecap="round"
-                  strokeDasharray={`${2 * Math.PI * 36 * 0.8} ${2 * Math.PI * 36}`}
-                  strokeDashoffset="0"
-                />
-              </svg>
-            </div>
+              <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-8">
+                {/* Gauge */}
+                <div className="relative w-[200px] h-[110px] flex items-end justify-center overflow-hidden">
+                  <svg
+                    className="w-[200px] h-[170px] transform rotate-180 translate-y-17"
+                    viewBox="0 0 80 80"
+                  >
+                    {/* Background half-circle */}
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="32"
+                      fill="none"
+                      stroke="#e4e4e7"
+                      strokeWidth="8"
+                      strokeLinecap="round"
+                      strokeDasharray={`${Math.PI * 32} ${2 * Math.PI * 32}`}
+                      strokeDashoffset={0}
+                    />
+                    {/* Used half-circle (80%) */}
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="32"
+                      fill="none"
+                      stroke="#22c55e"
+                      strokeWidth="8"
+                      strokeLinecap="round"
+                      strokeDasharray={`${Math.PI * 32} ${2 * Math.PI * 32}`}
+                      strokeDashoffset={Math.PI * 32 * (1 - 0.8)}
+                    />
+                  </svg>
+                  <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex flex-col items-center">
+                    <span className="text-[12px] leading-[16px] text-[#71717a]">
+                      USED
+                    </span>
+                    <span className="text-[24px] leading-[32px] font-semibold text-[#18181b]">
+                      80%
+                    </span>
+                  </div>
+                </div>
 
-            {/* Icons Section - Right side */}
-            <div className="flex items-center gap-3 pl-3 border-l border-[#e4e4e7]">
-              <Users className="w-5 h-5 text-[#71717a]" />
-              <Clock className="w-5 h-5 text-[#71717a]" />
+                {/* Stats */}
+                <div className="flex flex-1 items-center justify-end gap-8">
+                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="w-8 h-8 rounded-full bg-[#f4f4f5] flex items-center justify-center">
+                      <Gift className="w-4 h-4 text-[#71717a]" />
+                    </div>
+                    
+                      <span className="text-[12px] leading-[16px] text-[#71717a]">
+                        Gifted Seats
+                      </span>
+                      <span className="text-[18px] leading-[24px] font-semibold text-[#18181b]">
+                        2
+                      </span>
+                    </div>
+                  </div>
+                  <div className="h-12 w-px bg-[#e4e4e7]" />
+                  <div className="flex items-center gap-3">
+                    <div className="flex flex-col items-center gap-1">
+                    <div className="w-8 h-8 rounded-full bg-[#f4f4f5] flex items-center justify-center">
+                      <Clock className="w-4 h-4 text-[#71717a]" />
+                    </div>
+                    
+                      <span className="text-[12px] leading-[16px] text-[#71717a]">
+                        Pending Invites
+                      </span>
+                      <span className="text-[18px] leading-[24px] font-semibold text-[#18181b]">
+                        1
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -884,8 +936,9 @@ function TeamTabContent() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.2 }}
-        className="bg-[#f4f4f4] border border-[#e8e8e9] rounded-xl overflow-hidden"
+        className="relative z-10 bg-[#f4f4f4] border border-[#e8e8e9] rounded-xl"
       >
+        <div className="flex flex-wrap justify-between mb-2">
         {/* Section Header */}
         <div className="p-6 pb-4">
           <h3 className="text-[20px] font-semibold leading-[30px] text-[#18181b] mb-1">
@@ -897,7 +950,7 @@ function TeamTabContent() {
         </div>
 
         {/* Toolbar */}
-        <div className="px-6 pb-4 flex items-center gap-4">
+        <div className="px-6 flex flex-wrap items-center gap-4">
           {/* Search */}
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#71717a]" />
@@ -1002,67 +1055,92 @@ function TeamTabContent() {
             <span className="text-[14px] font-medium leading-[20px]">Invite user</span>
           </motion.button>
         </div>
+        </div>
 
         {/* Table */}
         <div className="px-6 pb-6">
-          <div className="bg-white border border-[#e4e4e7] rounded-md overflow-hidden">
+          <div className="bg-white border border-[#e4e4e7] rounded-md">
             {/* Table Header */}
-            <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_80px] gap-4 bg-[#f4f4f5] border-b border-[#e4e4e7] px-4 py-3">
-              <div className="text-[14px] font-semibold leading-[20px] text-[#18181b]">User name</div>
-              <div className="text-[14px] font-semibold leading-[20px] text-[#18181b]">Role</div>
-              <div className="text-[14px] font-semibold leading-[20px] text-[#18181b]">Status</div>
-              <div className="text-[14px] font-semibold leading-[20px] text-[#18181b]">Collabs</div>
-              <div className="text-[14px] font-semibold leading-[20px] text-[#18181b]">Last active</div>
-              <div></div>
+            <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_80px] gap-4 bg-[#fff] border-b border-[#e4e4e7] px-4 py-3">
+              <div className="text-[14px] font-medium leading-[20px] text-[#71717A]">User name</div>
+              <div className="text-[14px] font-medium leading-[20px] text-[#71717A]">Rule</div>
+              <div className="text-[14px] font-medium leading-[20px] text-[#71717A]">Status</div>
+              <div className="text-[14px] font-medium leading-[20px] text-[#71717A]">Collabs</div>
+              <div className="text-[14px] font-medium leading-[20px] text-[#71717A]">Last active</div>
+              <div className="text-[14px] font-medium leading-[20px] text-[#71717A] text-right">Actions</div>
             </div>
 
             {/* Table Rows */}
             <AnimatePresence>
-              {teamMembers.map((member, index) => (
-                <motion.div
-                  key={member.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className={`grid grid-cols-[2fr_1fr_1fr_1fr_1fr_80px] gap-4 px-4 py-3 border-b border-[#e4e4e7] last:border-b-0 transition-colors ${selectedUsers.includes(member.id) ? 'bg-[#f4f4f5]' : 'bg-white hover:bg-[#fafafa]'
+              {teamMembers.map((member, index) => {
+                const isSelected = selectedUsers.includes(member.id)
+                return (
+                  <motion.div
+                    key={member.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    className={`grid grid-cols-[2fr_1fr_1fr_1fr_1fr_80px] gap-4 px-4 py-3 border-b border-[#e4e4e7] last:border-b-0 transition-colors ${
+                      isSelected ? 'bg-[#f4f4f5]' : 'bg-white hover:bg-[#fafafa]'
                     }`}
-                >
-                  {/* User Name */}
-                  <div className="flex items-center gap-3">
-                    <ToggleSwitch
-                      checked={selectedUsers.includes(member.id)}
-                      onChange={() => toggleUserSelection(member.id)}
-                    />
-                    <div className="w-8 h-8 rounded-full overflow-hidden shrink-0">
-                      <Image
-                        src={member.avatar}
-                        alt={member.name}
-                        width={32}
-                        height={32}
-                        className="w-full h-full object-cover"
-                      />
+                  >
+                    {/* User Name */}
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => toggleUserSelection(member.id)}
+                        className={`w-4 h-4 rounded border flex items-center justify-center cursor-pointer transition-colors ${
+                          isSelected
+                            ? 'bg-[#22c55e] border-[#22c55e]'
+                            : 'bg-white border-[#e4e4e7]'
+                        }`}
+                      >
+                        {isSelected && (
+                          <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                        )}
+                      </button>
+                      <div className="w-8 h-8 rounded-full overflow-hidden shrink-0">
+                        <Image
+                          src={member.avatar}
+                          alt={member.name}
+                          width={32}
+                          height={32}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div>
+                        <p className="text-[14px] font-semibold leading-[20px] text-[#18181b]">
+                          {member.name}
+                        </p>
+                        <p className="text-[12px] leading-[16px] text-[#71717a]">
+                          {member.email}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-[14px] font-semibold leading-[20px] text-[#18181b]">
-                        {member.name}
-                      </p>
-                      <p className="text-[12px] leading-[16px] text-[#71717a]">
-                        {member.email}
-                      </p>
-                    </div>
-                  </div>
 
                   {/* Role */}
                   <div className="flex items-center">
-                    <span className={`px-2 py-1 rounded-md text-[12px] font-medium leading-[16px] ${getRoleBadgeColor(member.role)}`}>
-                      {member.role}
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#e4e4e7] text-[12px] font-medium leading-[16px] text-[#18181b]">
+                      {member.role === 'Owner' && (
+                        <Crown className="w-3.5 h-3.5 text-[#18181b]" />
+                      )}
+                      {member.role === 'Admin' && (
+                        <UserCog className="w-3.5 h-3.5 text-[#18181b]" />
+                      )}
+                      {member.role === 'Editor' && (
+                        <Pencil className="w-3.5 h-3.5 text-[#18181b]" />
+                      )}
+                      {member.role === 'Viewer' && (
+                        <Eye className="w-3.5 h-3.5 text-[#18181b]" />
+                      )}
+                      <span>{member.role}</span>
                     </span>
                   </div>
-
+ 
                   {/* Status */}
                   <div className="flex items-center">
-                    <span className={`px-2 py-1 rounded-md text-[12px] font-medium leading-[16px] ${getStatusBadgeColor(member.status)}`}>
+                    <span className="px-3 py-1 rounded-full border border-[#e4e4e7] bg-white text-[12px] font-medium leading-[16px] text-[#3f3f46]">
                       {member.status}
                     </span>
                   </div>
@@ -1081,50 +1159,53 @@ function TeamTabContent() {
                     </span>
                   </div>
 
-                  {/* Actions */}
-                  <div className="flex items-center justify-end relative actions-menu">
-                    <motion.button
-                      onClick={() => setShowActionsMenu(showActionsMenu === member.id ? null : member.id)}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      className="p-1 hover:bg-[#f4f4f5] rounded transition-colors"
-                    >
-                      <MoreVertical className="w-4 h-4 text-[#71717a]" />
-                    </motion.button>
-                    <AnimatePresence>
-                      {showActionsMenu === member.id && (
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.95, y: -10 }}
-                          animate={{ opacity: 1, scale: 1, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                          className="absolute right-0 top-full mt-1 bg-white border border-[#e4e4e7] rounded-md shadow-lg z-20 min-w-[160px]"
-                        >
-                          <motion.button
-                            whileHover={{ backgroundColor: '#f4f4f5' }}
-                            className="w-full px-3 py-2 text-left text-[14px] leading-[20px] text-[#18181b] flex items-center gap-2"
+                    {/* Actions */}
+                    <div className="flex items-center justify-end relative actions-menu">
+                      <motion.button
+                        onClick={() =>
+                          setShowActionsMenu(showActionsMenu === member.id ? null : member.id)
+                        }
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        className="p-1 hover:bg-[#f4f4f5] rounded transition-colors"
+                      >
+                        <MoreVertical className="w-4 h-4 text-[#71717a]" />
+                      </motion.button>
+                      <AnimatePresence>
+                        {showActionsMenu === member.id && (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                            className="absolute right-0 top-full mt-1 bg-white border border-[#e4e4e7] rounded-md shadow-lg z-20 min-w-[160px]"
                           >
-                            Edit Role
-                          </motion.button>
-                          <motion.button
-                            whileHover={{ backgroundColor: '#f4f4f5' }}
-                            className="w-full px-3 py-2 text-left text-[14px] leading-[20px] text-[#18181b] flex items-center gap-2"
-                          >
-                            View Details
-                          </motion.button>
-                          <div className="border-t border-[#e4e4e7] my-1" />
-                          <motion.button
-                            whileHover={{ backgroundColor: '#fee2e2' }}
-                            className="w-full px-3 py-2 text-left text-[14px] leading-[20px] text-[#e52f2f] flex items-center gap-2"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                            Remove
-                          </motion.button>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </motion.div>
-              ))}
+                            <motion.button
+                              whileHover={{ backgroundColor: '#f4f4f5' }}
+                              className="w-full px-3 py-2 text-left text-[14px] leading-[20px] text-[#18181b] flex items-center gap-2"
+                            >
+                              Edit Role
+                            </motion.button>
+                            <motion.button
+                              whileHover={{ backgroundColor: '#f4f4f5' }}
+                              className="w-full px-3 py-2 text-left text-[14px] leading-[20px] text-[#18181b] flex items-center gap-2"
+                            >
+                              View Details
+                            </motion.button>
+                            <div className="border-t border-[#e4e4e7] my-1" />
+                            <motion.button
+                              whileHover={{ backgroundColor: '#fee2e2' }}
+                              className="w-full px-3 py-2 text-left text-[14px] leading-[20px] text-[#e52f2f] flex items-center gap-2"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                              Remove
+                            </motion.button>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </motion.div>
+                )
+              })}
             </AnimatePresence>
           </div>
 
@@ -1134,30 +1215,32 @@ function TeamTabContent() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              className="mt-4 flex items-center gap-3"
+              className="mt-4 flex justify-center"
             >
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="bg-[#e52f2f] text-white rounded-md px-4 py-2 h-[40px] flex items-center gap-2 hover:opacity-90 transition-opacity"
-              >
-                <Trash2 className="w-4 h-4" />
-                <span className="text-[14px] font-medium leading-[20px]">Remove</span>
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="bg-white border border-[#e4e4e7] rounded-md px-4 py-2 h-[40px] text-[14px] font-medium leading-[20px] text-[#18181b] hover:bg-[#f4f4f5] transition-colors"
-              >
-                Role Assignment
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="bg-white border border-[#e4e4e7] rounded-md px-4 py-2 h-[40px] text-[14px] font-medium leading-[20px] text-[#18181b] hover:bg-[#f4f4f5] transition-colors"
-              >
-                Collab Reassignment
-              </motion.button>
+              <div className="bg-[#18181b] rounded-xl px-2 py-1 flex items-center gap-2 shadow-lg">
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full text-[#ef4444] text-[13px] leading-[18px]"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  <span>Remove</span>
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="px-3 py-1.5 rounded-lg bg-[#FFFFFF38] text-white text-[13px] leading-[18px]"
+                >
+                  Role Assignment
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="px-3 py-1.5 rounded-lg bg-[#FFFFFF38] text-white text-[13px] leading-[18px]"
+                >
+                  Collab Reassignment
+                </motion.button>
+              </div>
             </motion.div>
           )}
         </div>
@@ -1183,7 +1266,6 @@ function TeamTabContent() {
         {/* Role Cards */}
         <div className="px-6 pb-6">
           <div className="grid grid-cols-2 gap-4">
-            {/* Owner Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1191,12 +1273,10 @@ function TeamTabContent() {
               whileHover={{ scale: 1.02, y: -2 }}
               className="bg-white border border-[#e8e8e9] rounded-xl p-4"
             >
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-6 h-6 flex items-center justify-center">
-                  <Crown className="w-4 h-4 text-[#18181b]" />
-                </div>
-                <span className="px-2 py-1 bg-[#fef3c7] text-[#92400e] rounded-md text-[12px] font-medium leading-[16px]">
-                  Owner
+              <div className="mb-3">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#e4e4e7] bg-[#f4f4f5] text-[12px] font-medium leading-[16px] text-[#18181b]">
+                  <Crown className="w-3.5 h-3.5 text-[#18181b]" />
+                  <span>Owner</span>
                 </span>
               </div>
               <p className="text-[14px] leading-[20px] text-[#71717a]">
@@ -1204,7 +1284,6 @@ function TeamTabContent() {
               </p>
             </motion.div>
 
-            {/* Admin Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1212,12 +1291,10 @@ function TeamTabContent() {
               whileHover={{ scale: 1.02, y: -2 }}
               className="bg-white border border-[#e8e8e9] rounded-xl p-4"
             >
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-6 h-6 flex items-center justify-center">
-                  <UserCog className="w-4 h-4 text-[#18181b]" />
-                </div>
-                <span className="px-2 py-1 bg-[#dbeafe] text-[#1e40af] rounded-md text-[12px] font-medium leading-[16px]">
-                  Admin
+              <div className="mb-3">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#e4e4e7] bg-[#f4f4f5] text-[12px] font-medium leading-[16px] text-[#18181b]">
+                  <UserCog className="w-3.5 h-3.5 text-[#18181b]" />
+                  <span>Admin</span>
                 </span>
               </div>
               <p className="text-[14px] leading-[20px] text-[#71717a]">
@@ -1225,7 +1302,6 @@ function TeamTabContent() {
               </p>
             </motion.div>
 
-            {/* Editor Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1233,12 +1309,10 @@ function TeamTabContent() {
               whileHover={{ scale: 1.02, y: -2 }}
               className="bg-white border border-[#e8e8e9] rounded-xl p-4"
             >
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-6 h-6 flex items-center justify-center">
-                  <Pencil className="w-4 h-4 text-[#18181b]" />
-                </div>
-                <span className="px-2 py-1 bg-[#d1fae5] text-[#065f46] rounded-md text-[12px] font-medium leading-[16px]">
-                  Editor
+              <div className="mb-3">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#e4e4e7] bg-[#f4f4f5] text-[12px] font-medium leading-[16px] text-[#18181b]">
+                  <Pencil className="w-3.5 h-3.5 text-[#18181b]" />
+                  <span>Editor</span>
                 </span>
               </div>
               <p className="text-[14px] leading-[20px] text-[#71717a]">
@@ -1246,7 +1320,6 @@ function TeamTabContent() {
               </p>
             </motion.div>
 
-            {/* Viewer Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1254,12 +1327,10 @@ function TeamTabContent() {
               whileHover={{ scale: 1.02, y: -2 }}
               className="bg-white border border-[#e8e8e9] rounded-xl p-4"
             >
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-6 h-6 flex items-center justify-center">
-                  <Eye className="w-4 h-4 text-[#18181b]" />
-                </div>
-                <span className="px-2 py-1 bg-[#e5e7eb] text-[#374151] rounded-md text-[12px] font-medium leading-[16px]">
-                  Viewer
+              <div className="mb-3">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#e4e4e7] bg-[#f4f4f5] text-[12px] font-medium leading-[16px] text-[#18181b]">
+                  <Eye className="w-3.5 h-3.5 text-[#18181b]" />
+                  <span>Viewer</span>
                 </span>
               </div>
               <p className="text-[14px] leading-[20px] text-[#71717a]">
@@ -1760,7 +1831,11 @@ function PlansTabContent() {
                     onClick={() => toggleAddOn('design-studio')}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="bg-[#18181b] text-white rounded-md px-4 py-2 h-[40px] text-[14px] font-medium leading-[20px] hover:opacity-90 transition-opacity"
+                    className={`rounded-md px-4 py-2 h-[40px] text-[14px] font-medium leading-[20px] transition-opacity ${
+                      addedAddOns.includes('design-studio')
+                        ? 'bg-white border border-[#e4e4e7] text-[#18181b] opacity-50'
+                        : 'bg-[#18181b] text-white hover:opacity-90'
+                    }`}
                   >
                     {addedAddOns.includes('design-studio') ? 'Added' : 'Add'}
                   </motion.button>
@@ -1840,7 +1915,11 @@ function PlansTabContent() {
                     onClick={() => toggleAddOn('ai-wins')}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="bg-[#18181b] text-white rounded-md px-4 py-2 h-[40px] text-[14px] font-medium leading-[20px] hover:opacity-90 transition-opacity"
+                    className={`rounded-md px-4 py-2 h-[40px] text-[14px] font-medium leading-[20px] transition-opacity ${
+                      addedAddOns.includes('ai-wins')
+                        ? 'bg-white border border-[#e4e4e7] text-[#18181b] opacity-50'
+                        : 'bg-[#18181b] text-white hover:opacity-90'
+                    }`}
                   >
                     {addedAddOns.includes('ai-wins') ? 'Added' : 'Add'}
                   </motion.button>
@@ -1877,7 +1956,11 @@ function PlansTabContent() {
                     onClick={() => toggleAddOn('storage')}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="bg-[#18181b] text-white rounded-md px-4 py-2 h-[40px] text-[14px] font-medium leading-[20px] hover:opacity-90 transition-opacity"
+                    className={`rounded-md px-4 py-2 h-[40px] text-[14px] font-medium leading-[20px] transition-opacity ${
+                      addedAddOns.includes('storage')
+                        ? 'bg-white border border-[#e4e4e7] text-[#18181b] opacity-50'
+                        : 'bg-[#18181b] text-white hover:opacity-90'
+                    }`}
                   >
                     {addedAddOns.includes('storage') ? 'Added' : 'Upgrade'}
                   </motion.button>
@@ -3698,7 +3781,7 @@ function SettingsCard({ title, subtitle, isExpanded, onToggle, children }) {
           onClick={onToggle}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          className="text-[#18181b] cursor-pointer"
+          className="text-[#18181b] cursor-pointer bg-[#fff] border border-[#E4E4E7] p-2 rounded-md"
         >
           <ChevronUp
             className={`w-5 h-5 transition-transform ${isExpanded ? '' : 'rotate-180'}`}
@@ -3862,7 +3945,7 @@ function ProfileTabContent({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.4 }}
-          className="bg-[#f4f4f4] border border-[#e8e8e9] rounded-xl overflow-hidden"
+          className="bg-[#f4f4f4] border border-[#e8e8e9] rounded-xl"
         >
           <div className="p-4 pb-0">
             <div className="mb-4">
@@ -4139,7 +4222,7 @@ function ProfileTabContent({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.5 }}
-          className="bg-[#f4f4f4] border border-[#e8e8e9] rounded-xl overflow-hidden"
+          className="bg-[#f4f4f4] border border-[#e8e8e9] rounded-xl"
         >
           <div className="p-4 pb-0">
             <div className="mb-4">
