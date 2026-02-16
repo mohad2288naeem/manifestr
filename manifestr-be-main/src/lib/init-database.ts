@@ -9,17 +9,64 @@ export async function initDatabase() {
     try {
         console.log('🔍 Checking database schema...');
 
-        // ===== CRITICAL: FIX USER ID TYPE =====
-        // Production has INTEGER id, but we need VARCHAR for Supabase UUIDs
+        // ===== CHECK IF USERS TABLE EXISTS =====
+        const tableExists = await AppDataSource.query(`
+            SELECT EXISTS (
+                SELECT FROM information_schema.tables 
+                WHERE table_name = 'users'
+            );
+        `);
+
+        if (!tableExists[0]?.exists) {
+            console.log('📝 Users table does not exist - creating from scratch...');
+            await AppDataSource.query(`
+                CREATE TABLE users (
+                    id VARCHAR(255) PRIMARY KEY,
+                    email VARCHAR(255) UNIQUE NOT NULL,
+                    first_name VARCHAR(255) DEFAULT 'User',
+                    last_name VARCHAR(255) DEFAULT '',
+                    dob DATE,
+                    country VARCHAR(100),
+                    gender VARCHAR(50),
+                    promotional_emails BOOLEAN DEFAULT false,
+                    onboarding_completed BOOLEAN DEFAULT false,
+                    expertise VARCHAR(255),
+                    job_title VARCHAR(255),
+                    industry VARCHAR(255),
+                    goal TEXT,
+                    work_style VARCHAR(50),
+                    problems TEXT,
+                    password_hash VARCHAR(255),
+                    email_verified BOOLEAN DEFAULT true,
+                    tier VARCHAR(50) DEFAULT 'free',
+                    wins_balance INTEGER DEFAULT 100,
+                    created_at TIMESTAMP DEFAULT NOW(),
+                    updated_at TIMESTAMP DEFAULT NOW()
+                );
+            `);
+            console.log('✅ Users table created');
+            return;
+        }
+
+        // ===== CRITICAL: FIX USER ID TYPE IF NEEDED =====
         console.log('🔧 Checking user ID column type...');
         try {
             const result = await AppDataSource.query(`
-                SELECT data_type 
+                SELECT data_type, COUNT(*) as count
                 FROM information_schema.columns 
-                WHERE table_name = 'users' AND column_name = 'id';
+                WHERE table_name = 'users' AND column_name = 'id'
+                GROUP BY data_type;
             `);
 
-            if (result[0]?.data_type === 'integer') {
+            const hasInteger = result.some((r: any) => r.data_type === 'integer');
+
+            if (hasInteger && result.length > 1) {
+                console.log('⚠️  CRITICAL: Multiple id columns detected - using init script is safer than auto-migration');
+                console.log('ℹ️  Please run: node simple-fix.js');
+                return;
+            }
+
+            if (result[0]?.data_type === 'integer' && result.length === 1) {
                 console.log('⚠️  CRITICAL: users.id is INTEGER, converting to VARCHAR for Supabase UUIDs');
 
                 // Step 1: Check if there are any users with data

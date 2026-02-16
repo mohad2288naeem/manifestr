@@ -19,7 +19,7 @@ export const AppDataSource = new DataSource({
     username: databaseUrl ? undefined : process.env.DB_USER || 'postgres',
     password: databaseUrl ? undefined : process.env.DB_PASSWORD || 'postgres',
     database: databaseUrl ? undefined : process.env.DB_NAME || 'manifestr',
-    synchronize: process.env.NODE_ENV !== 'production', // NEVER auto-sync in production!
+    synchronize: false, // ALWAYS use init-database.ts instead of auto-sync!
     logging: false,
     entities: [
         User,
