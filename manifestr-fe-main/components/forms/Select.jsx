@@ -10,6 +10,7 @@ export default function Select({
   error,
   required = false,
   className = '',
+  fieldClassName = '',
   ...props
 }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -31,9 +32,9 @@ export default function Select({
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`bg-base-background border rounded-md w-full flex items-center justify-between gap-2 px-3 py-2 ${
+          className={`border rounded-md w-full flex items-center justify-between gap-2 px-3 py-2 ${
             error ? 'border-[#fca5a5]' : 'border-[#e4e4e7]'
-          }`}
+          } ${fieldClassName || 'bg-base-background'}`}
           {...props}
         >
           <span className={`flex-1 text-left text-b2-regular ${

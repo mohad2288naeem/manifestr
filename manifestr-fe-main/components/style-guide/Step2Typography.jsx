@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Folder, Type, Palette, Grid, FileText, Plus, ArrowRight } from 'lucide-react'
+import { Folder, Type, Palette, Grid, FileText, Plus, ArrowRight, ChevronUp, ChevronDown } from 'lucide-react'
 import Button from '../ui/Button'
 import Select from '../forms/Select'
 
@@ -48,6 +48,21 @@ export default function StyleGuideStep2Typography({ data, updateData, onBack, on
   const updateStyle = (id, field, value) => {
     const newStyles = typographyStyles.map((style) => (style.id === id ? { ...style, [field]: value } : style))
     updateData({ typography: newStyles })
+  }
+
+  const adjustNumericValue = (rawValue, delta, withPx) => {
+    const numeric = parseInt(String(rawValue || '').replace('px', ''), 10)
+    const base = Number.isNaN(numeric) ? 0 : numeric
+    const next = Math.max(0, base + delta)
+    return withPx ? `${next}px` : String(next)
+  }
+
+  const bumpField = (id, field, delta) => {
+    const style = typographyStyles.find((item) => item.id === id)
+    if (!style) return
+    const withPx = field === 'fontSize' || field === 'lineHeight'
+    const nextValue = adjustNumericValue(style[field], delta, withPx)
+    updateStyle(id, field, nextValue)
   }
 
   return (
@@ -132,13 +147,34 @@ export default function StyleGuideStep2Typography({ data, updateData, onBack, on
                   {typographyStyles.map((style, index) => (
                     <tr
                       key={style.id}
-                      className={`border-b border-[#e4e4e7] ${index === typographyStyles.length - 1 ? 'border-b-0' : ''
-                        }`}
+                      className={`border-b border-[#e4e4e7] ${
+                        index === typographyStyles.length - 1 ? 'border-b-0' : ''
+                      }`}
                     >
                       <td className="px-6 py-4">
-                        <span className="text-[16px] leading-[24px] font-semibold text-[#18181b]">
+                        <div
+                          style={{
+                            fontFamily: style.font,
+                            fontSize: style.fontSize,
+                            fontWeight:
+                              style.fontWeight === 'Bold'
+                                ? '700'
+                                : style.fontWeight === 'SemiBold'
+                                ? '600'
+                                : style.fontWeight === 'Medium'
+                                ? '500'
+                                : style.fontWeight === 'Regular'
+                                ? '400'
+                                : style.fontWeight === 'Light'
+                                ? '300'
+                                : '400',
+                            lineHeight: style.lineHeight,
+                            letterSpacing: style.letterSpacing,
+                          }}
+                          className="text-[#18181b]"
+                        >
                           {style.name}
-                        </span>
+                        </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="w-[150px]">
@@ -147,16 +183,35 @@ export default function StyleGuideStep2Typography({ data, updateData, onBack, on
                             onChange={(e) => updateStyle(style.id, 'font', e.target.value)}
                             options={fontOptions}
                             className="w-full"
+                            fieldClassName="bg-[#F3F3F5]"
                           />
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <input
-                          type="text"
-                          value={style.fontSize}
-                          onChange={(e) => updateStyle(style.id, 'fontSize', e.target.value)}
-                          className="w-[100px] px-3 py-2 bg-white border border-[#e4e4e7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#18181b] focus:border-transparent text-[14px] leading-[20px] text-[#18181b]"
-                        />
+                        <div className="relative inline-flex items-center">
+                          <input
+                            type="text"
+                            value={style.fontSize}
+                            onChange={(e) => updateStyle(style.id, 'fontSize', e.target.value)}
+                            className="w-[100px] px-3 py-2 pr-8 bg-[#F3F3F5] border border-[#e4e4e7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#18181b] focus:border-transparent text-[14px] leading-[20px] text-[#18181b]"
+                          />
+                          <div className="absolute inset-y-0 right-1 flex flex-col justify-center gap-0.5">
+                            <button
+                              type="button"
+                              onClick={() => bumpField(style.id, 'fontSize', 1)}
+                              className="w-5 h-3 flex items-center justify-center text-[#71717a] hover:text-[#18181b]"
+                            >
+                              <ChevronUp className="w-3 h-3" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => bumpField(style.id, 'fontSize', -1)}
+                              className="w-5 h-3 flex items-center justify-center text-[#71717a] hover:text-[#18181b]"
+                            >
+                              <ChevronDown className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="w-[150px]">
@@ -165,24 +220,61 @@ export default function StyleGuideStep2Typography({ data, updateData, onBack, on
                             onChange={(e) => updateStyle(style.id, 'fontWeight', e.target.value)}
                             options={fontWeightOptions}
                             className="w-full"
+                            fieldClassName="bg-[#F3F3F5]"
                           />
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <input
-                          type="text"
-                          value={style.lineHeight}
-                          onChange={(e) => updateStyle(style.id, 'lineHeight', e.target.value)}
-                          className="w-[100px] px-3 py-2 bg-white border border-[#e4e4e7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#18181b] focus:border-transparent text-[14px] leading-[20px] text-[#18181b]"
-                        />
+                        <div className="relative inline-flex items-center">
+                          <input
+                            type="text"
+                            value={style.lineHeight}
+                            onChange={(e) => updateStyle(style.id, 'lineHeight', e.target.value)}
+                            className="w-[100px] px-3 py-2 pr-8 bg-[#F3F3F5] border border-[#e4e4e7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#18181b] focus:border-transparent text-[14px] leading-[20px] text-[#18181b]"
+                          />
+                          <div className="absolute inset-y-0 right-1 flex flex-col justify-center gap-0.5">
+                            <button
+                              type="button"
+                              onClick={() => bumpField(style.id, 'lineHeight', 1)}
+                              className="w-5 h-3 flex items-center justify-center text-[#71717a] hover:text-[#18181b]"
+                            >
+                              <ChevronUp className="w-3 h-3" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => bumpField(style.id, 'lineHeight', -1)}
+                              className="w-5 h-3 flex items-center justify-center text-[#71717a] hover:text-[#18181b]"
+                            >
+                              <ChevronDown className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
                       </td>
                       <td className="px-6 py-4">
-                        <input
-                          type="text"
-                          value={style.letterSpacing}
-                          onChange={(e) => updateStyle(style.id, 'letterSpacing', e.target.value)}
-                          className="w-[100px] px-3 py-2 bg-white border border-[#e4e4e7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#18181b] focus:border-transparent text-[14px] leading-[20px] text-[#18181b]"
-                        />
+                        <div className="relative inline-flex items-center">
+                          <input
+                            type="text"
+                            value={style.letterSpacing}
+                            onChange={(e) => updateStyle(style.id, 'letterSpacing', e.target.value)}
+                            className="w-[100px] px-3 py-2 pr-8 bg-[#F3F3F5] border border-[#e4e4e7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#18181b] focus:border-transparent text-[14px] leading-[20px] text-[#18181b]"
+                          />
+                          <div className="absolute inset-y-0 right-1 flex flex-col justify-center gap-0.5">
+                            <button
+                              type="button"
+                              onClick={() => bumpField(style.id, 'letterSpacing', 1)}
+                              className="w-5 h-3 flex items-center justify-center text-[#71717a] hover:text-[#18181b]"
+                            >
+                              <ChevronUp className="w-3 h-3" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => bumpField(style.id, 'letterSpacing', -1)}
+                              className="w-5 h-3 flex items-center justify-center text-[#71717a] hover:text-[#18181b]"
+                            >
+                              <ChevronDown className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
                       </td>
                     </tr>
                   ))}
