@@ -1,21 +1,20 @@
 import { BaseAgent } from "../core/BaseAgent";
-import { GenerationJob, GenerationStatus } from "../../models/GenerationJob";
 import { ContentResponse, RenderResponse } from "../protocols/types";
-import { AppDataSource } from "../../lib/data-source"; // Added import
-import { VaultItem, VaultItemStatus, VaultItemType } from "../../models/VaultItem"; // Added import
-import { s3Util } from "../../utils/s3.util"; // Added import
+import SupabaseDB from "../../lib/supabase-db";
+import { s3Util } from "../../utils/s3.util";
 
 export class RenderingAgent extends BaseAgent<ContentResponse, RenderResponse> {
 
-    getProcessingStatus(): GenerationStatus {
-        return GenerationStatus.RENDERING;
+    getProcessingStatus(): string {
+        return 'rendering';
     }
 
-    extractInput(job: GenerationJob): ContentResponse {
-        return job.current_step_data as ContentResponse;
+    extractInput(job: any): ContentResponse {
+        // Get output from previous agent (Content)
+        return job.result || job.current_step_data;
     }
 
-    async process(input: ContentResponse, job: GenerationJob): Promise<RenderResponse> {
+    async process(input: ContentResponse, job: any): Promise<RenderResponse> {
         console.log("Rendering Agent transforming to editor format...");
 
         // Defensive checks
@@ -51,7 +50,7 @@ export class RenderingAgent extends BaseAgent<ContentResponse, RenderResponse> {
         };
     }
 
-    protected async onJobCompleted(job: GenerationJob): Promise<void> {
+    protected async onJobCompleted(job: any): Promise<void> {
         console.log(`[RenderingAgent] Finalizing job ${job.id} - Saving to Vault`);
 
         try {
@@ -66,24 +65,21 @@ export class RenderingAgent extends BaseAgent<ContentResponse, RenderResponse> {
             // Job is saved by BaseAgent after this hook returns, or we can save here to be safe but BaseAgent saves it.
             // Actually BaseAgent saves job AFTER this hook. So we just modify the object.
 
-            // 3. Create Vault Item
-            const vaultRepo = AppDataSource.getRepository(VaultItem);
-            const vaultItem = vaultRepo.create({
-                title: job.title || "Untitled Generation",
-                type: VaultItemType.FILE,
-                status: VaultItemStatus.FINAL,
+            // 3. Create Vault Item using Supabase
+            const vaultItem = await SupabaseDB.createVaultItem(job.user_id, {
+                title: job.input_data?.title || "Untitled Generation",
+                type: 'file',
+                status: 'Final',
                 file_key: fileKey,
-                thumbnail_url: job.cover_image,
-                project: "Generations", // Or create a folder for it? For now, flat or "Generations" project tag.
-                userId: job.userId,
+                thumbnail_url: job.input_data?.cover_image,
+                project: "Generations",
                 size: Buffer.byteLength(jsonContent),
                 meta: {
                     generationJobId: job.id,
-                    outputType: job.output_type
+                    outputType: job.type
                 }
             });
 
-            await vaultRepo.save(vaultItem);
             console.log(`[RenderingAgent] Vault Item created: ${vaultItem.id}`);
 
         } catch (error) {

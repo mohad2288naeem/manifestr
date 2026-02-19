@@ -1,5 +1,4 @@
 import { BaseAgent } from "../core/BaseAgent";
-import { GenerationJob, GenerationStatus } from "../../models/GenerationJob";
 import { IntentResponse, IntentResponseSchema, UserPrompt } from "../protocols/types";
 import { generateJSON } from "../../lib/openai";
 
@@ -11,7 +10,7 @@ export class IntentAgent extends BaseAgent<UserPrompt, IntentResponse> {
         this.layoutQueues = layoutQueues;
     }
 
-    protected getNextQueueUrl(job: GenerationJob, output: IntentResponse): string | undefined {
+    protected getNextQueueUrl(job: any, output: IntentResponse): string | undefined {
         const format = output.metadata.outputFormat || 'presentation';
         const queue = this.layoutQueues[format];
         if (!queue) {
@@ -21,21 +20,25 @@ export class IntentAgent extends BaseAgent<UserPrompt, IntentResponse> {
         return queue;
     }
 
-    getProcessingStatus(): GenerationStatus {
-        return GenerationStatus.PROCESSING_INTENT;
+    getProcessingStatus(): string {
+        return 'processing_intent';
     }
 
-    extractInput(job: GenerationJob): UserPrompt {
+    extractInput(job: any): UserPrompt {
+        // Job structure from Supabase:
+        // { id, user_id, type, input_data: { prompt, meta, ... }, result, ... }
+        const inputData = job.input_data || {};
+
         return {
-            prompt: job.prompt,
-            userId: job.userId,
+            prompt: inputData.prompt || job.prompt || '',
+            userId: job.user_id || job.userId,
             jobId: job.id,
-            output: job.output_type as any, // Cast from DB enum
-            meta: job.meta,
+            output: job.type || inputData.output || 'presentation',
+            meta: inputData.meta || job.meta || {},
         };
     }
 
-    async process(input: UserPrompt, job: GenerationJob): Promise<IntentResponse> {
+    async process(input: UserPrompt, job: any): Promise<IntentResponse> {
         console.log("Intent Agent Processing:", input.prompt);
 
         const systemPrompt = `

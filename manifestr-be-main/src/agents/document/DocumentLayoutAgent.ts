@@ -1,20 +1,20 @@
 import { BaseAgent } from "../core/BaseAgent";
-import { GenerationJob, GenerationStatus } from "../../models/GenerationJob";
 import { IntentResponse, LayoutResponse, LayoutGenerationSchema } from "../protocols/types";
 import { generateJSON } from "../../lib/openai";
 import { z } from "zod";
 
 export class DocumentLayoutAgent extends BaseAgent<IntentResponse, LayoutResponse> {
 
-    getProcessingStatus(): GenerationStatus {
-        return GenerationStatus.PROCESSING_LAYOUT;
+    getProcessingStatus(): string {
+        return 'processing_layout';
     }
 
-    extractInput(job: GenerationJob): IntentResponse {
-        return job.current_step_data as IntentResponse;
+    extractInput(job: any): IntentResponse {
+        // Get output from previous agent (Intent)
+        return job.result || job.current_step_data || job.input_data;
     }
 
-    async process(input: IntentResponse, job: GenerationJob): Promise<LayoutResponse> {
+    async process(input: IntentResponse, job: any): Promise<LayoutResponse> {
         if (!input || !input.metadata) {
             throw new Error("Invalid input: missing intent metadata");
         }

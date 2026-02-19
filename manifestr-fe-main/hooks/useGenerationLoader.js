@@ -32,18 +32,18 @@ export default function useGenerationLoader() {
                     throw new Error("No data received");
                 }
 
-                if (data.status === 'FAILED') {
+                if (data.status === 'failed' || data.status === 'FAILED') {
                     setStatus('FAILED');
-                    setError(data.errorMessage || "Generation failed");
+                    setError(data.error_message || data.errorMessage || data.error || "Generation failed");
                     setLoading(false);
                     return true; // stop polling
-                } else if (data.status === 'COMPLETED') {
+                } else if (data.status === 'completed' || data.status === 'COMPLETED') {
                     setStatus('COMPLETED');
 
-                    let rawContent = data.current_step_data?.editorState;
+                    // Check both locations for editorState (new Supabase structure)
+                    let rawContent = data.result?.editorState || data.current_step_data?.editorState;
                     let parsedContent = rawContent;
 
-                    // Identify if content is a stringified JSON and parse it
                     if (typeof rawContent === 'string') {
                         try {
                             parsedContent = JSON.parse(rawContent);
