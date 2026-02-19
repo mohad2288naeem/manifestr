@@ -55,25 +55,34 @@ export class AIOrchestrator {
             jobId: job.id,
         };
 
-        // 3. Push to SQS Queue
-        try {
-            await this.sqsClient.send(new SendMessageCommand({
-                QueueUrl: process.env.SQS_QUEUE_INTENT_URL!,
-                MessageBody: JSON.stringify({ jobId: job.id }),
-                MessageGroupId: job.id,
-                MessageDeduplicationId: `${job.id}-${Date.now()}`,
-            }));
+        // 3. Push to SQS Queue (Optional - graceful fallback if AWS not configured)
+        const useAWS = process.env.USE_AWS_SQS === 'true';
 
-            console.log(`[Orchestrator] Job ${job.id} pushed to Intent Queue`);
+        if (useAWS && process.env.SQS_QUEUE_INTENT_URL && process.env.AWS_ACCESS_KEY_ID) {
+            try {
+                await this.sqsClient.send(new SendMessageCommand({
+                    QueueUrl: process.env.SQS_QUEUE_INTENT_URL!,
+                    MessageBody: JSON.stringify({ jobId: job.id }),
+                    MessageGroupId: job.id,
+                    MessageDeduplicationId: `${job.id}-${Date.now()}`,
+                }));
 
-        } catch (e) {
-            console.error("Failed to push to SQS:", e);
-            // Update job status to failed
-            await SupabaseDB.updateGenerationJob(job.id, userId, {
-                status: 'failed',
-                error: "Failed to queue job: " + (e as Error).message
-            });
-            throw e;
+                console.log(`✅ [Orchestrator] Job ${job.id} pushed to AWS SQS Intent Queue`);
+
+            } catch (e: any) {
+                console.error("❌ Failed to push to SQS:", e.message);
+
+                // Update job status to failed but don't crash
+                await SupabaseDB.updateGenerationJob(job.id, userId, {
+                    status: 'failed',
+                    error: `AWS SQS Error: ${e.message}. Check AWS credentials in .env`
+                });
+
+                console.warn(`⚠️  Job ${job.id} failed to queue - check AWS credentials`);
+            }
+        } else {
+            console.log(`ℹ️  AWS SQS disabled - Job ${job.id} created but not queued`);
+            console.log(`ℹ️  Set USE_AWS_SQS=true in .env to enable background processing`);
         }
 
         return job;

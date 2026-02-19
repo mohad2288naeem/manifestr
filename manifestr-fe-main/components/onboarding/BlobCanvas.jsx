@@ -48,10 +48,16 @@ const BLOB_CONFIG = {
   sphereSegments: 128,   // Number of segments for sphere geometry (higher = smoother but slower)
 }
 
-function BlobCanvas({ fullscreen = false, blobRadius = null, width = 320, height = 250, isAiSpeaking = false, disableHover = false, audioAnalyser = null }) {
+function BlobCanvas({ fullscreen = false, blobRadius = null, width = 320, height = 250, isAiSpeaking = false, disableHover = false, audioAnalyser = null, onHoverChange = null }) {
   const canvasRef = useRef(null)
   const sceneRef = useRef(null)
   const animationFrameRef = useRef(null)
+  const onHoverChangeRef = useRef(onHoverChange)
+
+  // Update ref when prop changes
+  useEffect(() => {
+    onHoverChangeRef.current = onHoverChange
+  }, [onHoverChange])
 
   useEffect(() => {
     if (!canvasRef.current) return

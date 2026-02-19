@@ -14,8 +14,8 @@ export async function generateJSON<T>(schema: any, systemPrompt: string, userPro
         { role: "user", content: userPrompt }
     ];
 
-    console.log(`[OpenAI Input] System Prompt (first 100 chars): ${systemPrompt.substring(0, 100)}...`);
-    console.log(`[OpenAI User] User Prompt (first 100 chars): ${userPrompt.substring(0, 100)}...`);
+    console.log(`[OpenAI Input] System Prompt (first 100 chars): ${systemPrompt?.substring(0, 100) || 'N/A'}...`);
+    console.log(`[OpenAI User] User Prompt (first 100 chars): ${userPrompt?.substring(0, 100) || 'N/A'}...`);
 
     while (attempt < maxRetries) {
         attempt++;

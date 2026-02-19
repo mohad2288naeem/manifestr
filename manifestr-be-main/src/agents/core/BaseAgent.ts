@@ -1,6 +1,5 @@
 import { SQSClient, ReceiveMessageCommand, DeleteMessageCommand, SendMessageCommand } from "@aws-sdk/client-sqs";
-import { AppDataSource } from "../../lib/data-source";
-import { GenerationJob, GenerationStatus } from "../../models/GenerationJob";
+import SupabaseDB from "../../lib/supabase-db";
 import { ZodSchema } from "zod";
 
 export abstract class BaseAgent<TInput, TOutput> {
@@ -60,9 +59,8 @@ export abstract class BaseAgent<TInput, TOutput> {
             return;
         }
 
-        // 1. Fetch Job
-        const jobRepo = AppDataSource.getRepository(GenerationJob);
-        const job = await jobRepo.findOneBy({ id: jobId });
+        // 1. Fetch Job using Supabase
+        let job = await SupabaseDB.getGenerationJobById(jobId, 'system');
 
         if (!job) {
             console.error(`[${this.constructor.name}] Job ${jobId} not found in DB`);
@@ -71,9 +69,11 @@ export abstract class BaseAgent<TInput, TOutput> {
         }
 
         try {
-            // 2. Update Status
-            job.status = this.getProcessingStatus();
-            await jobRepo.save(job);
+            // 2. Update Status to processing
+            const processingStatus = this.getProcessingStatus();
+            job = await SupabaseDB.updateGenerationJob(jobId, job.user_id, {
+                status: processingStatus
+            });
 
             // 3. Process
             // We expect the previous step's data to be in `job.current_step_data`
@@ -81,24 +81,26 @@ export abstract class BaseAgent<TInput, TOutput> {
             const input = this.extractInput(job);
             const output = await this.process(input, job);
 
-            // 4. Save Output
-            job.current_step_data = output;
-            job.tokens_used = (job.tokens_used || 0) + (output as any).tokensUsed || 0; // Simple heuristic
+            // 4. Save Output to job
+            const updateData: any = {
+                result: output,
+                progress: this.nextQueueUrl ? 50 : 100
+            };
 
             if ((output as any).title) {
-                job.title = (output as any).title;
+                updateData.title = (output as any).title;
             }
 
-            // If there is a next queue, we are not done.
+            // If there is a next queue, we are not done
             if (this.nextQueueUrl) {
-                // Status update happens in next agent, but strictly speaking we are "Waiting for next"
-                // or we can leave it as IS until next agent picks it up.
+                // Keep current status, just save output
             } else {
-                job.status = GenerationStatus.COMPLETED;
+                // Final step - mark as completed
+                updateData.status = 'completed';
                 await this.onJobCompleted(job);
             }
 
-            await jobRepo.save(job);
+            job = await SupabaseDB.updateGenerationJob(jobId, job.user_id, updateData);
 
             // 5. Trigger Next Agent
             const nextQueue = this.getNextQueueUrl(job, output);
@@ -117,11 +119,14 @@ export abstract class BaseAgent<TInput, TOutput> {
 
         } catch (error) {
             console.error(`[${this.constructor.name}] Error processing job ${jobId}:`, error);
-            job.status = GenerationStatus.FAILED;
-            job.error_message = (error as Error).message;
-            await jobRepo.save(job);
-            // We do NOT delete the message immediately if we want retries.
-            // But for this MVP, we might want to move to DLQ manually or just delete it to prevent infinite loop.
+
+            // Update job to failed status
+            await SupabaseDB.updateGenerationJob(jobId, job.user_id, {
+                status: 'failed',
+                error: (error as Error).message
+            });
+
+            // Delete message to prevent infinite retries
             await this.deleteMessage(message.ReceiptHandle);
         }
     }
@@ -145,25 +150,26 @@ export abstract class BaseAgent<TInput, TOutput> {
     // --- Abstract Methods ---
 
     /** Which status enum does this agent represent when working? */
-    abstract getProcessingStatus(): GenerationStatus;
+    abstract getProcessingStatus(): string;
 
     /** Extract the correct input type from the job entity */
-    abstract extractInput(job: GenerationJob): TInput;
+    abstract extractInput(job: any): TInput;
 
     /** The core logic */
-    abstract process(input: TInput, jobContext: GenerationJob): Promise<TOutput>;
+    abstract process(input: TInput, jobContext: any): Promise<TOutput>;
+
     /**
      * Determine the next queue URL based on job state/output.
      * Defaults to the static nextQueueUrl.
      */
-    protected getNextQueueUrl(job: GenerationJob, output: TOutput): string | undefined {
+    protected getNextQueueUrl(job: any, output: TOutput): string | undefined {
         return this.nextQueueUrl;
     }
 
     /**
      * Optional hook to run when a job reaches the final state in this agent.
      */
-    protected async onJobCompleted(job: GenerationJob): Promise<void> {
+    protected async onJobCompleted(job: any): Promise<void> {
         // Override in specific agents if needed
     }
 }

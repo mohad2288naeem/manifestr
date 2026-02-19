@@ -263,6 +263,19 @@ export class SupabaseDB {
     }
 
     static async getGenerationJobById(id: string, userId: string) {
+        // If userId is 'system', skip user check (for agents)
+        if (userId === 'system') {
+            const { data, error } = await supabaseAdmin
+                .from('generation_jobs')
+                .select('*')
+                .eq('id', id)
+                .single();
+
+            if (error && error.code === 'PGRST116') return null;
+            if (error) throw error;
+            return data;
+        }
+
         const { data, error } = await supabaseAdmin
             .from('generation_jobs')
             .select('*')
@@ -270,6 +283,7 @@ export class SupabaseDB {
             .eq('user_id', userId)
             .single();
 
+        if (error && error.code === 'PGRST116') return null;
         if (error) throw error;
         return data;
     }

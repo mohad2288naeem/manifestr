@@ -29,7 +29,10 @@ export default function Home() {
       try {
         const res = await api.get('/ai/recent-generations');
         if (res.data.status === 'success') {
-          setRecentProjects(res.data.data.slice(0, 3)); // Show only 3 recent
+          const projects = res.data.data.slice(0, 3);
+          console.log('📦 Recent projects from API:', projects);
+          console.log('🔍 First project structure:', projects[0]);
+          setRecentProjects(projects);
         }
       } catch (err) {
         console.error("Failed to fetch recent projects", err);
@@ -41,15 +44,41 @@ export default function Home() {
   }, []);
 
   const handleProjectClick = (project) => {
-    const type = project.type?.toLowerCase();
-    let path = `/docs-editor?id=${project.id}`;
+    console.log('🎯 CLICK! Project data:', JSON.stringify(project, null, 2));
 
-    if (type === 'presentation') {
+    // AGGRESSIVE type detection - check EVERY possible location
+    const type = (
+      project.type ||
+      project.output_type ||
+      project.outputType ||
+      project.input_data?.output ||
+      project.input_data?.type ||
+      project.result?.outputFormat ||
+      'document'
+    ).toLowerCase();
+
+    console.log('✅ DETECTED TYPE:', type);
+    console.log('📋 All type fields:', {
+      'project.type': project.type,
+      'project.output_type': project.output_type,
+      'project.input_data?.output': project.input_data?.output,
+      'project.result?.outputFormat': project.result?.outputFormat
+    });
+
+    // Smart routing based on type
+    let path;
+    if (type.includes('presentation')) {
       path = `/presentation-editor?id=${project.id}`;
-    } else if (type === 'spreadsheet') {
+      console.log('🎨 → PRESENTATION EDITOR');
+    } else if (type.includes('spreadsheet') || type.includes('sheet')) {
       path = `/spreadsheet-editor?id=${project.id}`;
+      console.log('📊 → SPREADSHEET EDITOR');
+    } else {
+      path = `/docs-editor?id=${project.id}`;
+      console.log('📄 → DOCUMENT EDITOR (default)');
     }
 
+    console.log('🚀 Navigating to:', path);
     router.push(path);
   };
 

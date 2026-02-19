@@ -1,6 +1,4 @@
 import "dotenv/config";
-import "reflect-metadata";
-import { AppDataSource } from "../lib/data-source";
 import { IntentAgent } from "../agents/intent/IntentAgent";
 import { PresentationLayoutAgent } from "../agents/presentation/PresentationLayoutAgent";
 import { DocumentLayoutAgent } from "../agents/document/DocumentLayoutAgent";
@@ -11,14 +9,13 @@ import { SpreadsheetContentAgent } from "../agents/spreadsheet/SpreadsheetConten
 import { RenderingAgent } from "../agents/rendering/RenderingAgent";
 
 async function main() {
-    // 1. Initialize Database
+    // 1. Check environment
     if (!process.env.SQS_QUEUE_INTENT_URL) {
         console.error("Missing SQS_QUEUE_* environment variables. Please check .env");
         process.exit(1);
     }
 
-    await AppDataSource.initialize();
-    console.log("Database connected. Starting Agents with Branching Workflow...");
+    console.log("✅ Starting Agents with Supabase (no TypeORM)...");
 
     const renderQueue = process.env.SQS_QUEUE_RENDER_URL!;
 
